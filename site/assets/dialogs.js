@@ -50,7 +50,10 @@ const Dialogs = (() => {
     if (en) return `
       <h3>Accuracy</h3>
       <p>An AI model read the transcripts and picked out the companies he talked about. On a locked test set (holdout: 20 episodes nobody looked at while the system was being tuned), <strong>81.7% of the mentions it accepted were correct</strong> (49 of 60, margin of error about ±10 percentage points). That missed the 85% bar set in advance; it is published anyway. All 11 wrong ones had no ticker; all 48 with a ticker were right, and returns are only computed for mentions with a ticker. Recall (92.3%) and segment boundaries (100%) were measured on data used for tuning, so they may be optimistic.</p>
-      <p>Many tickers on this site were matched automatically against the official US listing (ticker and company name agree) and have not yet been checked by hand. A manual review is in progress.</p>
+      <p><strong>81.7% is the accuracy of the AI tool itself</strong> (finding which companies were mentioned in the transcripts). The list of stocks on this site was then checked by a person: every ticker was confirmed by hand (an approved dictionary, an approval sheet, or a row-by-row review sheet), and first mentions found to be wrong during that review were removed (for example, Disney's "Marvel" taken as Marvell, or "rethink" in Chinese taken as Synopsys).</p>
+
+      <h3>What counts as "mentioned"</h3>
+      <p>The title says "mentioned", not "recommended". A mention is any time he talks about the company: naming it while discussing an industry, using it as an example or a comparison, or responding when a listener brings it up. It does not mean he recommended the stock, or even that he was talking about investing in it. This definition was set on Nov 9, 2026, before any returns were computed.</p>
 
       <h3>The main result</h3>
       <ul>
@@ -72,6 +75,9 @@ const Dialogs = (() => {
       <h3>Why "to date" differs from the main result</h3>
       <p>Bubbles and the table show holding from the first mention until today: of the stocks mentioned from 2022 on, ${wins} beat the S&amp;P 500 and ${main.length - wins} trailed it. The main result looks only at the first 12 months. The S&amp;P 500 rose about ${F.pct(riseSpy(bench), 0)} (with dividends) from the start of 2022 to ${F.date(summary.price_date)}; the earlier a stock was mentioned, the longer the index run it is compared against.</p>
 
+      <h3>The chart's "Since mention" range</h3>
+      <p>After you pick a stock, the chart switches to "Since mention": every line, including the indexes, starts at 0% on the entry day of the earliest-mentioned stock you picked (the vertical dashed line), and the chart starts a little earlier so you can see the run-up. For that stock, the last number on its line equals "Return" to date in the detail table. If you pick several stocks, a stock mentioned later is measured from that earlier day too, so its line does not show its own return; <strong>the detail table always shows each stock's own return</strong>.</p>
+
       <h3>What may make this look better than reality</h3>
       <ul>
         <li>Excluded stocks (${excluded.length}): ${excluded.map((x) => F.esc(x.ticker)).join(", ")} (no daily prices from two free sources, or not buyable when mentioned).</li>
@@ -91,7 +97,10 @@ const Dialogs = (() => {
       事後描述（不改判定）：收錯的 11 筆 AI 都沒給代號；有代號的 48 筆全對。報酬只對有代號的提及計算。<br>
       召回率 92.3%、段落邊界 100% 來自調整用的資料，可能偏樂觀；真實的召回率沒有量。<br>
       品質合格的 690 集裡，段落分類失敗 3 集（EP107、657、668，這 3 集的公司全部沒抓到）、第一段只用字典候選 22 集。</p></blockquote>
-      <p>準確率由人工標註量：另外抽 20 集當新考卷，人工核對 AI 收下的 60 筆提及。網站上有不少代號是程式用上市清單自動核對的（代號和公司名稱對得上），人工確認還在進行。</p>
+      <p>準確率由人工標註量：另外抽 20 集當新考卷，人工核對 AI 收下的 60 筆提及。<strong>81.7% 是 AI 工具本身（從逐字稿找出提到哪些公司）的準確率</strong>；網站上的名單另外經過人工確認：每一檔的代號都經人工確認（核准的字典、核准表，或逐列看過的代號確認表），確認時發現的錯誤首次提及已經排除（例如把迪士尼的「漫威」當成 Marvell、把「重新思考」當成新思科技）。</p>
+
+      <h3>「提到」是什麼意思</h3>
+      <p>網站標題寫的是「提到」，不是「推薦」。只要他談到這家公司就算：談產業時點名它、拿它舉例或類比、聽眾提到而他有接著回應。不代表他推薦這檔股票，也不一定是在談投資這家公司。這個定義在 2026-11-09 定下，當時還沒有算任何報酬。</p>
 
       <h3>主結論怎麼算</h3>
       <ul>
@@ -112,6 +121,9 @@ const Dialogs = (() => {
 
       <h3>泡泡的「至今」和主結論為什麼不一樣</h3>
       <p>泡泡和表格是「第一次提到之後一直持有到現在」：2022 年起的股票，贏過 S&amp;P 500 的 ${wins} 檔、輸的 ${main.length - wins} 檔。主結論只看提到後的 12 個月。S&amp;P 500 從 2022 年初到 ${summary.price_date} 漲了約 ${F.pct(riseSpy(bench), 0)}（含息）；越早提到的股票，「至今」要和越長一段大盤漲幅比。</p>
+
+      <h3>走勢圖的「首次提及」</h3>
+      <p>選了股票之後，走勢圖會切到「首次提及」：所有線（包括大盤）都以你選的股票裡最早被提到那一檔的進場日（垂直虛線）為 0%，起點再往前多顯示一小段，看得到提及前的走勢。最早那一檔線上最後的數字，等於明細表的「至今報酬」。選了多檔時，較晚提到的股票也從這一天算起，線上的數字不是它自己的報酬；<strong>明細表的數字才是那一檔自己的報酬</strong>。</p>
 
       <h3>哪裡可能偏樂觀</h3>
       <ul>

@@ -2,8 +2,9 @@
 // 色弱也分得出：大盤三條用不同的虛線、個股用實線；線尾直接標名稱；滑到某條線時那條變粗、其他變淡
 "use strict";
 const Chart = (() => {
-  // 交易日數；Infinity＝全部（從 2020-02 節目開始）
-  const RANGES = [5, 20, 60, 126, 252, 756, 1260, Infinity];
+  // 交易日數；Infinity＝全部（從 2020-02 節目開始）；"mention"＝首次提及（以最早被提到那檔的進場日為 0%）
+  const RANGES = ["mention", 5, 20, 60, 126, 252, 756, 1260, Infinity];
+  const MENTION_PAD = 0.05, MENTION_PAD_MIN = 10;  // 首次提及：往前多顯示整段期間的 5%，最少 10 個交易日
   const BENCH = [
     { key: "spy", name: T.spyLong, short: T.spy, color: "#4d4d4d", dash: [2, 3], priceCur: "USD" },
     { key: "sox", name: T.soxLong, short: T.sox, color: "#767676", dash: [10, 3, 2, 3], priceCur: "IDX" },
@@ -12,21 +13,43 @@ const Chart = (() => {
   const FONT = '-apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif';
   let u = null, el, marksEl, tip, view = null, focused = null;
 
-  function rebase(vals, start) {
-    const out = vals.slice(start);
-    const base = out.find((v) => v != null);
-    return out.map((v) => (v == null || base == null ? null : (v / base - 1) * 100));
+  function rebase(vals, start, base = vals.slice(start).find((v) => v != null)) {
+    return vals.slice(start).map((v) => (v == null || base == null ? null : (v / base - 1) * 100));
+  }
+
+  // 首次提及模式：以最早被提到那檔的進場日為 0%。那一檔和大盤用進場日的開盤價當基準（大盤的開盤價由明細的
+  // 「至今報酬」反推：最後收盤 ÷ (1 + 至今報酬)），所以那一檔線上最後的數字等於明細表的至今報酬。
+  // 其他股票用進場日前一天的收盤當基準（沒有那天的開盤價）；同一天進場的用自己的進場價。
+  function mentionBases(b, stocks, ai) {
+    const first = stocks.reduce((a, s) => (s.entry_day < a.entry_day ? s : a));
+    const last = (arr) => arr[arr.length - 1];
+    const bases = { spy: last(b.spy) / (1 + first.bench.spy), sox: last(b.sox) / (1 + first.bench.sox) };
+    stocks.forEach((s) => {
+      bases[s.ticker] = s.entry_day === first.entry_day ? s.open
+        : s.c.slice(0, ai).reverse().find((v) => v != null) ?? s.c.slice(ai).find((v) => v != null);
+    });
+    return bases;
   }
 
   function build(b, stocks, days) {
-    const n = b.dates.length, start = Math.max(0, n - 1 - days);
+    const n = b.dates.length, mention = days === "mention" && stocks.length > 0;
+    let start = Math.max(0, n - 1 - (days === "mention" ? 5 : days)), bases = {};
+    if (mention) {
+      const ai = b.dates.indexOf(stocks.reduce((a, s) => (s.entry_day < a.entry_day ? s : a)).entry_day);
+      start = Math.max(0, ai - Math.max(MENTION_PAD_MIN, Math.round(MENTION_PAD * (n - 1 - ai))));
+      bases = mentionBases(b, stocks, ai);
+    }
     const xs = b.dates.slice(start).map((d) => Date.parse(d + "T00:00:00Z") / 1000);
     const lines = [
       ...BENCH.map((x) => ({ ...x, width: 1.5, price: b[x.key] })),
       ...stocks.map((s) => ({ name: s.ticker, short: s.ticker, color: s.color, dash: null, width: 2, price: s.c,
                               priceCur: "USD", entry: s.entry_day, date: s.date })),
     ];
-    lines.forEach((l) => { l.ys = rebase(l.price, start); l.prices = l.price.slice(start); });
+    lines.forEach((l) => {
+      const base = bases[l.key || l.name];
+      l.ys = base ? rebase(l.price, start, base) : rebase(l.price, start);
+      l.prices = l.price.slice(start);
+    });
     return { xs, lines, dates: b.dates.slice(start) };
   }
 
@@ -103,7 +126,7 @@ const Chart = (() => {
   function marks() {
     const first = view.dates[0];
     marksEl.innerHTML = view.lines.filter((l) => l.entry).map((l) =>
-      `<span>${sample(l, true)} ${F.esc(T.firstMark(l.name, F.date(l.date)))}${l.entry < first ? T.outside : ""}</span>`).join("");
+      `<span>${sample(l, true)} ${T.firstMark(F.esc(l.name), F.date(l.date))}${l.entry < first ? T.outside : ""}</span>`).join("");
   }
 
   function render(b, stocks, days) {

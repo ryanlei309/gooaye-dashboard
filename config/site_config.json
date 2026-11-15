@@ -1,7 +1,7 @@
 {
  "exported": "2026-11-13",
  "last_ep": 705,
- "n_stocks": 100,
+ "n_stocks": 101,
  "etfs": [
   "AVUV",
   "BND",
@@ -46,9 +46,9 @@
   "XLK"
  ],
  "snapshot_0050": {
-  "win": 0.39759,
-  "median": -0.08315,
-  "done": 83,
+  "win": 0.404762,
+  "median": -0.081092,
+  "done": 84,
   "as_of": "2026-11-13"
  },
  "stocks": [
@@ -307,6 +307,14 @@
    "date": "2022-08-24",
    "early": false,
    "entry_day": "2022-08-24",
+   "source": "yahoo"
+  },
+  {
+   "ticker": "SNPS",
+   "ep": 276,
+   "date": "2022-09-03",
+   "early": false,
+   "entry_day": "2022-09-06",
    "source": "yahoo"
   },
   {
@@ -1198,6 +1206,14 @@
    "source": "yahoo"
   },
   {
+   "ticker": "XYZ",
+   "ep": 67,
+   "date": "2020-09-02",
+   "early": true,
+   "entry_day": "2020-09-02",
+   "source": "yahoo"
+  },
+  {
    "ticker": "ADBE",
    "ep": 68,
    "date": "2020-09-05",
@@ -1382,6 +1398,14 @@
    "source": "yahoo"
   },
   {
+   "ticker": "EXPE",
+   "ep": 96,
+   "date": "2020-12-12",
+   "early": true,
+   "entry_day": "2020-12-14",
+   "source": "yahoo"
+  },
+  {
    "ticker": "MA",
    "ep": 97,
    "date": "2020-12-16",
@@ -1555,6 +1579,14 @@
    "date": "2021-05-15",
    "early": true,
    "entry_day": "2021-05-17",
+   "source": "yahoo"
+  },
+  {
+   "ticker": "MRVL",
+   "ep": 153,
+   "date": "2021-06-30",
+   "early": true,
+   "entry_day": "2021-06-30",
    "source": "yahoo"
   },
   {
@@ -2651,6 +2683,23 @@
    "url": "https://player.soundon.fm/p/954689a5-3096-43a4-a80b-7810b219cef3/episodes/340cdd1b-5b7f-4a67-b738-7a6a4238cf07",
    "later_episodes": 2,
    "entry_day": "2022-08-31",
+   "excluded": "",
+   "unbuyable": false
+  },
+  {
+   "ticker": "SNPS",
+   "company": "Synopsys",
+   "company_en": "Synopsys, Inc.",
+   "kind": "個股",
+   "ep": 276,
+   "early": false,
+   "date": "2022-09-03",
+   "segment": "正題",
+   "quote": "…l，所以直接影響到的公司，一般我們看過是三家，一個是新思科技 (Synopsys)，一個是 Cadence，另外一個是西門子 (Siemens)，這三家應該…",
+   "quote_en": "…so the companies directly affected, as we usually see it, are three: Synopsys, Cadence, and Siemens. These three should…",
+   "url": "https://player.soundon.fm/p/954689a5-3096-43a4-a80b-7810b219cef3/episodes/a4a130e1-42cd-4a7d-9ecc-81c687d9d261",
+   "later_episodes": 5,
+   "entry_day": "2022-09-06",
    "excluded": "",
    "unbuyable": false
   },
@@ -4933,6 +4982,23 @@
    "unbuyable": false
   },
   {
+   "ticker": "XYZ",
+   "company": "Block",
+   "company_en": "Block, Inc.",
+   "kind": "個股",
+   "ep": 67,
+   "early": true,
+   "date": "2020-09-02",
+   "segment": "Q&A",
+   "quote": "比方說像這個最近很紅的 Square，SQ。SQ 它也是一家好幾年的公司，可是為什麼就等到最近才爆噴？",
+   "quote_en": "For example, Square, SQ, which is very hot lately. SQ has been around for years, so why did it only explode recently?",
+   "url": "https://player.soundon.fm/p/954689a5-3096-43a4-a80b-7810b219cef3/episodes/6c52dff3-83d1-4165-a40f-bbb25da3a678",
+   "later_episodes": 53,
+   "entry_day": "2020-09-02",
+   "excluded": "",
+   "unbuyable": false
+  },
+  {
    "ticker": "ADBE",
    "company": "Adobe",
    "company_en": "Adobe Inc.",
@@ -5324,6 +5390,23 @@
    "unbuyable": false
   },
   {
+   "ticker": "EXPE",
+   "company": "",
+   "company_en": "Expedia Group, Inc.",
+   "kind": "個股",
+   "ep": 96,
+   "early": true,
+   "date": "2020-12-12",
+   "segment": "正題",
+   "quote": "那也因為 Airbnb 的上市，我覺得就讓更多人開始去注意到，比方說像是 Booking.com 跟 Expedia。",
+   "quote_en": "And Airbnb's listing has made more people start paying attention to companies like Booking.com and Expedia.",
+   "url": "https://player.soundon.fm/p/954689a5-3096-43a4-a80b-7810b219cef3/episodes/8e69fc82-6df1-4d1d-a50c-206f0f1ce321",
+   "later_episodes": 3,
+   "entry_day": "2020-12-14",
+   "excluded": "",
+   "unbuyable": false
+  },
+  {
    "ticker": "MA",
    "company": "Mastercard",
    "company_en": "Mastercard Incorporated",
@@ -5694,6 +5777,23 @@
    "url": "https://player.soundon.fm/p/954689a5-3096-43a4-a80b-7810b219cef3/episodes/08a430be-b275-49d7-b561-e8adf50e9a71",
    "later_episodes": 30,
    "entry_day": "2021-05-17",
+   "excluded": "",
+   "unbuyable": false
+  },
+  {
+   "ticker": "MRVL",
+   "company": "Marvell",
+   "company_en": "Marvell Technology, Inc.",
+   "kind": "個股",
+   "ep": 153,
+   "early": true,
+   "date": "2021-06-30",
+   "segment": "正題",
+   "quote": "…來說，像美國的 AVGO、QCOM，還有這個，別說像是 MRVL，這些在做網通的，那在做這個射頻相關的，高通、Skyworks，你根本就不知道他媽老闆是誰。",
+   "quote_en": "…for example, in the US there's AVGO, QCOM, and also MRVL, the networking ones; and in RF, Qualcomm and Skyworks. You have no idea who their bosses are.",
+   "url": "https://player.soundon.fm/p/954689a5-3096-43a4-a80b-7810b219cef3/episodes/4ab38360-397a-4843-bbfe-d5660d1f677b",
+   "later_episodes": 81,
+   "entry_day": "2021-06-30",
    "excluded": "",
    "unbuyable": false
   },

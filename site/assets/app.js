@@ -7,7 +7,8 @@
   const MAX = 5;
   const get = (p) => fetch(ROOT + p).then((r) => { if (!r.ok) throw new Error(p); return r.json(); });
   const [summary, events, bench] = await Promise.all(["data/summary.json", "data/events.json", "data/benchmarks.json"].map(get));
-  const state = { view: "bubbles", days: 252, picked: [], focus: null };
+  // 時間區間：還沒選股票時 1 週；選了股票自動切到「首次提及」，除非使用者自己選過別的區間（rangeSet）
+  const state = { view: "bubbles", days: 5, rangeSet: false, picked: [], focus: null };
   const prices = new Map();
   const bubbleOf = new Map(summary.bubbles.map((b) => [b.ticker, b]));
   const eventOf = new Map(events.filter((e) => e.kind === "個股").map((e) => [e.ticker, e]));
@@ -31,7 +32,8 @@
 
   async function drawChart() {
     const stocks = await Promise.all(state.picked.map(async (t) => ({
-      ticker: t, c: (await load(t)).c, entry_day: eventOf.get(t).entry_day, date: eventOf.get(t).date, color: color(t) })));
+      ticker: t, c: (await load(t)).c, entry_day: eventOf.get(t).entry_day, date: eventOf.get(t).date, color: color(t),
+      open: bubbleOf.get(t).entry_open, bench: bubbleOf.get(t).to_date.USD.bench })));
     Chart.render(bench, stocks, state.days);
   }
 
@@ -40,7 +42,8 @@
     $("chips").innerHTML = state.picked.map((t) => {
       const on = t === state.focus;
       return `<span class="chip${on ? " on" : ""}" style="--c:${color(t)}">${Chart.sample({ color: on ? "#fff" : color(t) })}` +
-        `<button type="button" data-show="${F.esc(t)}" aria-pressed="${on}" aria-label="${F.esc(T.show(t))}">${F.esc(t)}</button>` +
+        `<button type="button" data-show="${F.esc(t)}" aria-pressed="${on}" aria-label="${F.esc(T.show(t))}">${F.esc(t)}` +
+        (eventOf.get(t).early ? ` <span class="early-tag">${T.earlyShort}</span>` : "") + `</button>` +
         `<button type="button" class="x" data-drop="${F.esc(t)}" aria-label="${F.esc(T.remove(t))}">×</button></span>`;
     }).join("") + (state.picked.length > 1 ? `<button type="button" class="clear" id="clear">${T.clearAll}</button>` : "");
   }
@@ -83,10 +86,19 @@
 
   function note(text) { $("chart-note").textContent = text; }
 
+  // 時間區間按鈕：選中的 aria-pressed；「首次提及」在還沒選股票時不能按
+  function syncRanges() {
+    $("ranges").querySelectorAll("button").forEach((x) => {
+      x.setAttribute("aria-pressed", String(x.dataset.days === String(state.days)));
+      if (x.dataset.days === "mention") x.disabled = !state.picked.length;
+    });
+  }
+
   function pick(t) {
     if (!state.picked.includes(t)) {
       if (state.picked.length >= MAX) { note(T.maxPicked(MAX)); return; }
       state.picked.push(t);
+      if (!state.rangeSet) state.days = "mention";
     }
     state.focus = t;  // 新加的、或再點一次的，成為正在顯示的那檔
     note("");
@@ -101,7 +113,8 @@
   }
 
   function refresh() {
-    chips(); detail(); drawChart(); Bubbles.refreshPicked(); Table.render();
+    if (!state.picked.length && state.days === "mention") state.days = 5;  // 沒有股票就沒有「首次提及」，回到 1 週
+    syncRanges(); chips(); detail(); drawChart(); Bubbles.refreshPicked(); Table.render();
   }
 
   function setView(v) {
@@ -121,12 +134,14 @@
   // 控制項
   document.querySelectorAll("[data-view]").forEach((btn) => btn.addEventListener("click", () => setView(btn.dataset.view)));
   $("ranges").innerHTML = Chart.RANGES.map((n, i) =>
-    `<button type="button" data-days="${n}" aria-pressed="${n === state.days}">${T.ranges[i]}</button>`).join("");
+    `<button type="button" data-days="${n}" aria-pressed="false">${T.ranges[i]}</button>`).join("");
+  syncRanges();
   $("ranges").addEventListener("click", (e) => {
     const b = e.target.closest("[data-days]");
-    if (!b) return;
-    state.days = Number(b.dataset.days);
-    $("ranges").querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
+    if (!b || b.disabled) return;
+    state.days = b.dataset.days === "mention" ? "mention" : Number(b.dataset.days);
+    state.rangeSet = true;  // 使用者自己選過：之後加新股票不再自動跳回「首次提及」
+    syncRanges();
     drawChart();
   });
   $("chips").addEventListener("click", (e) => {

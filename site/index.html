@@ -6,21 +6,21 @@
 <meta name="referrer" content="no-referrer">
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'none'; base-uri 'none'">
 <title>謝孟恭提到的股票，後來贏過大盤嗎？</title>
-<meta name="description" content="42% 贏過 S&amp;P 500（83 檔個股，持有 12 個月）。AI 讀《股癌》逐字稿，找出每一檔美股第一次被提到的那天，和同一天買 S&amp;P 500 比。">
+<meta name="description" content="43% 贏過 S&amp;P 500（84 檔個股，持有 12 個月）。AI 讀《股癌》逐字稿，找出每一檔美股第一次被提到的那天，和同一天買 S&amp;P 500 比。">
 <link rel="alternate" hreflang="zh-Hant" href="https://ryanlei309.github.io/gooaye-dashboard/">
 <link rel="alternate" hreflang="en" href="https://ryanlei309.github.io/gooaye-dashboard/en/">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://ryanlei309.github.io/gooaye-dashboard/">
 <meta property="og:title" content="謝孟恭提到的股票，後來贏過大盤嗎？">
-<meta property="og:description" content="42% 贏過 S&amp;P 500（83 檔個股，持有 12 個月）。AI 讀《股癌》逐字稿，找出每一檔美股第一次被提到的那天，和同一天買 S&amp;P 500 比。">
+<meta property="og:description" content="43% 贏過 S&amp;P 500（84 檔個股，持有 12 個月）。AI 讀《股癌》逐字稿，找出每一檔美股第一次被提到的那天，和同一天買 S&amp;P 500 比。">
 <meta property="og:image" content="https://ryanlei309.github.io/gooaye-dashboard/assets/og-zh.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
-<meta property="og:image:alt" content="標題與主結論：42% 贏過 S&amp;P 500">
+<meta property="og:image:alt" content="標題與主結論：43% 贏過 S&amp;P 500">
 <meta property="og:locale" content="zh_TW">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="謝孟恭提到的股票，後來贏過大盤嗎？">
-<meta name="twitter:description" content="42% 贏過 S&amp;P 500（83 檔個股，持有 12 個月）。AI 讀《股癌》逐字稿，找出每一檔美股第一次被提到的那天，和同一天買 S&amp;P 500 比。">
+<meta name="twitter:description" content="43% 贏過 S&amp;P 500（84 檔個股，持有 12 個月）。AI 讀《股癌》逐字稿，找出每一檔美股第一次被提到的那天，和同一天買 S&amp;P 500 比。">
 <meta name="twitter:image" content="https://ryanlei309.github.io/gooaye-dashboard/assets/og-zh.png">
 <link rel="stylesheet" href="assets/vendor/uPlot.min.css">
 <link rel="stylesheet" href="assets/style.css">
@@ -36,7 +36,6 @@
   <p class="headline" id="headline"></p>
   <div class="meta-lines">
     <p id="worst"></p>
-    <p id="accuracy">AI 辨識提及的準確率 81.7%，未達事先定的 85%</p>
     <p class="dates"><span id="price-date"></span>・<span id="last-ep"></span></p>
   </div>
 </header>
@@ -68,12 +67,12 @@
 
   <section class="chart-panel" aria-labelledby="chart-title">
     <h2 id="chart-title" class="visually-hidden">報酬走勢</h2>
-    <div class="panel-head">
+    <div class="panel-head chart-head">
+      <p class="marks" id="marks"></p>
       <div class="ranges" role="group" aria-label="時間區間" id="ranges"></div>
     </div>
     <div class="chart" id="chart" role="img" aria-label="報酬走勢圖"></div>
     <div class="chart-foot">
-      <p class="marks" id="marks"></p>
       <div class="chips" id="chips"></div>
       <p class="note" id="chart-note" role="status"></p>
     </div>

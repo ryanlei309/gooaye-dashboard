@@ -83,7 +83,7 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 .bubble {
   position: absolute; left: 0; top: 0; border-radius: 50%; border: 2px solid; background: var(--bg);
   display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 0;
-  line-height: 1.15; will-change: transform; text-align: center; transition: scale 0.15s;
+  line-height: 1.15; will-change: translate; text-align: center; transition: scale 0.15s;
 }
 .bubble:hover, .bubble:focus-visible { scale: 1.15; z-index: 2; }
 .bubble[aria-pressed="true"] { outline: 3px solid var(--ink); outline-offset: 2px; }
@@ -98,7 +98,7 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 .bubble.win { border-color: var(--win); background: var(--win); color: #fff; }
 .bubble.lose { border-color: var(--lose); background: #fff; color: var(--lose); }
 .bubbles.static { touch-action: auto; overflow-y: auto; display: flex; flex-wrap: wrap; align-content: flex-start; gap: 12px; padding: 14px; }
-.bubbles.static .bubble { position: static; transform: none !important; }
+.bubbles.static .bubble { position: static; translate: none !important; }
 @media (prefers-reduced-motion: reduce) { .bubble { transition: none; } }
 
 /* 表格：在自己的框裡捲動，表頭固定 */
@@ -132,9 +132,14 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 .ranges button { border: 0; background: none; padding: 4px 6px; min-height: 32px; font-size: 0.9rem; color: var(--muted); }
 .ranges button + button::before { content: "｜" / ""; color: var(--rule); margin: 0 6px 0 -6px; font-weight: 400;
                                    display: inline-block; }  /* inline-block：選中那個的底線不會連到分隔線 */
+.ranges button:disabled { opacity: 0.45; cursor: default; }
 .ranges button[aria-pressed="true"] { color: var(--ink); font-weight: 700; text-decoration: underline;
                                       text-underline-offset: 5px; text-decoration-thickness: 2px; }
-.marks { margin: 0; flex-basis: 100%; display: flex; flex-wrap: wrap; gap: 0 16px; font-size: 0.78rem; color: var(--muted); }
+/* 走勢圖上方一列：左邊是首次提及的說明，右邊是時間區間 */
+.chart-head { flex-wrap: nowrap; align-items: center; }
+.marks { margin: 0; flex: 1; min-width: 0; display: flex; flex-wrap: wrap; gap: 0 16px; font-size: 0.78rem; color: var(--muted); }
+.marks strong { color: var(--ink); }
+.chart-head .ranges { margin-left: auto; flex: none; justify-content: flex-end; }
 .marks:empty { display: none; }
 .marks svg { vertical-align: -1px; }
 /* 已選股票：圓角膠囊，淡底色＋該線的線樣，× 是圓形按鈕 */
@@ -144,6 +149,7 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
         border: 2px solid var(--c); background: var(--bg); color: var(--c); }
 .chip.on { background: var(--c); color: #fff; }
 .chip.on .x { color: #fff; }
+.chip .early-tag { border-color: currentColor; font-weight: 700; margin-left: 2px; vertical-align: 1px; }
 .chip button { border: 0; background: none; padding: 2px 4px; min-height: 28px; font-weight: 700; }
 .chip .x { width: 24px; height: 24px; min-height: 24px; padding: 0; border-radius: 50%; font-size: 1rem; line-height: 1;
            font-weight: 400; color: inherit; }
@@ -221,6 +227,8 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
   /* 手機直式（2026-11-15 第五版）：泡泡在走勢圖上面，點了泡泡之後走勢圖和明細接在下面，方便對照 */
   .grid { padding: 4px 12px 0; grid-template-areas: "bubbles" "chart" "detail"; }
   .chart-panel { margin-top: 10px; }
+  .chart-head { flex-wrap: wrap; }
+  .chart-head .marks { flex-basis: 100%; }
   .chart { height: 24svh; min-height: 152px; }
   .chart-foot { padding: 4px 0; gap: 4px 8px; }
   .ranges button { padding: 2px 4px; font-size: 0.82rem; }

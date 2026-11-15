@@ -5,7 +5,8 @@
 "use strict";
 const Bubbles = (() => {
   let root, items = [], onPick, isPicked, laid = [], pos = 0, lo = 0, hi = 0, start0 = 0;
-  let playing = true, hovering = false, last = null, frame = null, reduced = false, playBtn, whenEl;
+  let playing = true, hovering = false, last = null, frame = null, reduced = false, playBtn, whenEl, hot = null;
+  const GROW = 1.15;  // 滑過或鍵盤移到時放大的倍數（CSS .bubble:hover 的 scale）
   const shown = new Map();  // ticker → 畫面上的按鈕
   const motion = matchMedia("(prefers-reduced-motion: reduce)");
 
@@ -84,7 +85,13 @@ const Bubbles = (() => {
         b.remove();
         shown.delete(o.it.ticker);
       }
-      if (visible) b.style.transform = `translate(${o.x}px, ${top}px)`;
+      // 用 translate 屬性定位：瀏覽器先移位置再放大，scale 才會以泡泡中心放大（用 transform 的話，位移也會被放大，
+      // 泡泡就往右下長）。滑過的那顆如果貼著上下邊緣，往內推到放大後也不會被切掉。
+      if (visible) {
+        const pad = ((GROW - 1) / 2) * o.d + 2;
+        const y = b === hot ? Math.min(Math.max(top, pad), h - o.d - pad) : top;
+        b.style.translate = `${o.x}px ${y}px`;
+      }
     });
     // 角落：畫面上最上面那顆（最新）到最下面那顆（最舊）的年月，和泡泡由上到下的順序一致
     if (seen.length) {
@@ -178,10 +185,11 @@ const Bubbles = (() => {
       setPlaying(false);
       moveTo(Math.abs(move) === Infinity ? (move < 0 ? lo : hi) : pos + move);
     });
-    root.addEventListener("pointerover", (e) => (hovering = !!e.target.closest(".bubble")));
-    root.addEventListener("pointerleave", () => (hovering = false));
-    root.addEventListener("focusin", (e) => (hovering = e.target !== root));  // 鍵盤移到泡泡上時停住，才按得到
-    root.addEventListener("focusout", () => (hovering = false));
+    const setHot = (b) => { hot = b; hovering = !!b || root.contains(document.activeElement) && document.activeElement !== root; if (!reduced) draw(); };
+    root.addEventListener("pointerover", (e) => setHot(e.target.closest(".bubble")));
+    root.addEventListener("pointerleave", () => setHot(null));
+    root.addEventListener("focusin", (e) => setHot(e.target.closest(".bubble")));  // 鍵盤移到泡泡上時停住，才按得到
+    root.addEventListener("focusout", () => setHot(null));
     playBtn.addEventListener("click", () => setPlaying(!playing));
   }
 
