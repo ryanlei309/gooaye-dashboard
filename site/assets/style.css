@@ -125,13 +125,23 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 @container (max-width: 340px) { .list .col-date { display: none; } }
 
 /* 走勢圖 */
-.chart { flex: 1; min-height: 0; position: relative; touch-action: pan-y; }
+/* 走勢圖和已選股票的標籤：標籤在左邊直的一列（第七版）；手機放在走勢圖上方 */
+.chart-body { flex: 1; min-height: 0; display: flex; gap: 10px; }
+.chart-body .chips { flex: none; flex-direction: column; flex-wrap: nowrap; align-items: stretch; overflow-y: auto;
+                     max-height: 100%; padding: 6px 0; }
+.chart-body .chips:empty { display: none; }
+.chart-body .chip { justify-content: space-between; }
+.chart { flex: 1; min-width: 0; min-height: 0; position: relative; touch-action: pan-y; }
 .chart-foot { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; padding: 6px 0; }
 /* 時間區間：像 Google 財經，文字用「｜」分隔；選中的加底線和粗體（不只靠顏色） */
 .ranges { display: flex; flex-wrap: wrap; align-items: center; }
 .ranges button { border: 0; background: none; padding: 4px 6px; min-height: 32px; font-size: 0.9rem; color: var(--muted); }
-.ranges button + button::before { content: "｜" / ""; color: var(--rule); margin: 0 6px 0 -6px; font-weight: 400;
-                                   display: inline-block; }  /* inline-block：選中那個的底線不會連到分隔線 */
+/* 分隔線放在每個按鈕左邊的空白裡；整排往左移一格再切掉左邊，換行時每一行開頭的「｜」就被切掉（第七版） */
+.ranges { margin-left: -14px; clip-path: inset(-6px -6px -6px 14px); }
+.ranges button { position: relative; margin-left: 14px; }
+.ranges button::before { content: "｜" / ""; color: var(--rule); position: absolute; left: -14px; width: 14px;
+                         text-align: center; font-weight: 400; text-decoration: none; }
+.ranges button:focus-visible { outline-offset: -2px; }
 .ranges button:disabled { opacity: 0.45; cursor: default; }
 .ranges button[aria-pressed="true"] { color: var(--ink); font-weight: 700; text-decoration: underline;
                                       text-underline-offset: 5px; text-decoration-thickness: 2px; }
@@ -202,8 +212,9 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
 .dialog-body .steps { padding-left: 1.4em; }
 .dialog-body .steps li { margin: 8px 0; }
 
-/* 直式（手機、平板直放）：整頁可以捲動；上半走勢圖、下半泡泡，明細在最下面 */
-@media (orientation: portrait) {
+/* 單欄、整頁可以捲動：寬度不到 1024 或高度不到 600（手機直放與橫放、平板直放）。只有平板橫放和電腦用左右兩欄
+   （2026-11-15 第七版：手機橫放原本是左右兩欄，高度只有約 390px，泡泡和走勢圖都太扁，改成和手機直式一樣） */
+@media (max-width: 1023px), (max-height: 599px) {
   body { display: block; height: auto; overflow: visible; }
   .top { --big: 1.6rem; padding: 10px 16px 8px; grid-template-areas: "title title" "headline headline" "meta controls"; gap: 2px 12px; }
   .controls { align-self: end; }
@@ -211,30 +222,31 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
   .meta-lines .dates { margin-left: 0; }
   .grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; grid-template-areas: "chart" "bubbles" "detail";
           padding: 8px 16px 0; }
-  .chart { flex: none; height: 27vh; min-height: 176px; }
+  .chart { flex: 1; height: 27vh; min-height: 176px; }
   .bubbles-wrap, .table-box { flex: none; height: 30vh; min-height: 220px; }
   .detail { overflow: visible; }
 }
 
-/* 手機直式：主結論縮小；走勢圖和泡泡要在同一個畫面裡 */
-@media (orientation: portrait) and (max-width: 600px) {
+/* 手機（直放或橫放）：主結論縮小；由上到下「結論列 → 泡泡 → 走勢圖 → 明細」，點了泡泡之後走勢圖和明細接在下面，
+   方便對照（第五版）；已選股票的標籤空間不夠放左邊，放在走勢圖上方（第七版） */
+@media (max-width: 600px), (max-height: 500px) {
   .top { --big: 1.3rem; padding: 8px 12px 6px; }
   .headline .label { font-size: 0.85rem; }
   .meta-lines { font-size: 0.68rem; }
   .controls { flex-direction: column; align-items: flex-end; gap: 2px; }
   .controls .link-btn { font-size: 0.75rem; min-height: 24px; padding: 0; }
   .seg button { min-height: 30px; padding: 2px 8px; font-size: 0.8rem; }
-  /* 手機直式（2026-11-15 第五版）：泡泡在走勢圖上面，點了泡泡之後走勢圖和明細接在下面，方便對照 */
   .grid { padding: 4px 12px 0; grid-template-areas: "bubbles" "chart" "detail"; }
   .chart-panel { margin-top: 10px; }
   .chart-head { flex-wrap: wrap; }
   .chart-head .marks { flex-basis: 100%; }
   .chart-head .ranges { flex: 1 1 100%; justify-content: flex-start; }  /* 手機上可以換行，不超出畫面 */
-  .chart { height: 24svh; min-height: 152px; }
-  .chart-foot { padding: 4px 0; gap: 4px 8px; }
+  .chart-body { flex-direction: column; }
+  .chart-body .chips { flex-direction: row; flex-wrap: wrap; width: auto; max-height: none; padding: 0 0 6px; }
+  .chart { height: max(24svh, 170px); min-height: 170px; }
   .ranges button { padding: 2px 4px; font-size: 0.82rem; }
   .panel-head { padding: 4px 0; }
-  .bubbles-wrap, .table-box { height: 30svh; min-height: 190px; }
+  .bubbles-wrap, .table-box { height: max(30svh, 200px); min-height: 200px; }
   .foot { padding: 8px 12px 16px; }
   .cmp { font-size: 0.74rem; }
   .cmp td, .cmp thead th { padding-left: 8px; }
@@ -242,19 +254,4 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
   .cmp tbody th { white-space: normal; min-width: 5.5em; }
   .cmp .sec th { white-space: normal; }
   .cmp .u { display: block; font-size: 0.66rem; }
-}
-
-/* 手機橫放：高度只有約 390px，可以捲動；頂部壓成兩行，走勢圖不能被擠扁 */
-@media (orientation: landscape) and (max-height: 500px) {
-  body { display: block; height: auto; overflow: visible; }
-  .top { --big: 1.1rem; padding: 6px 16px; gap: 0 12px; grid-template-areas: "title controls" "headline headline" "meta meta"; }
-  .headline .label { font-size: 0.8rem; }
-  .meta-lines { font-size: 0.68rem; gap: 0 12px; }
-  .seg button { min-height: 28px; padding: 2px 7px; font-size: 0.75rem; }
-  .grid { padding: 6px 16px 0; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); grid-template-rows: auto auto; }
-  .panel-head { padding-bottom: 4px; }
-  .bubbles-wrap, .table-box { flex: none; height: calc(100vh - 110px); min-height: 200px; }
-  .chart { flex: none; height: calc(80vh - 96px); min-height: 180px; }
-  .chart-foot { padding: 4px 0; gap: 4px 8px; }
-  .detail { overflow: visible; }
 }

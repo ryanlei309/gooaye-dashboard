@@ -51,8 +51,10 @@
     $("chips").innerHTML = state.picked.map((t) => {
       const on = t === state.focus;
       return `<span class="chip${on ? " on" : ""}" style="--c:${color(t)}">${Chart.sample({ color: on ? "#fff" : color(t) })}` +
-        `<button type="button" data-show="${F.esc(t)}" aria-pressed="${on}" aria-label="${F.esc(T.show(t))}">${F.esc(t)}` +
-        (eventOf.get(t).early ? ` <span class="early-tag">${T.earlyShort}</span>` : "") + `</button>` +
+        // 早期提及：框框裡一個「E」，滑過顯示「早期提及（2020–2021）」，可存取名稱也念得出來
+        `<button type="button" data-show="${F.esc(t)}" aria-pressed="${on}" ` +
+        `aria-label="${F.esc(T.show(t))}${eventOf.get(t).early ? (LANG === "en" ? ", " : "，") + T.early : ""}">${F.esc(t)}` +
+        (eventOf.get(t).early ? ` <span class="early-tag" title="${T.early}" aria-hidden="true">E</span>` : "") + `</button>` +
         `<button type="button" class="x" data-drop="${F.esc(t)}" aria-label="${F.esc(T.remove(t))}">×</button></span>`;
     }).join("") + (state.picked.length > 1 ? `<button type="button" class="clear" id="clear">${T.clearAll}</button>` : "");
   }
@@ -103,13 +105,13 @@
     });
   }
 
+  // 點泡泡或表格的一列：沒選的加進來；已經選了的再點一次就取消（第七版）
   function pick(t) {
-    if (!state.picked.includes(t)) {
-      if (state.picked.length >= MAX) { note(T.maxPicked(MAX)); return; }
-      state.picked.push(t);
-      if (!state.rangeSet) state.days = "mention";
-    }
-    state.focus = t;  // 新加的、或再點一次的，成為正在顯示的那檔
+    if (state.picked.includes(t)) { drop(t); return; }
+    if (state.picked.length >= MAX) { note(T.maxPicked(MAX)); return; }
+    state.picked.push(t);
+    if (!state.rangeSet) state.days = "mention";
+    state.focus = t;  // 新加的成為正在顯示的那檔
     note("");
     refresh();
   }

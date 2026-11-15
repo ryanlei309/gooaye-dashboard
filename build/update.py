@@ -154,6 +154,59 @@ def path_metrics(s: Series, entry, end, threshold):
             "max_loss": rets[lo], "max_loss_day": lo, "days": len(rets) - 1, "done": done}
 
 
+# ---- statistical tests (reference only; method fixed in the research spec before computing) ----------
+
+BOOT_N, BOOT_SEED = 10_000, 20261115
+
+
+def binom_pmf(n, k, p):
+    return math.comb(n, k) * p ** k * (1 - p) ** (n - k)
+
+
+def binom_test(k, n, p=0.5):
+    """Exact two-sided p-value: sum of probabilities of outcomes no more likely than the observed one."""
+    obs = binom_pmf(n, k, p)
+    return min(1.0, sum(binom_pmf(n, i, p) for i in range(n + 1) if binom_pmf(n, i, p) <= obs * (1 + 1e-7)))
+
+
+def clopper_pearson(k, n, alpha=0.05):
+    """Exact 95% confidence interval for a proportion (bisection on the binomial tails).
+    Lower bound: P(X >= k | p) = alpha/2. Upper bound: P(X <= k | p) = alpha/2."""
+    def solve(tail, rising):  # tail(p) is monotone in p; find p where it equals alpha / 2
+        lo, hi = 0.0, 1.0
+        for _ in range(100):
+            mid = (lo + hi) / 2
+            below = tail(mid) < alpha / 2
+            lo, hi = (mid, hi) if below == rising else (lo, mid)
+        return (lo + hi) / 2
+    lower = 0.0 if k == 0 else solve(lambda q: sum(binom_pmf(n, i, q) for i in range(k, n + 1)), rising=True)
+    upper = 1.0 if k == n else solve(lambda q: sum(binom_pmf(n, i, q) for i in range(k + 1)), rising=False)
+    return lower, upper
+
+
+def bootstrap_ci(xs, stat, n_boot=BOOT_N, seed=BOOT_SEED):
+    """Percentile 95% interval: resample with replacement n_boot times, fixed seed (same result every run)."""
+    import random
+
+    rng, n = random.Random(seed), len(xs)
+    vals = sorted(stat([xs[rng.randrange(n)] for _ in range(n)]) for _ in range(n_boot))
+    return vals[int(0.025 * n_boot)], vals[int(0.975 * n_boot) - 1]
+
+
+def tests(xs):
+    """Win-rate binomial test vs 50% with a Clopper-Pearson interval; bootstrap intervals for the mean and median."""
+    if not xs:
+        return None
+    xs = sorted(xs)  # the bootstrap depends on order; sorting makes every caller get the same result
+    n, k = len(xs), sum(x > 0 for x in xs)
+    lo, hi = clopper_pearson(k, n)
+    mean = sum(xs) / n
+    return {"n": n, "wins": k, "p_value": r6(binom_test(k, n)), "win_ci": [r6(lo), r6(hi)],
+            "mean": r6(mean), "mean_ci": [r6(v) for v in bootstrap_ci(xs, lambda v: sum(v) / len(v))],
+            "median": r6(median(xs)), "median_ci": [r6(v) for v in bootstrap_ci(xs, median)],
+            "boot_n": BOOT_N, "boot_seed": BOOT_SEED}
+
+
 def win_median(xs):
     return {"win": sum(x > 0 for x in xs) / len(xs), "median": median(xs)} if xs else None
 
@@ -222,7 +275,7 @@ def compute(cfg: dict, series: dict, spy: Series, sox: Series) -> dict:
     summary = {
         "price_date": price_date.isoformat(), "last_ep": cfg["last_ep"], "main_horizon": "12 個月",
         "main": {"n_stocks": cfg["n_stocks"], "computed": n_main, "done": len(main_x), "spy": win_median(main_x),
-                 "0050": cfg["snapshot_0050"]},
+                 "0050": cfg["snapshot_0050"], "tests": tests(main_x)},
         "worst": {"done": len(worst_x), "spy": win_median(worst_x)},
         "early": {"n": n_early, "computed": n_early, "done": len(early_x), "spy": win_median(early_x)},
         "etfs": cfg["etfs"], "bubbles": bubbles,

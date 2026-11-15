@@ -93,9 +93,10 @@ const Bubbles = (() => {
         b.style.translate = `${o.x}px ${y}px`;
       }
     });
-    // 角落：畫面上最上面那顆（最新）到最下面那顆（最舊）的年月，和泡泡由上到下的順序一致
+    // 角落：畫面上看得到的泡泡的年月範圍
     if (seen.length) {
-      const a = F.month(seen.reduce((x, y) => (x > y ? x : y))), b = F.month(seen.reduce((x, y) => (x < y ? x : y)));
+      // 由舊到新（第七版）：最下面那顆的年月 – 最上面那顆的年月
+      const a = F.month(seen.reduce((x, y) => (x < y ? x : y))), b = F.month(seen.reduce((x, y) => (x > y ? x : y)));
       whenEl.textContent = a === b ? a : `${a} – ${b}`;
     }
   }
