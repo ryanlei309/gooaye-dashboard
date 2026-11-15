@@ -67,6 +67,21 @@ const Dialogs = (() => {
       <p>方法：雙尾精確二項檢定、Clopper–Pearson 信賴區間、bootstrap 重複抽樣 ${t.boot_n.toLocaleString("en-US")} 次（固定亂數種子 ${t.boot_seed}），都在算之前定下。只當參考，不改主結論。</p>`;
   }
 
+  // 補分類排除的（2026-11-15）：基金不算個股；首次提及時還是 SPAC 空殼的視同還沒上市
+  function reclassified(list) {
+    if (!list || !list.length) return "";
+    const fund = list.filter((x) => x.why === "fund").map((x) => x.ticker), spac = list.filter((x) => x.why === "spac");
+    const parts = [];
+    if (en) {
+      if (fund.length) parts.push(`${fund.join(", ")} (a closed-end fund; funds and ETFs are not counted as individual stocks)`);
+      if (spac.length) parts.push(`${spac.map((x) => `${x.ticker} (still a SPAC shell when first mentioned; the merger closed on ${F.date(x.merged)})`).join(", ")}, treated as not yet listed`);
+      return `<li>Reclassified and excluded: ${parts.join("; ")}.</li>`;
+    }
+    if (fund.length) parts.push(`${fund.join("、")}（封閉式基金，照「ETF、基金不算個股」處理）`);
+    if (spac.length) parts.push(`${spac.map((x) => `${x.ticker}（首次提及時還是 SPAC 空殼公司，${x.merged} 才完成合併）`).join("、")}，視同還沒上市`);
+    return `<li>補分類排除：${parts.join("；")}。</li>`;
+  }
+
   function method(summary, events, bench) {
     const m = summary.main, w = summary.worst, e = summary.early, t50 = m["0050"];  // 0050 是固定日期的計算（公開 repo 沒有台股資料）
     const excluded = events.filter((x) => x.kind === "個股" && x.excluded);
@@ -87,7 +102,8 @@ const Dialogs = (() => {
         <li>${F.share(m.spy.win)} beat the S&amp;P 500. The median excess return is ${F.pct(m.spy.median)}.</li>
         <li><strong>Excess return</strong> = the stock's return minus the index's return over the same period, in %. That is why it can be below −100% (for example, the stock at −80% while the index is at +110% gives −190%). The bubble numbers use the same definition.</li>
         <li>All figures are in US dollars, using adjusted prices (splits and dividends included).</li>
-        <li>ETFs are not in the main result (${summary.etfs.length}): ${summary.etfs.join(", ")}.</li>
+        <li>ETFs and funds are not in the main result (${summary.etfs.length}): ${summary.etfs.join(", ")}.</li>
+        ${reclassified(summary.reclassified)}
       </ul>
 
       ${verdict(m.tests)}
@@ -136,7 +152,8 @@ const Dialogs = (() => {
         <li>贏過 S&amp;P 500 的比例 ${F.share(m.spy.win)}；超額報酬中位數 ${F.pct(m.spy.median)}。</li>
         <li><strong>超額報酬</strong>＝個股報酬減大盤同期報酬，用 % 表示，所以可能小於 −100%（例如個股 −80%、大盤 +110%，就是 −190%）。泡泡上的數字是同一個定義。</li>
         <li>全部用美元計算；股價是調整後股價（含分割、配息調整），所以和券商看到的當年股價不一樣。</li>
-        <li>ETF 不在主結論（${summary.etfs.length} 檔）：${summary.etfs.join("、")}。</li>
+        <li>ETF 與基金不在主結論（${summary.etfs.length} 檔）：${summary.etfs.join("、")}。</li>
+        ${reclassified(summary.reclassified)}
       </ul>
 
       ${verdict(m.tests)}

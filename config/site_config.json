@@ -1,13 +1,14 @@
 {
  "exported": "2026-11-13",
  "last_ep": 705,
- "n_stocks": 101,
+ "n_stocks": 100,
  "etfs": [
   "AVUV",
   "BND",
   "BNDX",
   "CORN",
   "DBC",
+  "DXYZ",
   "EEM",
   "EWT",
   "GLD",
@@ -45,10 +46,26 @@
   "XLF",
   "XLK"
  ],
+ "reclassified": [
+  {
+   "ticker": "DXYZ",
+   "why": "fund"
+  },
+  {
+   "ticker": "QS",
+   "why": "spac",
+   "merged": "2020-11-25"
+  },
+  {
+   "ticker": "LVWR",
+   "why": "spac",
+   "merged": "2022-09-26"
+  }
+ ],
  "snapshot_0050": {
-  "win": 0.404762,
-  "median": -0.081092,
-  "done": 84,
+  "win": 0.39759,
+  "median": -0.08315,
+  "done": 83,
   "as_of": "2026-11-13"
  },
  "stocks": [
@@ -547,14 +564,6 @@
    "date": "2024-07-13",
    "early": false,
    "entry_day": "2024-07-15",
-   "source": "yahoo"
-  },
-  {
-   "ticker": "DXYZ",
-   "ep": 490,
-   "date": "2024-09-21",
-   "early": false,
-   "entry_day": "2024-09-23",
    "source": "yahoo"
   },
   {
@@ -1302,14 +1311,6 @@
    "source": "yahoo"
   },
   {
-   "ticker": "QS",
-   "ep": 74,
-   "date": "2020-09-26",
-   "early": true,
-   "entry_day": "2020-09-28",
-   "source": "yahoo"
-  },
-  {
    "ticker": "HYLN",
    "ep": 81,
    "date": "2020-10-20",
@@ -1651,14 +1652,6 @@
    "date": "2021-12-08",
    "early": true,
    "entry_day": "2021-12-08",
-   "source": "yahoo"
-  },
-  {
-   "ticker": "LVWR",
-   "ep": 201,
-   "date": "2021-12-15",
-   "early": true,
-   "entry_day": "2021-12-15",
    "source": "yahoo"
   }
  ],
@@ -3523,7 +3516,7 @@
    "ticker": "DXYZ",
    "company": "Destiny Tech100",
    "company_en": "Destiny Tech100 Inc.",
-   "kind": "個股",
+   "kind": "ETF",
    "ep": 490,
    "early": false,
    "date": "2024-09-21",
@@ -5186,23 +5179,6 @@
    "unbuyable": false
   },
   {
-   "ticker": "QS",
-   "company": "QuantumScape",
-   "company_en": "QuantumScape Corporation",
-   "kind": "個股",
-   "ep": 74,
-   "early": true,
-   "date": "2020-09-26",
-   "segment": "正題",
-   "quote": "…叫做 Kensington Capital Acquisition Corp，是因為這個 KCAC 它要去收購的公司，是一家叫做 QuantumScape。",
-   "quote_en": "…called Kensington Capital Acquisition Corp, because the company this KCAC is acquiring is one called QuantumScape.",
-   "url": "https://player.soundon.fm/p/954689a5-3096-43a4-a80b-7810b219cef3/episodes/2e90660e-9db7-4e13-a098-6beda5e587bb",
-   "later_episodes": 2,
-   "entry_day": "2020-09-28",
-   "excluded": "",
-   "unbuyable": false
-  },
-  {
    "ticker": "HYLN",
    "company": "",
    "company_en": "Hyliion Holdings Corp.",
@@ -5930,23 +5906,6 @@
    "url": "https://player.soundon.fm/p/954689a5-3096-43a4-a80b-7810b219cef3/episodes/d21844c8-ab92-49fb-8993-3b5f957e1e49",
    "later_episodes": 2,
    "entry_day": "2021-12-08",
-   "excluded": "",
-   "unbuyable": false
-  },
-  {
-   "ticker": "LVWR",
-   "company": "",
-   "company_en": "LiveWire Group, Inc.",
-   "kind": "個股",
-   "ep": 201,
-   "early": true,
-   "date": "2021-12-15",
-   "segment": "正題",
-   "quote": "那這一家要併的對象是 Harley-Davidson 下面的一個部門，叫做 LiveWire。",
-   "quote_en": "The company it's merging with is a division of Harley-Davidson called LiveWire.",
-   "url": "https://player.soundon.fm/p/954689a5-3096-43a4-a80b-7810b219cef3/episodes/b7b83c93-f74c-42df-892f-8a3d12083512",
-   "later_episodes": 0,
-   "entry_day": "2021-12-15",
    "excluded": "",
    "unbuyable": false
   }

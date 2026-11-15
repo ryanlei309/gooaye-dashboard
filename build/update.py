@@ -278,7 +278,7 @@ def compute(cfg: dict, series: dict, spy: Series, sox: Series) -> dict:
                  "0050": cfg["snapshot_0050"], "tests": tests(main_x)},
         "worst": {"done": len(worst_x), "spy": win_median(worst_x)},
         "early": {"n": n_early, "computed": n_early, "done": len(early_x), "spy": win_median(early_x)},
-        "etfs": cfg["etfs"], "bubbles": bubbles,
+        "etfs": cfg["etfs"], "reclassified": cfg.get("reclassified", []), "bubbles": bubbles,
         "path_summary": {str(round(th * 100)): {"USD": summary_paths(th)} for th in THRESHOLDS},
     }
     chart_days = [d for d in days if d >= CHART_START]
