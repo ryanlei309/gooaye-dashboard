@@ -24,11 +24,20 @@
 
   const items = summary.bubbles.map((b) => ({ ticker: b.ticker, date: b.date, ex: b.to_date.USD.vs_spy, early: b.early }));
 
+  // 讀一檔的股價；失敗就重試一次（GitHub Pages 偶爾回 503）
   async function load(t) {
-    if (!prices.has(t)) prices.set(t, await get(`data/prices/${encodeURIComponent(t)}.json`));
+    if (!prices.has(t)) {
+      const path = `data/prices/${encodeURIComponent(t)}.json`;
+      prices.set(t, await get(path).catch(() => new Promise((r) => setTimeout(r, 800)).then(() => get(path))));
+    }
     return prices.get(t);
   }
-  const loadAll = () => Promise.all(summary.bubbles.map((b) => load(b.ticker)));
+  // 表格「到指定日期」要全部的股價：一次最多 8 個請求（一次發 200 個會被拒），某一檔還是失敗就那檔顯示「—」，不影響其他檔
+  async function loadAll() {
+    const queue = summary.bubbles.map((b) => b.ticker).filter((t) => !prices.has(t));
+    const worker = async () => { while (queue.length) await load(queue.shift()).catch(() => null); };
+    await Promise.all(Array.from({ length: 8 }, worker));
+  }
 
   async function drawChart() {
     const stocks = await Promise.all(state.picked.map(async (t) => ({
