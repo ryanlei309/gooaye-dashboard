@@ -112,6 +112,13 @@ const Chart = (() => {
     ctx.restore();
   }
 
+  function axisSize(self, values) {
+    if (!values) return 56;
+    const c = document.createElement("canvas").getContext("2d");
+    c.font = `12px ${FONT}`;
+    return Math.max(48, Math.ceil(Math.max(...values.map((v) => c.measureText(v).width))) + 22);
+  }
+
   function labelRoom() {
     const c = document.createElement("canvas").getContext("2d");
     c.font = `12px ${FONT}`;
@@ -143,7 +150,8 @@ const Chart = (() => {
       scales: { x: { time: true } },
       axes: [
         { stroke: "#5c5c5c", grid: { stroke: "#e6e1d3", width: 1 }, ticks: { stroke: "#d8d3c4" } },
-        { stroke: "#5c5c5c", grid: { stroke: "#e6e1d3", width: 1 }, ticks: { stroke: "#d8d3c4" }, size: 56,
+        // 寬度照最長的刻度文字算（固定 56px 時「3000%」會壓到刻度線）
+        { stroke: "#5c5c5c", grid: { stroke: "#e6e1d3", width: 1 }, ticks: { stroke: "#d8d3c4" }, size: axisSize,
           values: (_, vals) => vals.map((v) => F.pct(v / 100, 0)) },
       ],
       series: [{}, ...view.lines.map((l) => ({ label: l.name, stroke: l.color, width: l.width, dash: l.dash || undefined,

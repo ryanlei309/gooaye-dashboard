@@ -229,6 +229,7 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
   .chart-panel { margin-top: 10px; }
   .chart-head { flex-wrap: wrap; }
   .chart-head .marks { flex-basis: 100%; }
+  .chart-head .ranges { flex: 1 1 100%; justify-content: flex-start; }  /* 手機上可以換行，不超出畫面 */
   .chart { height: 24svh; min-height: 152px; }
   .chart-foot { padding: 4px 0; gap: 4px 8px; }
   .ranges button { padding: 2px 4px; font-size: 0.82rem; }
