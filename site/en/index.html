@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en" data-root="../">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'none'; base-uri 'none'">
+<title>Stocks mentioned on the Gooaye podcast: did they beat the market?</title>
+<meta name="description" content="42% beat the S&amp;P 500 (83 stocks, held 12 months). An AI read the transcripts of the Taiwanese investing podcast Gooaye, found the first time each US stock was mentioned, and compared buying it that day with buying the S&amp;P 500.">
+<link rel="alternate" hreflang="zh-Hant" href="https://ryanlei309.github.io/gooaye-dashboard/">
+<link rel="alternate" hreflang="en" href="https://ryanlei309.github.io/gooaye-dashboard/en/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ryanlei309.github.io/gooaye-dashboard/en/">
+<meta property="og:title" content="Stocks mentioned on the Gooaye podcast: did they beat the market?">
+<meta property="og:description" content="42% beat the S&amp;P 500 (83 stocks, held 12 months). An AI read the transcripts of the Taiwanese investing podcast Gooaye, found the first time each US stock was mentioned, and compared buying it that day with buying the S&amp;P 500.">
+<meta property="og:image" content="https://ryanlei309.github.io/gooaye-dashboard/assets/og-en.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Title and main result: 42% beat the S&amp;P 500">
+<meta property="og:locale" content="en_US">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Stocks mentioned on the Gooaye podcast: did they beat the market?">
+<meta name="twitter:description" content="42% beat the S&amp;P 500 (83 stocks, held 12 months). An AI read the transcripts of the Taiwanese investing podcast Gooaye, found the first time each US stock was mentioned, and compared buying it that day with buying the S&amp;P 500.">
+<meta name="twitter:image" content="https://ryanlei309.github.io/gooaye-dashboard/assets/og-en.png">
+<link rel="stylesheet" href="../assets/vendor/uPlot.min.css">
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+<body>
+<header class="top">
+  <h1>Stocks mentioned on the Gooaye podcast: did they beat the market?</h1>
+  <div class="controls">
+    <button type="button" id="method-open" class="link-btn">Method</button>
+    <button type="button" id="build-open" class="link-btn">How I built this</button>
+    <nav class="lang" aria-label="Language"><a href="../" lang="zh-Hant" hreflang="zh-Hant" data-lang-link>中文</a><span aria-hidden="true">｜</span><a href="./" lang="en" hreflang="en" data-lang-link aria-current="page">English</a></nav>
+  </div>
+  <p class="headline" id="headline"></p>
+  <div class="meta-lines">
+    <p id="worst"></p>
+    <p id="accuracy">AI accuracy at finding mentions: 81.7%, below the 85% bar set in advance</p>
+    <p class="dates"><span id="price-date"></span>・<span id="last-ep"></span></p>
+  </div>
+</header>
+
+<main class="grid">
+  <section class="bubbles-panel" aria-label="Each stock since its first mention, vs the S&amp;P 500">
+    <div class="panel-head">
+      <div class="seg" role="group" aria-label="View">
+        <button type="button" data-view="bubbles" aria-pressed="true">Bubbles</button>
+        <button type="button" data-view="table" aria-pressed="false">Table</button>
+      </div>
+      <div class="table-tools" id="table-tools" hidden>
+        <div class="seg" role="group" aria-label="Filter" id="table-filter"></div>
+        <label class="upto">To <input type="date" id="upto"></label>
+      </div>
+    </div>
+    <div class="bubbles-wrap">
+      <div class="bubbles" id="bubbles" tabindex="0" role="group" aria-label="Bubbles, newest mention at the top, older further down"
+           aria-describedby="bubbles-hint"></div>
+      <p class="visually-hidden" id="bubbles-hint">Use the up and down arrow keys, the mouse wheel, or swipe up and down to move through time</p>
+      <p class="when" id="when"></p>
+      <button type="button" class="play" id="play" aria-pressed="true" aria-label="Play">
+        <svg class="i-play" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
+        <svg class="i-pause" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z" fill="currentColor"/></svg>
+      </button>
+    </div>
+    <div class="table-box" id="table-box" hidden></div>
+  </section>
+
+  <section class="chart-panel" aria-labelledby="chart-title">
+    <h2 id="chart-title" class="visually-hidden">Return chart</h2>
+    <div class="panel-head">
+      <div class="ranges" role="group" aria-label="Time range" id="ranges"></div>
+    </div>
+    <div class="chart" id="chart" role="img" aria-label="Return chart"></div>
+    <div class="chart-foot">
+      <p class="marks" id="marks"></p>
+      <div class="chips" id="chips"></div>
+      <p class="note" id="chart-note" role="status"></p>
+    </div>
+  </section>
+
+  <section class="detail" id="detail" aria-live="polite"></section>
+</main>
+
+<footer class="foot">
+  <span>Unofficial site, not affiliated with the show or its host. Not investment advice.</span>
+  <span class="sep" aria-hidden="true">｜</span>
+  <button type="button" id="sources-open" class="link-btn">Sources and tools</button>
+  <span class="sep" aria-hidden="true">｜</span>
+  <span>Made by <a href="https://www.linkedin.com/in/yuan-chun-lei-8b533bb3/" target="_blank" rel="noopener noreferrer">Ryan Lei</a></span>
+</footer>
+
+<dialog id="method" aria-labelledby="method-title">
+  <div class="dialog-head">
+    <h2 id="method-title">Method</h2>
+    <button type="button" class="link-btn" data-close>Close</button>
+  </div>
+  <div class="dialog-body" id="method-body"></div>
+</dialog>
+
+<dialog id="sources" aria-labelledby="sources-title">
+  <div class="dialog-head">
+    <h2 id="sources-title">Sources and tools</h2>
+    <button type="button" class="link-btn" data-close>Close</button>
+  </div>
+  <div class="dialog-body" id="sources-body"></div>
+</dialog>
+
+<dialog id="build" aria-labelledby="build-title">
+  <div class="dialog-head">
+    <h2 id="build-title">How I built this</h2>
+    <button type="button" class="link-btn" data-close>Close</button>
+  </div>
+  <div class="dialog-body" id="build-body"></div>
+</dialog>
+
+<script src="../assets/vendor/uPlot.iife.min.js"></script>
+<script src="../assets/i18n.js"></script>
+<script src="../assets/format.js"></script>
+<script src="../assets/dialogs.js"></script>
+<script src="../assets/chart.js"></script>
+<script src="../assets/bubbles.js"></script>
+<script src="../assets/table.js"></script>
+<script src="../assets/app.js"></script>
+</body>
+</html>

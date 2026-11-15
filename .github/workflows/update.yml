@@ -1,0 +1,47 @@
+# Daily build: fetch prices, recompute, deploy to GitHub Pages.
+# Runs at 23:00 UTC Sunday to Friday = 07:00 Taipei Monday to Saturday, after each US session has closed.
+# If the build step fails (no data, a suspicious price, stale data), nothing is deployed: Pages keeps the
+# previous version, and GitHub emails the repo owner about the failed run.
+# Daily data is never committed; it only lives in the Pages deployment.
+name: Update prices and deploy
+
+on:
+  schedule:
+    - cron: "0 23 * * 0-5"
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - run: pip install -r build/requirements.txt
+      - run: python build/update.py --out _site
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

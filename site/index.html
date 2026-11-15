@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="zh-Hant" data-root="">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; form-action 'none'; base-uri 'none'">
+<title>謝孟恭提到的股票，後來贏過大盤嗎？</title>
+<meta name="description" content="42% 贏過 S&amp;P 500（83 檔個股，持有 12 個月）。AI 讀《股癌》逐字稿，找出每一檔美股第一次被提到的那天，和同一天買 S&amp;P 500 比。">
+<link rel="alternate" hreflang="zh-Hant" href="https://ryanlei309.github.io/gooaye-dashboard/">
+<link rel="alternate" hreflang="en" href="https://ryanlei309.github.io/gooaye-dashboard/en/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://ryanlei309.github.io/gooaye-dashboard/">
+<meta property="og:title" content="謝孟恭提到的股票，後來贏過大盤嗎？">
+<meta property="og:description" content="42% 贏過 S&amp;P 500（83 檔個股，持有 12 個月）。AI 讀《股癌》逐字稿，找出每一檔美股第一次被提到的那天，和同一天買 S&amp;P 500 比。">
+<meta property="og:image" content="https://ryanlei309.github.io/gooaye-dashboard/assets/og-zh.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="標題與主結論：42% 贏過 S&amp;P 500">
+<meta property="og:locale" content="zh_TW">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="謝孟恭提到的股票，後來贏過大盤嗎？">
+<meta name="twitter:description" content="42% 贏過 S&amp;P 500（83 檔個股，持有 12 個月）。AI 讀《股癌》逐字稿，找出每一檔美股第一次被提到的那天，和同一天買 S&amp;P 500 比。">
+<meta name="twitter:image" content="https://ryanlei309.github.io/gooaye-dashboard/assets/og-zh.png">
+<link rel="stylesheet" href="assets/vendor/uPlot.min.css">
+<link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+<header class="top">
+  <h1>謝孟恭提到的股票，後來贏過大盤嗎？</h1>
+  <div class="controls">
+    <button type="button" id="method-open" class="link-btn">方法與限制</button>
+    <button type="button" id="build-open" class="link-btn">製作過程</button>
+    <nav class="lang" aria-label="語言"><a href="./" lang="zh-Hant" hreflang="zh-Hant" data-lang-link aria-current="page">中文</a><span aria-hidden="true">｜</span><a href="en/" lang="en" hreflang="en" data-lang-link>English</a></nav>
+  </div>
+  <p class="headline" id="headline"></p>
+  <div class="meta-lines">
+    <p id="worst"></p>
+    <p id="accuracy">AI 辨識提及的準確率 81.7%，未達事先定的 85%</p>
+    <p class="dates"><span id="price-date"></span>・<span id="last-ep"></span></p>
+  </div>
+</header>
+
+<main class="grid">
+  <section class="bubbles-panel" aria-label="每一檔第一次提到之後至今，和 S&amp;P 500 比">
+    <div class="panel-head">
+      <div class="seg" role="group" aria-label="顯示方式">
+        <button type="button" data-view="bubbles" aria-pressed="true">泡泡</button>
+        <button type="button" data-view="table" aria-pressed="false">表格</button>
+      </div>
+      <div class="table-tools" id="table-tools" hidden>
+        <div class="seg" role="group" aria-label="篩選" id="table-filter"></div>
+        <label class="upto">到 <input type="date" id="upto"></label>
+      </div>
+    </div>
+    <div class="bubbles-wrap">
+      <div class="bubbles" id="bubbles" tabindex="0" role="group" aria-label="泡泡，最新提到的在最上面，越往下越舊"
+           aria-describedby="bubbles-hint"></div>
+      <p class="visually-hidden" id="bubbles-hint">用上下方向鍵、滑鼠滾輪或手指上下滑動，前後移動時間</p>
+      <p class="when" id="when"></p>
+      <button type="button" class="play" id="play" aria-pressed="true" aria-label="播放">
+        <svg class="i-play" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M4 2.5v11l9-5.5z" fill="currentColor"/></svg>
+        <svg class="i-pause" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z" fill="currentColor"/></svg>
+      </button>
+    </div>
+    <div class="table-box" id="table-box" hidden></div>
+  </section>
+
+  <section class="chart-panel" aria-labelledby="chart-title">
+    <h2 id="chart-title" class="visually-hidden">報酬走勢</h2>
+    <div class="panel-head">
+      <div class="ranges" role="group" aria-label="時間區間" id="ranges"></div>
+    </div>
+    <div class="chart" id="chart" role="img" aria-label="報酬走勢圖"></div>
+    <div class="chart-foot">
+      <p class="marks" id="marks"></p>
+      <div class="chips" id="chips"></div>
+      <p class="note" id="chart-note" role="status"></p>
+    </div>
+  </section>
+
+  <section class="detail" id="detail" aria-live="polite"></section>
+</main>
+
+<footer class="foot">
+  <span>非官方網站，與節目及主持人無關，內容不構成投資建議。</span>
+  <span class="sep" aria-hidden="true">｜</span>
+  <button type="button" id="sources-open" class="link-btn">資料來源與製作</button>
+  <span class="sep" aria-hidden="true">｜</span>
+  <span>製作：<a href="https://www.linkedin.com/in/yuan-chun-lei-8b533bb3/" target="_blank" rel="noopener noreferrer">Ryan Lei</a></span>
+</footer>
+
+<dialog id="method" aria-labelledby="method-title">
+  <div class="dialog-head">
+    <h2 id="method-title">方法與限制</h2>
+    <button type="button" class="link-btn" data-close>關閉</button>
+  </div>
+  <div class="dialog-body" id="method-body"></div>
+</dialog>
+
+<dialog id="sources" aria-labelledby="sources-title">
+  <div class="dialog-head">
+    <h2 id="sources-title">資料來源與製作</h2>
+    <button type="button" class="link-btn" data-close>關閉</button>
+  </div>
+  <div class="dialog-body" id="sources-body"></div>
+</dialog>
+
+<dialog id="build" aria-labelledby="build-title">
+  <div class="dialog-head">
+    <h2 id="build-title">製作過程</h2>
+    <button type="button" class="link-btn" data-close>關閉</button>
+  </div>
+  <div class="dialog-body" id="build-body"></div>
+</dialog>
+
+<script src="assets/vendor/uPlot.iife.min.js"></script>
+<script src="assets/i18n.js"></script>
+<script src="assets/format.js"></script>
+<script src="assets/dialogs.js"></script>
+<script src="assets/chart.js"></script>
+<script src="assets/bubbles.js"></script>
+<script src="assets/table.js"></script>
+<script src="assets/app.js"></script>
+</body>
+</html>
