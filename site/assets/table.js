@@ -25,8 +25,8 @@ const Table = (() => {
     });
   }
 
-  // 排序：數字照大小；本益比的「虧損」和「—」不管升冪降冪都排最後（虧損在「—」前面）；其他欄的「—」也排最後
-  const rank = (v) => (typeof v === "number" ? 0 : v === "loss" ? 1 : 2);
+  // 排序：數字照大小；本益比的「虧損」（含「預估虧損」）和「—」不管升冪降冪都排最後（虧損在「—」前面）；其他欄的「—」也排最後
+  const rank = (v) => (typeof v === "number" ? 0 : v === "loss" || v === "est_loss" ? 1 : 2);
   function sorted(list) {
     const { key, dir } = sort;
     return list.sort((a, b) => {

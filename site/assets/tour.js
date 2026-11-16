@@ -35,12 +35,15 @@ const Tour = (() => {
   }[LANG];
   let dlg, body, back, next, dots, page = 1, opener = null;
 
+  // 每句一行（2026-11-16 第十三版）：中文遇到「。」、英文遇到句點加空白就換行
+  const lines = (s) => s.split(/(?<=。)|(?<=\.)\s+/).filter(Boolean).join("<br>");
+
   function render() {
     const p = TEXT.pages[page - 1];
     const img = p.img ? `<figure class="tour-fig"><img src="${ROOT}assets/tour/${LANG}-${p.img}.webp" alt="${TEXT.illustration}" ` +
       `width="1100" height="660"></figure>` : "";
     body.innerHTML = img + (p.title ? `<h2 id="tour-title">${p.title}</h2>` : `<h2 id="tour-title" class="visually-hidden">${TEXT.page(page)}</h2>`) +
-      (p.body ? `<p>${p.body}</p>` : "") + (p.note ? `<p class="tour-note">${p.note}</p>` : "");
+      (p.body ? `<p>${lines(p.body)}</p>` : "") + (p.note ? `<p class="tour-note">${lines(p.note)}</p>` : "");
     back.hidden = page === 1;
     next.textContent = page === PAGES ? TEXT.start : TEXT.next;
     next.classList.toggle("start", page === PAGES);

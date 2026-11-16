@@ -61,9 +61,10 @@ const I18N = {
     peInfo: {
       mention: "首次提及時本益比\n公式：首次提及後進場日的股價 ÷ 當時最近 4 季 EPS 總和\n和現在的本益比比較，可以看出股價變化是來自獲利，還是市場給的評價變了。",
       now: "現在本益比\n公式：股價 ÷ 最近 4 季 EPS 總和\n衡量股價相對獲利的高低：越高代表股價相對獲利越貴，越低越便宜。但獲利成長越快，市場願意給的本益比也越高，所以要配合產業和成長性一起看。虧損的公司沒有本益比。",
-      fwd: "預估本益比\n公式：股價 ÷ 分析師預估的下一個會計年度 EPS\n預估可能落空，而且通常用調整後的獲利，常比正式財報好看，所以常低於現在本益比，兩者不能直接比較。",
+      fwd: "預估本益比\n公式：股價 ÷ 分析師預估的下一個會計年度 EPS\n預估可能落空，而且通常用調整後的獲利，常比正式財報好看，所以常低於現在本益比，兩者不能直接比較。分析師預估下一個會計年度虧損時寫「預估虧損」。",
     },
     peLoss: "虧損",
+    peEstLoss: "預估虧損",
     tableCaption: "每一檔第一次提到之後的報酬",
     yearAll: "全部",
     yearEarly: "早期（2020–2021）",
@@ -123,9 +124,10 @@ const I18N = {
     peInfo: {
       mention: "P/E at first mention\nFormula: share price on the entry day after the first mention ÷ sum of EPS over the latest 4 quarters at the time\nComparing it with today’s P/E shows whether the price moved because of earnings or because the market’s valuation changed.",
       now: "P/E now\nFormula: share price ÷ sum of EPS over the latest 4 quarters\nMeasures how high the price is relative to earnings: higher means pricier relative to earnings, lower means cheaper. But the faster earnings grow, the higher the P/E the market is willing to pay, so read it alongside the industry and growth. Loss-making companies have no P/E.",
-      fwd: "Forward P/E\nFormula: share price ÷ analysts’ EPS estimate for the next fiscal year\nEstimates can miss, and they usually use adjusted earnings, which tend to look better than official figures, so it is often lower than today’s P/E; the two aren’t directly comparable.",
+      fwd: "Forward P/E\nFormula: share price ÷ analysts’ EPS estimate for the next fiscal year\nEstimates can miss, and they usually use adjusted earnings, which tend to look better than official figures, so it is often lower than today’s P/E; the two aren’t directly comparable. If analysts expect a loss for the next fiscal year, it shows “Est. loss”.",
     },
     peLoss: "Loss",
+    peEstLoss: "Est. loss",
     tableCaption: "Return after each stock's first mention",
     yearAll: "All",
     yearEarly: "Early (2020–2021)",

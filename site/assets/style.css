@@ -284,7 +284,7 @@ dialog.tour { max-width: 760px; }
 .tour-body h2 { font-size: 1.4rem; margin: 6px 0 10px; }
 .tour-body p { margin: 8px 0 0; line-height: 1.7; }
 .tour-note { font-style: italic; color: var(--muted); font-size: 0.85rem; }
-.tour-fig { margin: 4px 0 6px; }
+.tour-fig { margin: 4px 0 calc(6px + 1.7em); }  /* 文字和圖片之間多空一行（第十三版） */
 .tour-fig img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); }
 .tour-foot { display: flex; justify-content: space-between; padding: 8px 24px 4px; }
 .tour-btn { border: 1px solid var(--ink); background: var(--bg); padding: 6px 18px; min-height: 40px; font-size: 0.95rem; }

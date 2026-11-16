@@ -90,12 +90,15 @@ def frame_splits(df) -> dict:
 
 
 def fetch_forward_pe(ticker: str):
-    """Forward P/E from Yahoo (analysts' estimate, now only). Any problem gives None; it never stops the build."""
+    """Forward P/E from Yahoo (analysts' estimate, now only). Any problem gives None; it never stops the build.
+    Zero or negative means analysts expect a loss next fiscal year: "est_loss" (shown as an estimated loss)."""
     try:
         import yfinance as yf
 
         v = yf.Ticker(ticker).info.get("forwardPE")
-        return round(float(v), 2) if isinstance(v, (int, float)) and math.isfinite(v) else None
+        if not (isinstance(v, (int, float)) and math.isfinite(v)):
+            return None
+        return "est_loss" if v <= 0 else round(float(v), 2)
     except Exception:
         return None
 

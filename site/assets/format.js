@@ -24,9 +24,11 @@ const F = {
   esc(s) {
     return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   },
-  // 本益比：數字留一位小數；虧損寫「虧損」／Loss；沒資料（剛上市、外國公司等）是「—」
+  // 本益比：數字留一位小數；虧損寫「虧損」／Loss；分析師預估下一年虧損（預估本益比是負的）寫「預估虧損」／Est. loss；
+  // 沒資料（剛上市、外國公司等）是「—」
   pe(v) {
     if (v === "loss") return T.peLoss;
+    if (v === "est_loss") return T.peEstLoss;
     return typeof v === "number" && isFinite(v) ? v.toFixed(1) : "—";
   },
   day(d) {
