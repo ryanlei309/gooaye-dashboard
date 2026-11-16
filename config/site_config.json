@@ -110,8 +110,8 @@
    "early": false,
    "entry_day": "2022-02-16",
    "source": "yahoo",
-   "pe_mention": 42.99,
-   "eps_ttm": 1.2966601178781927,
+   "pe_mention": null,
+   "eps_ttm": null,
    "eps_basis_date": "2026-11-16"
   },
   {
@@ -308,8 +308,8 @@
    "early": false,
    "entry_day": "2022-06-15",
    "source": "yahoo",
-   "pe_mention": 46.96,
-   "eps_ttm": 3.49,
+   "pe_mention": null,
+   "eps_ttm": null,
    "eps_basis_date": "2026-11-16"
   },
   {
@@ -341,8 +341,8 @@
    "early": false,
    "entry_day": "2022-08-17",
    "source": "yahoo",
-   "pe_mention": "loss",
-   "eps_ttm": 0.5,
+   "pe_mention": null,
+   "eps_ttm": null,
    "eps_basis_date": "2026-11-16"
   },
   {
@@ -594,7 +594,7 @@
    "early": false,
    "entry_day": "2023-10-09",
    "source": "yahoo",
-   "pe_mention": "loss",
+   "pe_mention": null,
    "eps_ttm": 3.5000000000000004,
    "eps_basis_date": "2026-11-16"
   },
@@ -782,7 +782,7 @@
    "entry_day": "2024-11-04",
    "source": "yahoo",
    "pe_mention": 20.22,
-   "eps_ttm": 3.38,
+   "eps_ttm": null,
    "eps_basis_date": "2026-11-16"
   },
   {
@@ -1090,7 +1090,7 @@
    "entry_day": "2026-10-05",
    "source": "yahoo",
    "pe_mention": "loss",
-   "eps_ttm": -0.41000000000000003,
+   "eps_ttm": null,
    "eps_basis_date": "2026-11-16"
   },
   {
@@ -1431,7 +1431,7 @@
    "entry_day": "2020-06-10",
    "source": "yahoo",
    "pe_mention": 7.74,
-   "eps_ttm": 6.99,
+   "eps_ttm": null,
    "eps_basis_date": "2026-11-16"
   },
   {

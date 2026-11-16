@@ -15,7 +15,7 @@ const Tour = (() => {
       page: (i) => `第 ${i} 頁，共 ${PAGES} 頁`,
       pages: [
         { title: "謝孟恭提到的股票，後來贏過大盤嗎？", body: "我們找出他在節目中第一次提到每檔美股的日期，算出之後的報酬，和 S&amp;P 500 比較。" },
-        { body: "每個泡泡是一檔股票：代號、第一次提到的日期，以及從那天到今天贏或輸 S&amp;P 500 多少。實心紅色是贏，空心綠色是輸。切換到「表格」可以看完整清單和排序。", img: 2 },
+        { body: "每個泡泡是一檔股票：代號、第一次提到的日期，以及從那天到今天贏或輸 S&amp;P 500 多少。實心紅色是贏，空心綠色是輸。切換到『表格』可以看完整清單、排序，也可以切換看報酬或本益比。", img: 2 },
         { body: "點一下股票，走勢圖會加上它的線，和 S&amp;P 500、費半一起比較。虛線是第一次提到的那天。", img: 3 },
         { body: "走勢圖下方是這檔股票的成績單：第一次提到後買進，到今天的報酬，和同期的 S&amp;P 500、費半比較；以及前 12 個月內，多久漲到 +10%、+20%，最大漲幅和最大跌幅。", img: 4 },
         { title: "那，謝孟恭提到的股票，後來贏過大盤嗎？", note: "此為非官方網站，與節目及主持人無關，內容不構成投資建議。" },
@@ -26,7 +26,7 @@ const Tour = (() => {
       page: (i) => `Page ${i} of ${PAGES}`,
       pages: [
         { title: "Did the stocks mentioned on the Gooaye podcast beat the market?", body: "We found the first time each US stock came up on the show, then tracked how it did against the S&amp;P 500." },
-        { body: "Each bubble is one stock: its ticker, the date it was first mentioned, and how far it is ahead of or behind the S&amp;P 500 since then. Solid green beat the index; outlined red trailed it. Switch to Table for the full, sortable list.", img: 2 },
+        { body: "Each bubble is one stock: its ticker, the date it was first mentioned, and how far it is ahead of or behind the S&amp;P 500 since then. Solid green beat the index; outlined red trailed it. Switch to Table for the full, sortable list, with returns or P/E.", img: 2 },
         { body: "Click a stock to add its line to the chart, alongside the S&amp;P 500 and the semiconductor index. The dotted line marks the day it was first mentioned.", img: 3 },
         { body: "Below the chart is the stock’s report card: its return if you bought right after the first mention, against the S&amp;P 500 and the semiconductor index over the same period, plus how fast it rose 10% and 20%, and its biggest gain and drop in the first 12 months.", img: 4 },
         { title: "So, did they beat the market?", note: "Unofficial site, not affiliated with the show or its host. Not investment advice." },

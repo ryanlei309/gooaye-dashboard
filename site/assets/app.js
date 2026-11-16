@@ -66,7 +66,8 @@
     const path = (name, f, c = () => "") => row(name, (k) => (p[k] ? td(p[k], f, c(p[k])) : `<td class="n">—</td>`));
     const at = (v, d) => `${F.pct(v)}<span class="u">${T.atDay(d)}</span>`;
     // 本益比只有這一檔自己的（大盤的欄位空著）
-    const peRow = (name, v) => `<tr><th scope="row">${name}</th><td class="n">${F.pe(v)}</td><td class="n"></td><td class="n"></td></tr>`;
+    const peRow = (name, v, kind) => `<tr><th scope="row">${name} ${Info.button(kind)}</th><td class="n">${F.pe(v)}</td>` +
+      `<td class="n"></td><td class="n"></td></tr>`;
     const span = win.end ? T.window12(F.date(win.start), F.date(win.end)) : T.window12Open(F.date(win.start), p.stock.days);
     const sec = (text) => `<tr class="sec"><th scope="colgroup" colspan="${cols.length + 1}">${text}</th></tr>`;
     const company = LANG === "en" ? e.company_en || e.company : e.company;
@@ -90,9 +91,9 @@
           ${path(T.rowMaxGain, (m) => at(m.max_gain, m.max_gain_day), (m) => F.cls(m.max_gain))}
           ${path(T.rowMaxLoss, (m) => at(m.max_loss, m.max_loss_day), (m) => F.cls(m.max_loss))}
           ${sec(T.peSection)}
-          ${peRow(T.rowPeMention, b.pe && b.pe.mention)}
-          ${peRow(T.rowPeNow, b.pe && b.pe.now)}
-          ${peRow(T.rowPeFwd, b.pe && b.pe.fwd)}
+          ${peRow(T.rowPeMention, b.pe && b.pe.mention, "mention")}
+          ${peRow(T.rowPeNow, b.pe && b.pe.now, "now")}
+          ${peRow(T.rowPeFwd, b.pe && b.pe.fwd, "fwd")}
         </tbody></table></div>`;
   }
 
@@ -133,6 +134,7 @@
     state.view = v;
     document.querySelectorAll("[data-view]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.view === v)));
     $("table-box").hidden = v !== "table";
+    $("table-mode").hidden = v !== "table";  // 「報酬｜本益比」只在表格模式
     Bubbles.show(v === "bubbles");
     Table.render();
   }
@@ -144,6 +146,11 @@
 
   // 控制項
   document.querySelectorAll("[data-view]").forEach((btn) => btn.addEventListener("click", () => setView(btn.dataset.view)));
+  document.querySelectorAll("[data-mode]").forEach((btn) => btn.addEventListener("click", () => {
+    document.querySelectorAll("[data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+    Table.setMode(btn.dataset.mode);
+  }));
+  Info.init();
   $("ranges").innerHTML = Chart.RANGES.map((n, i) =>
     `<button type="button" data-days="${n}" aria-pressed="false">${T.ranges[i]}</button>`).join("");
   syncRanges();

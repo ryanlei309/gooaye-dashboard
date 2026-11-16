@@ -279,3 +279,13 @@ dialog.tour { max-width: 760px; }
 .tour-dots { display: flex; justify-content: center; gap: 8px; padding: 6px 0 16px; }
 .tour-dots span:not(.visually-hidden) { width: 8px; height: 8px; border-radius: 50%; background: var(--rule); }
 .tour-dots span.on { background: var(--ink); }
+
+/* 本益比的 ⓘ 說明（第十一版） */
+.info { border: 1px solid var(--muted); background: var(--bg); color: var(--muted); border-radius: 50%; width: 20px; height: 20px;
+        padding: 0; font-size: 0.72rem; line-height: 1; vertical-align: 1px; margin-left: 2px; cursor: pointer; }
+.info[aria-expanded="true"] { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.info-pop { position: fixed; left: 0; top: 0; z-index: 60; max-width: min(320px, calc(100vw - 16px)); background: var(--bg);
+            border: 1px solid var(--ink); padding: 10px 12px; font-size: 0.82rem; line-height: 1.6; }
+/* 表頭的 ⓘ 放在欄名下面一行、靠右（和數字對齊）：欄位維持欄名的寬度，不會蓋到隔壁欄 */
+.list thead th .info { display: block; margin: 0 4px 4px auto; }
+.list .sub { display: block; font-size: 0.65rem; font-weight: 400; color: var(--muted); white-space: normal; }

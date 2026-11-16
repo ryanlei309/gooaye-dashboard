@@ -94,25 +94,24 @@ const Dialogs = (() => {
       (big ? `勝率會從 ${a} 降到 ${b}，差距超過 5 個百分點，主結論要小心看待。` : `勝率也只從 ${a} 降到 ${b}，結論不變。`);
   }
 
-  // 本益比（只供參考，2026-11-16）
+  // 本益比怎麼看（只供參考；第十一版：三個說明和表格、明細表的 ⓘ 同一份文字）
   function peSection() {
+    const items = ["mention", "now", "fwd"].map((k) => `<li>${T.peInfo[k]}</li>`).join("");
     if (en) return `
-      <h3>P/E ratios (reference only)</h3>
+      <h3>How to read the P/E ratios (reference only)</h3>
       <ul>
-        <li>P/E = share price ÷ diluted earnings per share over the past four quarters, from companies' official SEC filings (EDGAR). "At first mention" uses only reports already filed by that day; "now" uses the latest. Share splits are adjusted for. P/E is not part of the main result.</li>
+        ${items}
         <li>"Loss": earnings over the past four quarters were zero or negative, so there is no meaningful P/E.</li>
         <li>"—": fewer than four quarters of reports (newly listed), or no data. Most foreign companies (for example TSMC, ASML, Alibaba) file annual reports on forms 20-F or 40-F instead of US quarterly reports, often under IFRS and in their home currency, so the SEC data has no quarterly US-dollar earnings per share for them.</li>
-        <li>"Forward P/E (now)" uses analysts' estimates of the next 12 months' earnings, from Yahoo Finance. Past estimates are not freely available, so there is no forward P/E at first mention.</li>
-        <li>"P/E now" is recalculated every day from the latest close and the stored earnings; earnings are updated when new reports come out.</li>
+        <li>Earnings per share come from companies' official SEC filings (EDGAR); share splits are adjusted for. "P/E now" is recalculated every day from the latest close; earnings are updated whenever the site's data is refreshed. P/E is not part of the main result.</li>
       </ul>`;
     return `
-      <h3>本益比（只供參考）</h3>
+      <h3>本益比怎麼看（只供參考）</h3>
       <ul>
-        <li>本益比＝股價 ÷ 過去四季的稀釋後每股盈餘，每股盈餘來自公司向 SEC 申報的正式財報（EDGAR）。「首次提及時」只用那天之前已經申報的財報，「現在」用最新的；有處理股票分割。本益比不算進主結論。</li>
+        ${items}
         <li>「虧損」：過去四季的盈餘加起來是零或負的，算不出有意義的本益比。</li>
         <li>「—」：財報不到四季（剛上市），或沒有資料。外國公司（例如台積電、ASML、阿里巴巴）大多用 20-F 或 40-F 申報年報、不報美國的季報，而且常用國際會計準則和本國貨幣，SEC 資料裡沒有美元的季度每股盈餘，所以是「—」。</li>
-        <li>「預估本益比（現在）」用分析師預估的未來 12 個月盈餘，來自 Yahoo Finance。過去的預估要付費才有，所以沒有首次提及時的預估本益比。</li>
-        <li>「現在本益比」每天用最新收盤價和已存的每股盈餘重算；有新財報時再更新每股盈餘。</li>
+        <li>每股盈餘來自公司向 SEC 申報的正式財報（EDGAR），有處理股票分割。「現在本益比」每天用最新收盤價重算；每股盈餘在網站資料更新時一起更新。本益比不算進主結論。</li>
       </ul>`;
   }
 

@@ -119,6 +119,24 @@ const Chart = (() => {
     return Math.max(48, Math.ceil(Math.max(...values.map((v) => c.measureText(v).width))) + 22);
   }
 
+  // 時間軸只顯示日期（第十一版）：半年以內的區間，刻度放在真的交易日上、寫成「11/10」，第一個刻度和跨年時加上年份；
+  // uPlot 自己挑刻度時，區間短會出現「12am」「12pm」這種小時。半年以上照 uPlot 的月份刻度（不會有小時）
+  function dayAxis() {
+    if (view.xs.length > 130) return {};
+    return {
+      splits: (u) => {
+        const n = view.xs.length, want = Math.max(3, Math.floor(u.bbox.width / devicePixelRatio / 90));
+        const step = Math.max(1, Math.ceil(n / want));
+        return view.xs.filter((_, i) => i % step === 0);
+      },
+      values: (u, splits) => splits.map((ts, i) => {
+        const d = new Date(ts * 1000), y = d.getUTCFullYear();
+        const prev = i ? new Date(splits[i - 1] * 1000).getUTCFullYear() : null;
+        return `${d.getUTCMonth() + 1}/${d.getUTCDate()}` + (prev !== y ? `\n${y}` : "");
+      }),
+    };
+  }
+
   function labelRoom() {
     const c = document.createElement("canvas").getContext("2d");
     c.font = `12px ${FONT}`;
@@ -149,7 +167,7 @@ const Chart = (() => {
       cursor: { drag: { x: false, y: false }, points: { size: 6 }, focus: { prox: 16 } },
       scales: { x: { time: true } },
       axes: [
-        { stroke: "#5c5c5c", grid: { stroke: "#e6e1d3", width: 1 }, ticks: { stroke: "#d8d3c4" } },
+        { stroke: "#5c5c5c", grid: { stroke: "#e6e1d3", width: 1 }, ticks: { stroke: "#d8d3c4" }, ...dayAxis() },
         // 寬度照最長的刻度文字算（固定 56px 時「3000%」會壓到刻度線）
         { stroke: "#5c5c5c", grid: { stroke: "#e6e1d3", width: 1 }, ticks: { stroke: "#d8d3c4" }, size: axisSize,
           values: (_, vals) => vals.map((v) => F.pct(v / 100, 0)) },

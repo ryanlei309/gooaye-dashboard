@@ -48,6 +48,10 @@
         <button type="button" data-view="table" aria-pressed="false">Table</button>
       </div>
       <label class="year-pick"><span class="visually-hidden">Year of first mention</span><select id="year"></select></label>
+      <div class="seg" role="group" aria-label="Table columns" id="table-mode" hidden>
+        <button type="button" data-mode="ret" aria-pressed="true">Returns</button>
+        <button type="button" data-mode="pe" aria-pressed="false">P/E</button>
+      </div>
     </div>
     <div class="chips" id="chips"></div>
     <div class="bubbles-wrap">
@@ -128,6 +132,7 @@
 <script src="../assets/i18n.js"></script>
 <script src="../assets/format.js"></script>
 <script src="../assets/tour.js"></script>
+<script src="../assets/info.js"></script>
 <script src="../assets/dialogs.js"></script>
 <script src="../assets/chart.js"></script>
 <script src="../assets/bubbles.js"></script>
