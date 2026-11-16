@@ -1,8 +1,8 @@
 // 表格：每一檔第一次提到之後至今的報酬（美元，和 S&P 500 比）；點表頭排序（再點反向）、點一列＝點泡泡；
-// 可選「到指定日期」；可篩選全部／2022 起／早期提及
+// 可選「到指定日期」；年份由上方的下拉選單決定（和泡泡共用，第九版）
 "use strict";
 const Table = (() => {
-  let box, input, filterEl, ctx, sort = { key: "date", dir: -1 }, upto = "", filter = "all";
+  let box, input, ctx, sort = { key: "date", dir: -1 }, upto = "", inYear = () => true;
 
   const COLS = [
     { key: "ticker", name: () => T.colTicker, text: true },
@@ -24,7 +24,7 @@ const Table = (() => {
 
   function rows() {
     const { summary, bench, eventOf, prices } = ctx;
-    return summary.bubbles.filter((b) => filter === "all" || (filter === "early") === b.early).map((b) => {
+    return summary.bubbles.filter(inYear).map((b) => {
       const x = b.to_date.USD, p = prices.get(b.ticker), e = eventOf.get(b.ticker);
       return { ticker: b.ticker, company: LANG === "en" ? e.company_en || e.company : e.company, date: b.date,
                early: b.early, ret: x.return, vs: x.vs_spy, upto: uptoReturn(b, upto, bench, p && p.c) };
@@ -65,20 +65,13 @@ const Table = (() => {
     if (focus) box.querySelector(focus)?.focus({ preventScroll: true });  // 重畫後焦點留在原本的按鈕
   }
 
-  function init(el, dateInput, filterBox, context) {
-    box = el; input = dateInput; filterEl = filterBox; ctx = context;
+  function setYear(fn) { inYear = fn; render(); }
+
+  function init(el, dateInput, context) {
+    box = el; input = dateInput; ctx = context;
     const days = ctx.summary.bubbles.map((b) => b.window.start).sort();
     input.min = days[0];
     input.max = ctx.summary.price_date;
-    filterEl.innerHTML = [["all", T.filterAll], ["main", T.filterMain], ["early", T.filterEarly]].map(([k, n]) =>
-      `<button type="button" data-filter="${k}" aria-pressed="${k === filter}">${n}</button>`).join("");
-    filterEl.addEventListener("click", (e) => {
-      const b = e.target.closest("[data-filter]");
-      if (!b) return;
-      filter = b.dataset.filter;
-      filterEl.querySelectorAll("button").forEach((x) => x.setAttribute("aria-pressed", String(x === b)));
-      render();
-    });
     box.addEventListener("click", (e) => {
       const s = e.target.closest("[data-sort]");
       if (s) {
@@ -97,5 +90,5 @@ const Table = (() => {
     });
   }
 
-  return { init, render, uptoReturn };
+  return { init, render, setYear, uptoReturn };
 })();

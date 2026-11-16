@@ -4,6 +4,7 @@
 (async () => {
   const params = new URLSearchParams(location.search);
   if (LANG === "zh" && params.get("lang") === "en") { location.replace("en/" + location.hash); return; }  // ?lang=en 也能開英文版
+  if (Tour.redirectOnce()) return;  // 第一次進中文版、瀏覽器不是中文：轉到英文版（只轉一次）
   const MAX = 5;
   const get = (p) => fetch(ROOT + p).then((r) => { if (!r.ok) throw new Error(p); return r.json(); });
   const [summary, events, bench] = await Promise.all(["data/summary.json", "data/events.json", "data/benchmarks.json"].map(get));
@@ -77,8 +78,9 @@
       ? `<p class="tr">${F.esc(e.quote_en)} <span class="tag">${T.aiTranslation}</span></p>` : "") + "</blockquote>";
     box.innerHTML = `
       <h2>${F.esc(t)} ${F.esc(company)}${e.early ? ` <span class="early-tag">${T.early}</span>` : ""}</h2>
-      <p class="meta">${T.firstMention(e.ep, F.date(e.date), T.segment[e.segment] || e.segment)}｜${T.laterEps(e.later_episodes)}
-        ${e.url ? `｜<a href="${F.esc(e.url)}" target="_blank" rel="noopener noreferrer">${T.listen(e.ep)}</a>` : ""}</p>
+      <p class="meta"><span>${T.firstMention(e.ep, F.date(e.date), T.segment[e.segment] || e.segment)}｜${T.laterEps(e.later_episodes)}
+        ${e.url ? `｜<a href="${F.esc(e.url)}" target="_blank" rel="noopener noreferrer">${T.listen(e.ep)}</a>` : ""}</span>
+        <a class="profile" href="https://finance.yahoo.com/quote/${encodeURIComponent(t)}/profile/" target="_blank" rel="noopener noreferrer">${T.profile}</a></p>
       ${quote}
       <div class="cmp-box"><table class="cmp">
         <thead><tr><th scope="col"><span class="visually-hidden">${T.item}</span></th>
@@ -163,12 +165,24 @@
     else if (t.id === "clear") { state.picked = []; state.focus = null; note(""); refresh(); }
   });
 
+  // 年份選單（第九版）：全部、各年份（照資料自動產生，新的在前）、早期（2020–2021）；泡泡和表格共用
+  const years = [...new Set(summary.bubbles.filter((b) => !b.early).map((b) => b.date.slice(0, 4)))].sort().reverse();
+  $("year").innerHTML = [["all", T.yearAll], ...years.map((y) => [y, y]), ["early", T.yearEarly]]
+    .map(([v, n]) => `<option value="${v}">${n}</option>`).join("");
+  const inYear = (y) => (b) => (y === "all" ? true : y === "early" ? b.early : !b.early && b.date.startsWith(y));
+  $("year").addEventListener("change", () => {
+    const f = inYear($("year").value);
+    Bubbles.setItems(items.filter(f));
+    Table.setYear(f);
+  });
+
   Dialogs.init(summary, events, bench);
   Chart.init($("chart"), $("marks"));
   Bubbles.init($("bubbles"), items, pick, (t) => state.picked.includes(t));
-  Table.init($("table-box"), $("upto"), $("table-filter"), { summary, bench, eventOf, prices, pick, loadAll,
+  Table.init($("table-box"), $("upto"), { summary, bench, eventOf, prices, pick, loadAll,
                                                             isPicked: (t) => state.picked.includes(t) });
   detail(); drawChart();
+  Tour.init();
 })().catch((err) => {
   document.getElementById("chart-note").textContent = T.loadFail;
   console.error(err);

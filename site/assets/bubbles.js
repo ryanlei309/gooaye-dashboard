@@ -146,6 +146,14 @@ const Bubbles = (() => {
     frame = requestAnimationFrame(tick);
   }
 
+  // 年份選單（第九版）：只播放那一年首次提及的股票；從頭（最新的在最上面）重新排
+  function setItems(newItems) {
+    items = [...newItems].sort((a, b) => b.date.localeCompare(a.date) || a.ticker.localeCompare(b.ticker));
+    laid = [];
+    if (!root.parentElement.hidden) start();
+    else { shown.clear(); root.innerHTML = ""; }
+  }
+
   function refreshPicked() {
     root.querySelectorAll(".bubble").forEach((b) => b.setAttribute("aria-pressed", String(isPicked(b.dataset.ticker))));
   }
@@ -154,7 +162,8 @@ const Bubbles = (() => {
   function show(on) {
     root.parentElement.hidden = !on;
     cancelAnimationFrame(frame);
-    if (on && !reduced) { last = null; frame = requestAnimationFrame(tick); }
+    if (on && (!root.childElementCount || reduced)) return start();  // 藏起來時換了年份：重新排
+    if (on) { last = null; frame = requestAnimationFrame(tick); }
   }
 
   function controls() {
@@ -210,5 +219,5 @@ const Bubbles = (() => {
     start();
   }
 
-  return { init, refreshPicked, show };
+  return { init, refreshPicked, show, setItems };
 })();

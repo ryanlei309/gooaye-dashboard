@@ -31,6 +31,7 @@
   <div class="controls">
     <button type="button" id="method-open" class="link-btn">Method</button>
     <button type="button" id="build-open" class="link-btn">How I built this</button>
+    <button type="button" id="tour-open" class="link-btn">Tour</button>
     <nav class="lang" aria-label="Language"><a href="../" lang="zh-Hant" hreflang="zh-Hant" data-lang-link>中文</a><span aria-hidden="true">｜</span><a href="./" lang="en" hreflang="en" data-lang-link aria-current="page">English</a></nav>
   </div>
   <p class="headline" id="headline"></p>
@@ -47,11 +48,12 @@
         <button type="button" data-view="bubbles" aria-pressed="true">Bubbles</button>
         <button type="button" data-view="table" aria-pressed="false">Table</button>
       </div>
+      <label class="year-pick"><span class="visually-hidden">Year of first mention</span><select id="year"></select></label>
       <div class="table-tools" id="table-tools" hidden>
-        <div class="seg" role="group" aria-label="Filter" id="table-filter"></div>
         <label class="upto">To <input type="date" id="upto"></label>
       </div>
     </div>
+    <div class="chips" id="chips"></div>
     <div class="bubbles-wrap">
       <div class="bubbles" id="bubbles" tabindex="0" role="group" aria-label="Bubbles, newest mention at the top, older further down"
            aria-describedby="bubbles-hint"></div>
@@ -72,7 +74,6 @@
       <div class="ranges" role="group" aria-label="Time range" id="ranges"></div>
     </div>
     <div class="chart-body">
-      <div class="chips" id="chips"></div>
       <div class="chart" id="chart" role="img" aria-label="Return chart"></div>
     </div>
     <div class="chart-foot">
@@ -115,9 +116,22 @@
   <div class="dialog-body" id="build-body"></div>
 </dialog>
 
+<dialog id="tour" class="tour" aria-labelledby="tour-title">
+  <div class="tour-head">
+    <nav class="lang" aria-label="Language"><a href="../" lang="zh-Hant" hreflang="zh-Hant" data-tour-lang>中文</a><span aria-hidden="true">｜</span><a href="./" lang="en" hreflang="en" data-tour-lang aria-current="page">English</a></nav>
+    <button type="button" class="tour-x" data-tour-close aria-label="Close the tour">×</button>
+  </div>
+  <div class="tour-body" id="tour-body" aria-live="polite"></div>
+  <div class="tour-foot">
+    <button type="button" class="tour-btn" id="tour-back">Back</button>
+    <button type="button" class="tour-btn tour-next" id="tour-next">Next</button>
+  </div>
+  <div class="tour-dots" id="tour-dots"></div>
+</dialog>
 <script src="../assets/vendor/uPlot.iife.min.js"></script>
 <script src="../assets/i18n.js"></script>
 <script src="../assets/format.js"></script>
+<script src="../assets/tour.js"></script>
 <script src="../assets/dialogs.js"></script>
 <script src="../assets/chart.js"></script>
 <script src="../assets/bubbles.js"></script>

@@ -7,6 +7,11 @@
   --hover: #ede8da;
   --win: #b42318;
   --lose: #1e7b3a;
+}
+/* 英文版：綠＝贏、紅＝輸（歐美習慣，第九版）；實心＝贏、空心＝輸不變。白字在綠底 5.3:1、紅字在白底 6.6:1，都符合 WCAG AA */
+:root[lang="en"] {
+  --win: #1e7b3a;
+  --lose: #b42318;
   --serif: "Songti TC", "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
   --sans: -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
 }
@@ -125,12 +130,13 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 @container (max-width: 340px) { .list .col-date { display: none; } }
 
 /* 走勢圖 */
-/* 走勢圖和已選股票的標籤：標籤在左邊直的一列（第七版）；手機放在走勢圖上方 */
-.chart-body { flex: 1; min-height: 0; display: flex; gap: 10px; }
-.chart-body .chips { flex: none; flex-direction: column; flex-wrap: nowrap; align-items: stretch; overflow-y: auto;
-                     max-height: 100%; padding: 6px 0; }
-.chart-body .chips:empty { display: none; }
-.chart-body .chip { justify-content: space-between; }
+/* 已選股票的標籤：左欄「泡泡｜表格」那一列和泡泡區之間，橫向排列、太多就換行（第九版） */
+.chart-body { flex: 1; min-height: 0; display: flex; }
+.bubbles-panel .chips { padding: 0 0 8px; }
+.bubbles-panel .chips:empty { display: none; }
+/* 年份下拉選單 */
+.year-pick select { font: inherit; font-size: 0.85rem; color: var(--ink); background: var(--bg); border: 1px solid var(--ink);
+                    padding: 3px 6px; min-height: 32px; }
 .chart { flex: 1; min-width: 0; min-height: 0; position: relative; touch-action: pan-y; }
 .chart-foot { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: center; padding: 6px 0; }
 /* 時間區間：像 Google 財經，文字用「｜」分隔；選中的加底線和粗體（不只靠顏色） */
@@ -177,7 +183,8 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 
 /* 點選後的明細：該檔和三個大盤左右對照 */
 .detail h2 { font-size: 1.1rem; }
-.detail .meta { color: var(--muted); font-size: 0.85rem; margin: 2px 0 6px; }
+.detail .meta { color: var(--muted); font-size: 0.85rem; margin: 2px 0 6px; display: flex; flex-wrap: wrap; gap: 0 12px; }
+.detail .meta .profile { margin-left: auto; }  /* 公司簡介（Yahoo Finance）放在那一行最右邊 */
 .detail .empty { color: var(--muted); font-size: 0.85rem; margin: 0; }
 .detail blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--ink); font-family: var(--serif); }
 .detail blockquote p { margin: 0; }
@@ -241,8 +248,6 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
   .chart-head { flex-wrap: wrap; }
   .chart-head .marks { flex-basis: 100%; }
   .chart-head .ranges { flex: 1 1 100%; justify-content: flex-start; }  /* 手機上可以換行，不超出畫面 */
-  .chart-body { flex-direction: column; }
-  .chart-body .chips { flex-direction: row; flex-wrap: wrap; width: auto; max-height: none; padding: 0 0 6px; }
   .chart { height: max(24svh, 170px); min-height: 170px; }
   .ranges button { padding: 2px 4px; font-size: 0.82rem; }
   .panel-head { padding: 4px 0; }
@@ -255,3 +260,22 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
   .cmp .sec th { white-space: normal; }
   .cmp .u { display: block; font-size: 0.66rem; }
 }
+
+/* 第一次進站的導覽（第九版）：樣式和說明視窗一致；左上語言、右上 ×、右下下一頁（第 2 頁起左下上一頁）、最下面五個小點 */
+dialog.tour { max-width: 760px; }
+.tour-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px 0; }
+.tour-x { border: 0; background: none; font-size: 1.6rem; line-height: 1; width: 40px; height: 40px; border-radius: 50%; }
+.tour-x:hover { background: var(--hover); }
+.tour-body { padding: 4px 24px 8px; min-height: 180px; }
+.tour-body h2 { font-size: 1.4rem; margin: 6px 0 10px; }
+.tour-body p { margin: 8px 0 0; line-height: 1.7; }
+.tour-note { font-style: italic; color: var(--muted); font-size: 0.85rem; }
+.tour-fig { margin: 4px 0 6px; }
+.tour-fig img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); }
+.tour-foot { display: flex; justify-content: space-between; padding: 8px 24px 4px; }
+.tour-btn { border: 1px solid var(--ink); background: var(--bg); padding: 6px 18px; min-height: 40px; font-size: 0.95rem; }
+.tour-next { margin-left: auto; }
+.tour-next.start { background: var(--ink); color: #fff; }
+.tour-dots { display: flex; justify-content: center; gap: 8px; padding: 6px 0 16px; }
+.tour-dots span:not(.visually-hidden) { width: 8px; height: 8px; border-radius: 50%; background: var(--rule); }
+.tour-dots span.on { background: var(--ink); }

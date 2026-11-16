@@ -31,6 +31,7 @@
   <div class="controls">
     <button type="button" id="method-open" class="link-btn">方法與限制</button>
     <button type="button" id="build-open" class="link-btn">製作過程</button>
+    <button type="button" id="tour-open" class="link-btn">導覽</button>
     <nav class="lang" aria-label="語言"><a href="./" lang="zh-Hant" hreflang="zh-Hant" data-lang-link aria-current="page">中文</a><span aria-hidden="true">｜</span><a href="en/" lang="en" hreflang="en" data-lang-link>English</a></nav>
   </div>
   <p class="headline" id="headline"></p>
@@ -47,11 +48,12 @@
         <button type="button" data-view="bubbles" aria-pressed="true">泡泡</button>
         <button type="button" data-view="table" aria-pressed="false">表格</button>
       </div>
+      <label class="year-pick"><span class="visually-hidden">首次提及的年份</span><select id="year"></select></label>
       <div class="table-tools" id="table-tools" hidden>
-        <div class="seg" role="group" aria-label="篩選" id="table-filter"></div>
         <label class="upto">到 <input type="date" id="upto"></label>
       </div>
     </div>
+    <div class="chips" id="chips"></div>
     <div class="bubbles-wrap">
       <div class="bubbles" id="bubbles" tabindex="0" role="group" aria-label="泡泡，最新提到的在最上面，越往下越舊"
            aria-describedby="bubbles-hint"></div>
@@ -72,7 +74,6 @@
       <div class="ranges" role="group" aria-label="時間區間" id="ranges"></div>
     </div>
     <div class="chart-body">
-      <div class="chips" id="chips"></div>
       <div class="chart" id="chart" role="img" aria-label="報酬走勢圖"></div>
     </div>
     <div class="chart-foot">
@@ -115,9 +116,22 @@
   <div class="dialog-body" id="build-body"></div>
 </dialog>
 
+<dialog id="tour" class="tour" aria-labelledby="tour-title">
+  <div class="tour-head">
+    <nav class="lang" aria-label="語言"><a href="./" lang="zh-Hant" hreflang="zh-Hant" data-tour-lang aria-current="page">中文</a><span aria-hidden="true">｜</span><a href="en/" lang="en" hreflang="en" data-tour-lang>English</a></nav>
+    <button type="button" class="tour-x" data-tour-close aria-label="關閉導覽">×</button>
+  </div>
+  <div class="tour-body" id="tour-body" aria-live="polite"></div>
+  <div class="tour-foot">
+    <button type="button" class="tour-btn" id="tour-back">上一頁</button>
+    <button type="button" class="tour-btn tour-next" id="tour-next">下一頁</button>
+  </div>
+  <div class="tour-dots" id="tour-dots"></div>
+</dialog>
 <script src="assets/vendor/uPlot.iife.min.js"></script>
 <script src="assets/i18n.js"></script>
 <script src="assets/format.js"></script>
+<script src="assets/tour.js"></script>
 <script src="assets/dialogs.js"></script>
 <script src="assets/chart.js"></script>
 <script src="assets/bubbles.js"></script>
