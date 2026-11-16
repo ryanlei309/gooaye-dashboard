@@ -288,4 +288,7 @@ dialog.tour { max-width: 760px; }
             border: 1px solid var(--ink); padding: 10px 12px; font-size: 0.82rem; line-height: 1.6; }
 /* 表頭的 ⓘ 放在欄名下面一行、靠右（和數字對齊）：欄位維持欄名的寬度，不會蓋到隔壁欄 */
 .list thead th .info { display: block; margin: 0 4px 4px auto; }
+/* 表頭的按鈕規則（填滿整欄、最小高度 32px）不能套到 ⓘ：否則 ⓘ 變成整欄寬，打開時是一大塊黑色橢圓（第十一版修正） */
+.list thead th button.info { width: 20px; height: 20px; min-height: 0; padding: 0; color: var(--muted); font-size: 0.72rem; }
+.list thead th button.info[aria-expanded="true"] { color: var(--bg); }
 .list .sub { display: block; font-size: 0.65rem; font-weight: 400; color: var(--muted); white-space: normal; }
