@@ -82,6 +82,38 @@ def last_closed_day(now: datetime) -> date:
     return day if ny.time() >= time(17, 0) else day - timedelta(days=1)
 
 
+def frame_splits(df) -> dict:
+    """Split ratios by date from a Yahoo history frame (empty for sources without that column)."""
+    if "Stock Splits" not in getattr(df, "columns", []):
+        return {}
+    return {ts.date(): float(r) for ts, r in df["Stock Splits"].items() if r and float(r) > 0}
+
+
+def fetch_forward_pe(ticker: str):
+    """Forward P/E from Yahoo (analysts' estimate, now only). Any problem gives None; it never stops the build."""
+    try:
+        import yfinance as yf
+
+        v = yf.Ticker(ticker).info.get("forwardPE")
+        return round(float(v), 2) if isinstance(v, (int, float)) and math.isfinite(v) else None
+    except Exception:
+        return None
+
+
+def pe_now(price, eps, basis_date, splits):
+    """P/E now = latest close / trailing-12-month diluted EPS (SEC, stored). A split after the EPS date divides the EPS.
+    Loss (EPS <= 0) is "loss"; no EPS is None."""
+    if eps is None:
+        return None
+    if eps <= 0:
+        return "loss"
+    basis = date.fromisoformat(basis_date) if basis_date else date.min
+    for d, r in (splits or {}).items():
+        if d > basis:
+            eps /= r
+    return None if not price else round(price / eps, 2)
+
+
 def frame_to_series(df, now: datetime, jumps=frozenset()) -> Series:
     last = last_closed_day(now)
     rows = [(ts.date(), float(o), float(c)) for ts, o, c in zip(df.index, df["Open"], df["Close"])
@@ -215,8 +247,10 @@ def r6(x):
     return None if x is None else round(x, 6)
 
 
-def compute(cfg: dict, series: dict, spy: Series, sox: Series) -> dict:
-    """All price-based numbers. series: ticker -> Series (adjusted). Returns the site's data files."""
+def compute(cfg: dict, series: dict, spy: Series, sox: Series, splits: dict | None = None, fwd: dict | None = None) -> dict:
+    """All price-based numbers. series: ticker -> Series (adjusted). splits/fwd: optional per-ticker split ratios and
+    forward P/E (reference only). Returns the site's data files."""
+    splits, fwd = splits or {}, fwd or {}
     price_date = spy.dates[-1]
     days = spy.dates
     bubbles, main_x, early_x, worst_x, paths_all = [], [], [], [], {0.10: [], 0.20: []}
@@ -247,7 +281,11 @@ def compute(cfg: dict, series: dict, spy: Series, sox: Series) -> dict:
                         "to_date": {"USD": {"return": r6(ret), **{f"vs_{k}": r6(ret - v) for k, v in bench.items()},
                                             "bench": {k: r6(v) for k, v in bench.items()}}},
                         "window": {"start": entry.isoformat(), "end": end.isoformat() if end else None},
-                        "paths": {"USD": p}})
+                        "paths": {"USD": p},
+                        "pe": {"mention": st.get("pe_mention"),
+                               "now": pe_now(s.close_on_or_before(price_date), st.get("eps_ttm"), st.get("eps_basis_date"),
+                                             splits.get(t)),
+                               "fwd": fwd.get(t)}})
     # worst case: excluded and later-delisted stocks count as -100% over their 12 months
     for w in cfg["wipeouts"]:
         entry = date.fromisoformat(w["entry_day"])
@@ -276,7 +314,9 @@ def compute(cfg: dict, series: dict, spy: Series, sox: Series) -> dict:
         "price_date": price_date.isoformat(), "last_ep": cfg["last_ep"], "main_horizon": "12 個月",
         "main": {"n_stocks": cfg["n_stocks"], "computed": n_main, "done": len(main_x), "spy": win_median(main_x),
                  "0050": cfg["snapshot_0050"], "tests": tests(main_x)},
-        "worst": {"done": len(worst_x), "spy": win_median(worst_x)},
+        "worst": {"done": len(worst_x), "spy": win_median(worst_x),
+                  "missing": sum(w.get("kind") != "delisted" for w in cfg["wipeouts"]),
+                  "delisted": sum(w.get("kind") == "delisted" for w in cfg["wipeouts"])},
         "early": {"n": n_early, "computed": n_early, "done": len(early_x), "spy": win_median(early_x)},
         "etfs": cfg["etfs"], "reclassified": cfg.get("reclassified", []), "bubbles": bubbles,
         "path_summary": {str(round(th * 100)): {"USD": summary_paths(th)} for th in THRESHOLDS},
@@ -295,10 +335,15 @@ def load_config(path: Path = CONFIG) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
-def fetch_all(cfg: dict, now: datetime) -> tuple[dict, Series, Series]:
+def fetch_all(cfg: dict, now: datetime) -> tuple[dict, Series, Series, dict]:
     jumps = {t: frozenset(date.fromisoformat(d) for d in ds) for t, ds in cfg["price_exceptions"].items()}
-    get = lambda t, src: frame_to_series((fetch_nasdaq if src == "nasdaq" else fetch_yahoo)(t), now,
-                                         jumps.get(t, frozenset()))
+    split_map = {}
+
+    def get(t, src):
+        df = (fetch_nasdaq if src == "nasdaq" else fetch_yahoo)(t)
+        split_map[t] = frame_splits(df)
+        return frame_to_series(df, now, jumps.get(t, frozenset()))
+
     errors, series = [], {}
     spy, sox = get("SPY", "yahoo"), get("^SOX", "yahoo")
     if spy.dates[-1] < now.date() - timedelta(days=MAX_STALE_DAYS):
@@ -312,7 +357,7 @@ def fetch_all(cfg: dict, now: datetime) -> tuple[dict, Series, Series]:
             errors.append(f"{st['ticker']}: {exc}")
     if errors:
         raise BuildError("price problems:\n  " + "\n  ".join(errors))
-    return series, spy, sox
+    return series, spy, sox, split_map
 
 
 def write_site(data: dict, out: Path) -> None:
@@ -334,8 +379,9 @@ def main(argv=None) -> int:
     args = ap.parse_args(argv)
     cfg = load_config()
     try:
-        series, spy, sox = fetch_all(cfg, datetime.now(timezone.utc))
-        data = compute(cfg, series, spy, sox)
+        series, spy, sox, split_map = fetch_all(cfg, datetime.now(timezone.utc))
+        fwd = {st["ticker"]: fetch_forward_pe(st["ticker"]) for st in cfg["stocks"]}  # reference only; never fails
+        data = compute(cfg, series, spy, sox, split_map, fwd)
     except BuildError as exc:
         print(f"BUILD FAILED, nothing deployed: {exc}", file=sys.stderr)
         return 1

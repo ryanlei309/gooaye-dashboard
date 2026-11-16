@@ -1,33 +1,25 @@
-// 表格：每一檔第一次提到之後至今的報酬（美元，和 S&P 500 比）；點表頭排序（再點反向）、點一列＝點泡泡；
-// 可選「到指定日期」；年份由上方的下拉選單決定（和泡泡共用，第九版）
+// 表格：每一檔第一次提到之後至今的報酬（美元，和 S&P 500 比）與現在本益比；點表頭排序（再點反向）、點一列＝點泡泡；
+// 年份由上方的下拉選單決定（和泡泡共用，第九版）。「到指定日期的報酬」第十版換成「現在本益比」
 "use strict";
 const Table = (() => {
-  let box, input, ctx, sort = { key: "date", dir: -1 }, upto = "", inYear = () => true;
+  let box, ctx, sort = { key: "date", dir: -1 }, inYear = () => true;
 
   const COLS = [
     { key: "ticker", name: () => T.colTicker, text: true },
     { key: "date", name: () => T.colDate, text: true, cls: "col-date" },
     { key: "ret", name: () => T.colRet },
     { key: "vs", name: () => T.colVs },
-    { key: "upto", name: () => T.colUpto(upto && F.date(upto)) },
+    { key: "pe", name: () => T.colPe },
   ];
 
-  // 從首次提及的進場日開盤，持有到選的那天（那天沒有股價就用之前最近一天的收盤）；選的日期早於進場日是 null
-  function uptoReturn(b, day, bench, closes) {
-    if (!day || !closes || day < b.window.start) return null;
-    let k = bench.dates.length - 1;
-    while (k >= 0 && bench.dates[k] > day) k--;
-    while (k >= 0 && closes[k] == null && bench.dates[k] >= b.window.start) k--;
-    if (k < 0 || bench.dates[k] < b.window.start || closes[k] == null) return null;
-    return closes[k] / b.entry_open - 1;
-  }
-
   function rows() {
-    const { summary, bench, eventOf, prices } = ctx;
+    const { summary, eventOf } = ctx;
     return summary.bubbles.filter(inYear).map((b) => {
-      const x = b.to_date.USD, p = prices.get(b.ticker), e = eventOf.get(b.ticker);
+      const x = b.to_date.USD, e = eventOf.get(b.ticker), pe = b.pe && b.pe.now;
+      // 排序用數字；虧損和「—」排最後（虧損在「—」前面）
       return { ticker: b.ticker, company: LANG === "en" ? e.company_en || e.company : e.company, date: b.date,
-               early: b.early, ret: x.return, vs: x.vs_spy, upto: uptoReturn(b, upto, bench, p && p.c) };
+               early: b.early, ret: x.return, vs: x.vs_spy, pe: typeof pe === "number" ? pe : null,
+               peRank: typeof pe === "number" ? 0 : pe === "loss" ? 1 : 2, peShow: pe };
     });
   }
 
@@ -35,7 +27,7 @@ const Table = (() => {
     const { key, dir } = sort;
     return list.sort((a, b) => {
       const x = a[key], y = b[key];
-      if (x == null || y == null) return x == null ? (y == null ? 0 : 1) : -1;  // 「—」一律排最後
+      if (x == null || y == null) return x == null ? (y == null ? a.peRank - b.peRank || a.ticker.localeCompare(b.ticker) : 1) : -1;  // 「—」一律排最後
       return (typeof x === "string" ? x.localeCompare(y) : x - y) * dir || a.ticker.localeCompare(b.ticker);
     });
   }
@@ -57,7 +49,7 @@ const Table = (() => {
         `<th scope="row"><button type="button" data-pick="${F.esc(r.ticker)}" aria-pressed="${on}">${F.esc(r.ticker)}</button>` +
         (r.early ? ` <span class="early-tag" title="${T.early}">${T.earlyShort}</span>` : "") +
         `<span class="co">${F.esc(r.company)}</span></th><td class="col-date">${F.date(r.date)}</td>` +
-        cell(r.ret) + cell(r.vs) + cell(r.upto) + "</tr>";
+        cell(r.ret) + cell(r.vs) + `<td class="n">${F.pe(r.peShow)}</td></tr>`;
     }).join("");
     box.innerHTML = `<table class="list"><caption class="visually-hidden">${T.tableCaption}</caption>` +
       `<thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
@@ -67,11 +59,8 @@ const Table = (() => {
 
   function setYear(fn) { inYear = fn; render(); }
 
-  function init(el, dateInput, context) {
-    box = el; input = dateInput; ctx = context;
-    const days = ctx.summary.bubbles.map((b) => b.window.start).sort();
-    input.min = days[0];
-    input.max = ctx.summary.price_date;
+  function init(el, context) {
+    box = el; ctx = context;
     box.addEventListener("click", (e) => {
       const s = e.target.closest("[data-sort]");
       if (s) {
@@ -83,12 +72,7 @@ const Table = (() => {
       const row = e.target.closest("tr[data-ticker]");
       if (row) ctx.pick(row.dataset.ticker);
     });
-    input.addEventListener("change", async () => {
-      upto = input.value && input.value > input.max ? input.max : input.value;
-      if (upto) await ctx.loadAll();
-      render();
-    });
   }
 
-  return { init, render, setYear, uptoReturn };
+  return { init, render, setYear };
 })();

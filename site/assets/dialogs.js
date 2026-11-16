@@ -82,6 +82,40 @@ const Dialogs = (() => {
     return `<li>補分類排除：${parts.join("；")}。</li>`;
   }
 
+  // 最壞情況（2026-11-16 第十版從首頁移到這裡）：數字每天自動更新；和主結論差超過 5 個百分點就不說「結論不變」
+  function worstSentence(m, w) {
+    const a = F.share(m.spy.win), b = F.share(w.spy.win), big = m.spy.win - w.spy.win > 0.05;
+    const miss = w.missing ?? 0, del = w.delisted ?? 0;
+    if (en) return `${miss} stock${miss === 1 ? "" : "s"} had no usable price data and ${miss === 1 ? "is" : "are"} not in the main result` +
+      (del ? `; ${del} more ${del === 1 ? "was" : "were"} later delisted` : "") + `. Even if all of them are counted as a total loss (−100%), ` +
+      (big ? `the win rate falls from ${a} to ${b}, more than 5 percentage points, so read the main result with care.`
+           : `the win rate only falls from ${a} to ${b}; the conclusion does not change.`);
+    return `有 ${miss} 檔抓不到股價、沒有算進主結論` + (del ? `，另外 ${del} 檔後來下市` : "") + `。就算把它們全部當成賠光（−100%），` +
+      (big ? `勝率會從 ${a} 降到 ${b}，差距超過 5 個百分點，主結論要小心看待。` : `勝率也只從 ${a} 降到 ${b}，結論不變。`);
+  }
+
+  // 本益比（只供參考，2026-11-16）
+  function peSection() {
+    if (en) return `
+      <h3>P/E ratios (reference only)</h3>
+      <ul>
+        <li>P/E = share price ÷ diluted earnings per share over the past four quarters, from companies' official SEC filings (EDGAR). "At first mention" uses only reports already filed by that day; "now" uses the latest. Share splits are adjusted for. P/E is not part of the main result.</li>
+        <li>"Loss": earnings over the past four quarters were zero or negative, so there is no meaningful P/E.</li>
+        <li>"—": fewer than four quarters of reports (newly listed), or no data. Most foreign companies (for example TSMC, ASML, Alibaba) file annual reports on forms 20-F or 40-F instead of US quarterly reports, often under IFRS and in their home currency, so the SEC data has no quarterly US-dollar earnings per share for them.</li>
+        <li>"Forward P/E (now)" uses analysts' estimates of the next 12 months' earnings, from Yahoo Finance. Past estimates are not freely available, so there is no forward P/E at first mention.</li>
+        <li>"P/E now" is recalculated every day from the latest close and the stored earnings; earnings are updated when new reports come out.</li>
+      </ul>`;
+    return `
+      <h3>本益比（只供參考）</h3>
+      <ul>
+        <li>本益比＝股價 ÷ 過去四季的稀釋後每股盈餘，每股盈餘來自公司向 SEC 申報的正式財報（EDGAR）。「首次提及時」只用那天之前已經申報的財報，「現在」用最新的；有處理股票分割。本益比不算進主結論。</li>
+        <li>「虧損」：過去四季的盈餘加起來是零或負的，算不出有意義的本益比。</li>
+        <li>「—」：財報不到四季（剛上市），或沒有資料。外國公司（例如台積電、ASML、阿里巴巴）大多用 20-F 或 40-F 申報年報、不報美國的季報，而且常用國際會計準則和本國貨幣，SEC 資料裡沒有美元的季度每股盈餘，所以是「—」。</li>
+        <li>「預估本益比（現在）」用分析師預估的未來 12 個月盈餘，來自 Yahoo Finance。過去的預估要付費才有，所以沒有首次提及時的預估本益比。</li>
+        <li>「現在本益比」每天用最新收盤價和已存的每股盈餘重算；有新財報時再更新每股盈餘。</li>
+      </ul>`;
+  }
+
   function method(summary, events, bench) {
     const m = summary.main, w = summary.worst, e = summary.early, t50 = m["0050"];  // 0050 是固定日期的計算（公開 repo 沒有台股資料）
     const excluded = events.filter((x) => x.kind === "個股" && x.excluded);
@@ -125,11 +159,13 @@ const Dialogs = (() => {
       <h3>What may make this look better than reality</h3>
       <ul>
         <li>Excluded stocks (${excluded.length}): ${excluded.map((x) => F.esc(x.ticker)).join(", ")} (no daily prices from two free sources, or not buyable when mentioned).</li>
-        <li>Worst case: counting stocks without prices and the later-delisted WOLF as −100%, ${F.share(w.spy.win)} of ${w.done} beat the S&amp;P 500, median ${F.pct(w.spy.median)}. ${unbuyable.join(" and ")} could not be bought by listeners at the time and are left out of both versions.</li>
+        <li>${worstSentence(m, w)}</li>
         <li>The AI may miss companies, so some first mentions may be later than they really were.</li>
         <li>Many stocks mentioned since 2023 are AI-related and move together; more stocks does not mean more diversification.</li>
         <li>Only the mention date is known, not when he sold, so a fixed 12 months is used instead.</li>
       </ul>
+
+      ${peSection()}
 
       <h3>Reference: ±20% and ±10% paths</h3>
       <p>Daily closes over the first 12 months, relative to the entry price. <strong>Touching +20% is not the same as earning 20%</strong>: you would have had to sell at that moment. The S&amp;P 500 uses the same entry and exit days. These measures were defined before looking at the numbers and do not change the main result.</p>
@@ -175,11 +211,13 @@ const Dialogs = (() => {
       <h3>哪裡可能偏樂觀</h3>
       <ul>
         <li>排除的 ${excluded.length} 檔個股：${exList}。</li>
-        <li>最壞情況：抓不到股價的、後來下市的（WOLF）都算 −100%，${w.done} 檔裡贏過 S&amp;P 500 的比例 ${F.share(w.spy.win)}、超額報酬中位數 ${F.pct(w.spy.median)}。${unbuyable.join("、")} 聽眾當時買不到，不算。</li>
+        <li>${worstSentence(m, w)}</li>
         <li>AI 可能漏抓公司（召回率沒在新考卷上量），首次提及可能比實際晚。</li>
         <li>2023 年後提到的多是 AI 相關股，彼此高度連動，檔數多不代表分散。</li>
         <li>只看「提到」，不知道他何時賣出，所以用固定的 12 個月代替。</li>
       </ul>
+
+      ${peSection()}
 
       <h3>參考：±20%、±10% 路徑指標</h3>
       <p>從進場日起 12 個月內，每天收盤相對進場價的變化。<strong>曾經漲到 +20% 不等於能賺到 20%</strong>：要剛好在那時候賣掉才拿得到。S&amp;P 500 用同一個進場日和出場日。這些指標在看到數字之前定下，只是參考，不改主結論。</p>
@@ -197,6 +235,7 @@ const Dialogs = (() => {
         <li>Semiconductors: the PHLX Semiconductor Index itself (^SOX), from Yahoo Finance.</li>
         <li>Listings used to check tickers and company names: ${link("https://www.nasdaqtrader.com", "Nasdaq Trader")} (US) and ${link("https://finmindtrade.com", "FinMind")} (Taiwan).</li>
         <li>The 0050 comparison under "Method": 0050 prices from FinMind, adjusted for dividends and splits by this project and checked against Yahoo Finance; USD/TWD from Yahoo Finance.</li>
+        <li>Share prices and forward P/E ratios come from Yahoo Finance (via yfinance, for personal, non-commercial use); earnings per share come from public SEC EDGAR filings.</li>
         <li>All amounts are in US dollars. Quote translations are AI translations of the Chinese, labeled as such.</li>
       </ul>
 
@@ -220,6 +259,7 @@ const Dialogs = (() => {
         <li>費半：費城半導體指數本身（^SOX），來自 Yahoo Finance。</li>
         <li>上市清單（核對代號和公司名稱）：${link("https://www.nasdaqtrader.com", "Nasdaq Trader")}（美股）、${link("https://finmindtrade.com", "FinMind")}（台股）。</li>
         <li>說明裡和 0050 比的結果：0050 的股價用 FinMind 的原始價格，再依除權息與分割自己換算成含息價格，並和 Yahoo Finance 對照過；美元兌台幣匯率用 Yahoo Finance。</li>
+        <li>股價和預估本益比來自 Yahoo Finance（透過 yfinance，僅供個人非商業用途）；每股盈餘來自 SEC EDGAR 公開財報。</li>
         <li>全部金額用美元。</li>
       </ul>
 

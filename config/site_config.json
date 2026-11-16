@@ -75,7 +75,10 @@
    "date": "2022-01-12",
    "early": false,
    "entry_day": "2022-01-12",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": 14.86,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "WOLF",
@@ -84,6 +87,9 @@
    "early": false,
    "entry_day": "2022-01-26",
    "source": "nasdaq",
+   "pe_mention": "loss",
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16",
    "delisted_later": true
   },
   {
@@ -92,7 +98,10 @@
    "date": "2022-02-01",
    "early": false,
    "entry_day": "2022-02-02",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 29.76,
+   "eps_ttm": 17.55,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "FWONA",
@@ -100,7 +109,10 @@
    "date": "2022-02-16",
    "early": false,
    "entry_day": "2022-02-16",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 42.99,
+   "eps_ttm": 1.2966601178781927,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "NU",
@@ -108,7 +120,10 @@
    "date": "2022-02-16",
    "early": false,
    "entry_day": "2022-02-16",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "RH",
@@ -116,7 +131,10 @@
    "date": "2022-02-16",
    "early": false,
    "entry_day": "2022-02-16",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 19.57,
+   "eps_ttm": 5.619999999999999,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "DLTR",
@@ -124,7 +142,10 @@
    "date": "2022-03-05",
    "early": false,
    "entry_day": "2022-03-07",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 23.79,
+   "eps_ttm": 8.16,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "GIS",
@@ -132,7 +153,10 @@
    "date": "2022-03-05",
    "early": false,
    "entry_day": "2022-03-07",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 18.64,
+   "eps_ttm": -1.6600000000000001,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "JNJ",
@@ -140,7 +164,10 @@
    "date": "2022-03-05",
    "early": false,
    "entry_day": "2022-03-07",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 22.05,
+   "eps_ttm": 6.58,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "TSN",
@@ -148,7 +175,10 @@
    "date": "2022-03-05",
    "early": false,
    "entry_day": "2022-03-07",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 9.14,
+   "eps_ttm": 1.62,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "BCS",
@@ -156,7 +186,10 @@
    "date": "2022-03-16",
    "early": false,
    "entry_day": "2022-03-16",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "UI",
@@ -164,7 +197,10 @@
    "date": "2022-03-26",
    "early": false,
    "entry_day": "2022-03-28",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 33.39,
+   "eps_ttm": 17.71,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "NVTS",
@@ -172,7 +208,10 @@
    "date": "2022-03-30",
    "early": false,
    "entry_day": "2022-03-30",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": -1.38,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SIMO",
@@ -180,7 +219,10 @@
    "date": "2022-03-30",
    "early": false,
    "entry_day": "2022-03-30",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SCI",
@@ -188,7 +230,10 @@
    "date": "2022-04-06",
    "early": false,
    "entry_day": "2022-04-06",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 14.45,
+   "eps_ttm": 4.03,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "UAL",
@@ -196,7 +241,10 @@
    "date": "2022-04-27",
    "early": false,
    "entry_day": "2022-04-27",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 10.91,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "OXY",
@@ -204,7 +252,10 @@
    "date": "2022-05-04",
    "early": false,
    "entry_day": "2022-05-04",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 38.97,
+   "eps_ttm": 7.42,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MXL",
@@ -212,7 +263,10 @@
    "date": "2022-05-07",
    "early": false,
    "entry_day": "2022-05-09",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 45.46,
+   "eps_ttm": -0.37000000000000016,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MDT",
@@ -220,7 +274,10 @@
    "date": "2022-05-18",
    "early": false,
    "entry_day": "2022-05-18",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 28.53,
+   "eps_ttm": 4.06,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MNDY",
@@ -228,7 +285,10 @@
    "date": "2022-05-18",
    "early": false,
    "entry_day": "2022-05-18",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "NOW",
@@ -236,7 +296,10 @@
    "date": "2022-05-18",
    "early": false,
    "entry_day": "2022-05-18",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 378.21,
+   "eps_ttm": 1.39,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "VRSN",
@@ -244,7 +307,10 @@
    "date": "2022-06-15",
    "early": false,
    "entry_day": "2022-06-15",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 46.96,
+   "eps_ttm": 3.49,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "AIG",
@@ -252,7 +318,10 @@
    "date": "2022-07-30",
    "early": false,
    "entry_day": "2022-08-01",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 4.42,
+   "eps_ttm": 6.1499999999999995,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "WM",
@@ -260,7 +329,10 @@
    "date": "2022-08-13",
    "early": false,
    "entry_day": "2022-08-15",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 33.8,
+   "eps_ttm": 7.62,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "CVNA",
@@ -268,7 +340,10 @@
    "date": "2022-08-17",
    "early": false,
    "entry_day": "2022-08-17",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 0.5,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "GEO",
@@ -276,7 +351,10 @@
    "date": "2022-08-17",
    "early": false,
    "entry_day": "2022-08-17",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 16.31,
+   "eps_ttm": 1.25,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "NXST",
@@ -284,7 +362,10 @@
    "date": "2022-08-17",
    "early": false,
    "entry_day": "2022-08-17",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 9.28,
+   "eps_ttm": 11.049999999999999,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "S",
@@ -292,7 +373,10 @@
    "date": "2022-08-17",
    "early": false,
    "entry_day": "2022-08-17",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -1.02,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "STLA",
@@ -300,7 +384,10 @@
    "date": "2022-08-17",
    "early": false,
    "entry_day": "2022-08-17",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "TOST",
@@ -308,7 +395,10 @@
    "date": "2022-08-17",
    "early": false,
    "entry_day": "2022-08-17",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 0.93,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "HKD",
@@ -316,7 +406,10 @@
    "date": "2022-08-20",
    "early": false,
    "entry_day": "2022-08-22",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "BX",
@@ -324,7 +417,10 @@
    "date": "2022-08-24",
    "early": false,
    "entry_day": "2022-08-24",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 18.79,
+   "eps_ttm": 4.49,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SNPS",
@@ -332,7 +428,10 @@
    "date": "2022-09-03",
    "early": false,
    "entry_day": "2022-09-06",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 49.67,
+   "eps_ttm": 5.709999999999999,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "VWAGY",
@@ -340,7 +439,10 @@
    "date": "2022-09-07",
    "early": false,
    "entry_day": "2022-09-07",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "UPS",
@@ -348,7 +450,10 @@
    "date": "2022-09-17",
    "early": false,
    "entry_day": "2022-09-19",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 14.47,
+   "eps_ttm": 5.199999999999999,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "KLAC",
@@ -356,7 +461,10 @@
    "date": "2022-10-08",
    "early": false,
    "entry_day": "2022-10-10",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 13.66,
+   "eps_ttm": 3.99,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "LRCX",
@@ -364,7 +472,10 @@
    "date": "2022-10-15",
    "early": false,
    "entry_day": "2022-10-17",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 9.63,
+   "eps_ttm": 6.709999999999999,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "LNG",
@@ -372,7 +483,10 @@
    "date": "2022-10-19",
    "early": false,
    "entry_day": "2022-10-19",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 14.160000000000002,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "DIOD",
@@ -380,7 +494,10 @@
    "date": "2022-11-02",
    "early": false,
    "entry_day": "2022-11-02",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 11.36,
+   "eps_ttm": 2.5,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "PI",
@@ -388,7 +505,10 @@
    "date": "2022-11-05",
    "early": false,
    "entry_day": "2022-11-07",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.30999999999999994,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "LSCC",
@@ -396,7 +516,10 @@
    "date": "2022-11-23",
    "early": false,
    "entry_day": "2022-11-23",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 65.04,
+   "eps_ttm": 0.32,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "FTNT",
@@ -404,7 +527,10 @@
    "date": "2023-02-11",
    "early": false,
    "entry_day": "2023-02-13",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 65.67,
+   "eps_ttm": 3.07,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "PLAB",
@@ -412,7 +538,10 @@
    "date": "2023-03-25",
    "early": false,
    "entry_day": "2023-03-27",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 9.12,
+   "eps_ttm": 2.83,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SMCI",
@@ -420,7 +549,10 @@
    "date": "2023-04-15",
    "early": false,
    "entry_day": "2023-04-17",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 10.47,
+   "eps_ttm": 4.75,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "GLW",
@@ -428,7 +560,10 @@
    "date": "2023-06-03",
    "early": false,
    "entry_day": "2023-06-05",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 29.29,
+   "eps_ttm": 2.46,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "AAOI",
@@ -436,7 +571,10 @@
    "date": "2023-07-01",
    "early": false,
    "entry_day": "2023-07-03",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.42000000000000004,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "CLS",
@@ -444,7 +582,10 @@
    "date": "2023-09-16",
    "early": false,
    "entry_day": "2023-09-18",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": 10.55,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "ESTC",
@@ -452,7 +593,10 @@
    "date": "2023-10-07",
    "early": false,
    "entry_day": "2023-10-09",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 3.5000000000000004,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "CHPT",
@@ -460,7 +604,10 @@
    "date": "2023-10-25",
    "early": false,
    "entry_day": "2023-10-25",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -7.17,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "FLEX",
@@ -468,7 +615,10 @@
    "date": "2023-10-28",
    "early": false,
    "entry_day": "2023-10-30",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 14.69,
+   "eps_ttm": 2.77,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "JBL",
@@ -476,7 +626,10 @@
    "date": "2023-10-28",
    "early": false,
    "entry_day": "2023-10-30",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 20.0,
+   "eps_ttm": 9.75,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "FN",
@@ -484,7 +637,10 @@
    "date": "2023-11-22",
    "early": false,
    "entry_day": "2023-11-22",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 24.54,
+   "eps_ttm": 13.25,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "VRT",
@@ -492,7 +648,10 @@
    "date": "2024-02-24",
    "early": false,
    "entry_day": "2024-02-26",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 55.72,
+   "eps_ttm": 5.35,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SYNA",
@@ -500,7 +659,10 @@
    "date": "2024-03-06",
    "early": false,
    "entry_day": "2024-03-06",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -12.54,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "COHR",
@@ -508,7 +670,10 @@
    "date": "2024-03-09",
    "early": false,
    "entry_day": "2024-03-11",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 4.83,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "APH",
@@ -516,7 +681,10 @@
    "date": "2024-03-27",
    "early": false,
    "entry_day": "2024-03-27",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 37.07,
+   "eps_ttm": 2.295,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "HPE",
@@ -524,7 +692,10 @@
    "date": "2024-04-06",
    "early": false,
    "entry_day": "2024-04-08",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 12.51,
+   "eps_ttm": 1.94,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "STX",
@@ -532,7 +703,10 @@
    "date": "2024-04-06",
    "early": false,
    "entry_day": "2024-04-08",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 19.06,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "WDC",
@@ -540,7 +714,10 @@
    "date": "2024-04-06",
    "early": false,
    "entry_day": "2024-04-08",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 25.84,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "ETN",
@@ -548,7 +725,10 @@
    "date": "2024-04-20",
    "early": false,
    "entry_day": "2024-04-22",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 38.42,
+   "eps_ttm": 10.0,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "LITE",
@@ -556,7 +736,10 @@
    "date": "2024-05-08",
    "early": false,
    "entry_day": "2024-05-08",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -89.46999999999998,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "ACN",
@@ -564,7 +747,10 @@
    "date": "2024-07-13",
    "early": false,
    "entry_day": "2024-07-15",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 29.11,
+   "eps_ttm": 13.56,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MPWR",
@@ -572,7 +758,10 @@
    "date": "2024-10-05",
    "early": false,
    "entry_day": "2024-10-07",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 110.74,
+   "eps_ttm": 18.15,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "CEG",
@@ -580,7 +769,10 @@
    "date": "2024-11-02",
    "early": false,
    "entry_day": "2024-11-04",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 24.88,
+   "eps_ttm": 10.26,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "D",
@@ -588,7 +780,10 @@
    "date": "2024-11-02",
    "early": false,
    "entry_day": "2024-11-04",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 20.22,
+   "eps_ttm": 3.38,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "DJT",
@@ -596,7 +791,10 @@
    "date": "2024-11-02",
    "early": false,
    "entry_day": "2024-11-04",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": -3.33,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "EBAY",
@@ -604,7 +802,10 @@
    "date": "2024-11-16",
    "early": false,
    "entry_day": "2024-11-18",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 15.55,
+   "eps_ttm": 4.6,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "HUBS",
@@ -612,7 +813,10 @@
    "date": "2024-11-30",
    "early": false,
    "entry_day": "2024-12-02",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 4.18,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "ALAB",
@@ -620,7 +824,10 @@
    "date": "2024-12-04",
    "early": false,
    "entry_day": "2024-12-04",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": 2.51,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SOUN",
@@ -628,7 +835,10 @@
    "date": "2024-12-04",
    "early": false,
    "entry_day": "2024-12-04",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.44,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SSTK",
@@ -636,7 +846,10 @@
    "date": "2024-12-18",
    "early": false,
    "entry_day": "2024-12-18",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 29.18,
+   "eps_ttm": -11.41,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "HIMX",
@@ -644,7 +857,10 @@
    "date": "2025-02-15",
    "early": false,
    "entry_day": "2025-02-18",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "ENPH",
@@ -652,7 +868,10 @@
    "date": "2025-02-19",
    "early": false,
    "entry_day": "2025-02-19",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 88.48,
+   "eps_ttm": 0.67,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SEDG",
@@ -660,7 +879,10 @@
    "date": "2025-02-19",
    "early": false,
    "entry_day": "2025-02-19",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -3.8,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "WIX",
@@ -668,7 +890,10 @@
    "date": "2025-03-29",
    "early": false,
    "entry_day": "2025-03-31",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "DUOL",
@@ -676,7 +901,10 @@
    "date": "2025-05-03",
    "early": false,
    "entry_day": "2025-05-05",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 243.41,
+   "eps_ttm": 3.08,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "AVAV",
@@ -684,7 +912,10 @@
    "date": "2025-06-04",
    "early": false,
    "entry_day": "2025-06-04",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 160.95,
+   "eps_ttm": -4.0600000000000005,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "CRDO",
@@ -692,7 +923,10 @@
    "date": "2025-06-04",
    "early": false,
    "entry_day": "2025-06-04",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 7646.0,
+   "eps_ttm": 2.84,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "LOGI",
@@ -700,7 +934,10 @@
    "date": "2025-06-11",
    "early": false,
    "entry_day": "2025-06-11",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 21.34,
+   "eps_ttm": 5.55,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SNDK",
@@ -708,7 +945,10 @@
    "date": "2025-09-06",
    "early": false,
    "entry_day": "2025-09-08",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": 125.61000000000001,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "NBIS",
@@ -716,7 +956,10 @@
    "date": "2025-09-10",
    "early": false,
    "entry_day": "2025-09-10",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MP",
@@ -724,7 +967,10 @@
    "date": "2025-10-25",
    "early": false,
    "entry_day": "2025-10-27",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.19999999999999993,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "ONDS",
@@ -732,7 +978,10 @@
    "date": "2025-11-05",
    "early": false,
    "entry_day": "2025-11-05",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.08999999999999994,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SBLK",
@@ -740,7 +989,10 @@
    "date": "2025-12-03",
    "early": false,
    "entry_day": "2025-12-03",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "AXTI",
@@ -748,7 +1000,10 @@
    "date": "2026-01-10",
    "early": false,
    "entry_day": "2026-01-12",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 0.44000000000000006,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "CRCL",
@@ -756,7 +1011,10 @@
    "date": "2026-03-21",
    "early": false,
    "entry_day": "2026-03-23",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": 4.63,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MTSI",
@@ -764,7 +1022,10 @@
    "date": "2026-04-15",
    "early": false,
    "entry_day": "2026-04-15",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 118.17,
+   "eps_ttm": 4.31,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "VPG",
@@ -772,7 +1033,10 @@
    "date": "2026-04-18",
    "early": false,
    "entry_day": "2026-04-20",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 132.9,
+   "eps_ttm": -0.24999999999999992,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "TEAM",
@@ -780,7 +1044,10 @@
    "date": "2026-05-02",
    "early": false,
    "entry_day": "2026-05-04",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 0.33999999999999997,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "FLY",
@@ -788,7 +1055,10 @@
    "date": "2026-06-13",
    "early": false,
    "entry_day": "2026-06-15",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 6.09,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "RKLB",
@@ -796,7 +1066,10 @@
    "date": "2026-06-13",
    "early": false,
    "entry_day": "2026-06-15",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.36,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "IREN",
@@ -804,7 +1077,10 @@
    "date": "2026-08-01",
    "early": false,
    "entry_day": "2026-08-03",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 61.15,
+   "eps_ttm": -3.96,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SMTC",
@@ -812,7 +1088,10 @@
    "date": "2026-10-03",
    "early": false,
    "entry_day": "2026-10-05",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.41000000000000003,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "DIS",
@@ -820,7 +1099,10 @@
    "date": "2020-02-29",
    "early": true,
    "entry_day": "2020-03-02",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 19.17,
+   "eps_ttm": 4.84,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "NFLX",
@@ -828,7 +1110,10 @@
    "date": "2020-02-29",
    "early": true,
    "entry_day": "2020-03-02",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 92.26,
+   "eps_ttm": 3.46,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "TSLA",
@@ -836,7 +1121,10 @@
    "date": "2020-02-29",
    "early": true,
    "entry_day": "2020-03-02",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 0.91,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "BA",
@@ -844,7 +1132,10 @@
    "date": "2020-03-03",
    "early": true,
    "entry_day": "2020-03-03",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 9.659999999999998,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "BRK-B",
@@ -852,7 +1143,10 @@
    "date": "2020-03-03",
    "early": true,
    "entry_day": "2020-03-03",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MMM",
@@ -860,7 +1154,10 @@
    "date": "2020-03-03",
    "early": true,
    "entry_day": "2020-03-03",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 18.6,
+   "eps_ttm": 6.71,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "AMZN",
@@ -868,7 +1165,10 @@
    "date": "2020-03-06",
    "early": true,
    "entry_day": "2020-03-06",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 82.62,
+   "eps_ttm": 12.37,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "GOOGL",
@@ -876,7 +1176,10 @@
    "date": "2020-03-06",
    "early": true,
    "entry_day": "2020-03-06",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 26.36,
+   "eps_ttm": 19.16,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "TSM",
@@ -884,7 +1187,10 @@
    "date": "2020-03-09",
    "early": true,
    "entry_day": "2020-03-09",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "RYAAY",
@@ -892,7 +1198,10 @@
    "date": "2020-03-11",
    "early": true,
    "entry_day": "2020-03-12",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "AAPL",
@@ -900,7 +1209,10 @@
    "date": "2020-03-16",
    "early": true,
    "entry_day": "2020-03-16",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 19.13,
+   "eps_ttm": 8.98,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MSFT",
@@ -908,7 +1220,10 @@
    "date": "2020-03-17",
    "early": true,
    "entry_day": "2020-03-17",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 25.53,
+   "eps_ttm": 19.15,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "F",
@@ -916,7 +1231,10 @@
    "date": "2020-03-26",
    "early": true,
    "entry_day": "2020-03-26",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 525.0,
+   "eps_ttm": -1.97,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "TTWO",
@@ -924,7 +1242,10 @@
    "date": "2020-03-26",
    "early": true,
    "entry_day": "2020-03-26",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 38.8,
+   "eps_ttm": -1.29,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "WMT",
@@ -932,7 +1253,10 @@
    "date": "2020-03-26",
    "early": true,
    "entry_day": "2020-03-26",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 21.16,
+   "eps_ttm": 2.7600000000000002,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "ZM",
@@ -940,7 +1264,10 @@
    "date": "2020-03-26",
    "early": true,
    "entry_day": "2020-03-26",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 1764.37,
+   "eps_ttm": 10.780000000000001,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SBUX",
@@ -948,7 +1275,10 @@
    "date": "2020-04-03",
    "early": true,
    "entry_day": "2020-04-03",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 20.6,
+   "eps_ttm": 2.21,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "META",
@@ -956,7 +1286,10 @@
    "date": "2020-04-05",
    "early": true,
    "entry_day": "2020-04-06",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 25.75,
+   "eps_ttm": 29.32,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MS",
@@ -964,7 +1297,10 @@
    "date": "2020-04-07",
    "early": true,
    "entry_day": "2020-04-07",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 7.12,
+   "eps_ttm": 12.600000000000001,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "BABA",
@@ -972,7 +1308,10 @@
    "date": "2020-04-17",
    "early": true,
    "entry_day": "2020-04-20",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SPOT",
@@ -980,7 +1319,10 @@
    "date": "2020-04-25",
    "early": true,
    "entry_day": "2020-04-27",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SWKS",
@@ -988,7 +1330,10 @@
    "date": "2020-04-29",
    "early": true,
    "entry_day": "2020-04-29",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 22.22,
+   "eps_ttm": 1.14,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "PYPL",
@@ -996,7 +1341,10 @@
    "date": "2020-05-03",
    "early": true,
    "entry_day": "2020-05-04",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 59.74,
+   "eps_ttm": 5.24,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "AMD",
@@ -1004,7 +1352,10 @@
    "date": "2020-05-16",
    "early": true,
    "entry_day": "2020-05-18",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 126.95,
+   "eps_ttm": 4.6,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "AMKR",
@@ -1012,7 +1363,10 @@
    "date": "2020-05-16",
    "early": true,
    "entry_day": "2020-05-18",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 11.64,
+   "eps_ttm": 2.4699999999999998,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "INTC",
@@ -1020,7 +1374,10 @@
    "date": "2020-05-16",
    "early": true,
    "entry_day": "2020-05-18",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 11.63,
+   "eps_ttm": -2.39,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "LMT",
@@ -1028,7 +1385,10 @@
    "date": "2020-05-16",
    "early": true,
    "entry_day": "2020-05-18",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 17.14,
+   "eps_ttm": 28.15,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "NVDA",
@@ -1036,7 +1396,10 @@
    "date": "2020-05-16",
    "early": true,
    "entry_day": "2020-05-18",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 77.44,
+   "eps_ttm": 7.91,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SPCE",
@@ -1044,7 +1407,10 @@
    "date": "2020-05-27",
    "early": true,
    "entry_day": "2020-05-27",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -2.200000000000001,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "BILI",
@@ -1052,7 +1418,10 @@
    "date": "2020-06-10",
    "early": true,
    "entry_day": "2020-06-10",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "C",
@@ -1060,7 +1429,10 @@
    "date": "2020-06-10",
    "early": true,
    "entry_day": "2020-06-10",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 7.74,
+   "eps_ttm": 6.99,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "HPQ",
@@ -1068,7 +1440,10 @@
    "date": "2020-06-10",
    "early": true,
    "entry_day": "2020-06-10",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 8.28,
+   "eps_ttm": 2.6199999999999997,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SONY",
@@ -1076,7 +1451,10 @@
    "date": "2020-06-10",
    "early": true,
    "entry_day": "2020-06-10",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "CHT",
@@ -1084,7 +1462,10 @@
    "date": "2020-06-23",
    "early": true,
    "entry_day": "2020-06-24",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "FSLY",
@@ -1092,7 +1473,10 @@
    "date": "2020-06-23",
    "early": true,
    "entry_day": "2020-06-24",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.4,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SHOP",
@@ -1100,7 +1484,10 @@
    "date": "2020-06-23",
    "early": true,
    "entry_day": "2020-06-24",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": 1.65,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "JD",
@@ -1108,7 +1495,10 @@
    "date": "2020-07-04",
    "early": true,
    "entry_day": "2020-07-06",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "GRMN",
@@ -1116,7 +1506,10 @@
    "date": "2020-08-01",
    "early": true,
    "entry_day": "2020-08-03",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 20.49,
+   "eps_ttm": 10.41,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "PINS",
@@ -1124,7 +1517,10 @@
    "date": "2020-08-01",
    "early": true,
    "entry_day": "2020-08-03",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 0.24999999999999997,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "TWLO",
@@ -1132,7 +1528,10 @@
    "date": "2020-08-01",
    "early": true,
    "entry_day": "2020-08-03",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 7.97,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "AVGO",
@@ -1140,7 +1539,10 @@
    "date": "2020-08-05",
    "early": true,
    "entry_day": "2020-08-05",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 58.95,
+   "eps_ttm": 7.84,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "COST",
@@ -1148,7 +1550,10 @@
    "date": "2020-08-05",
    "early": true,
    "entry_day": "2020-08-05",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 40.67,
+   "eps_ttm": 20.76,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "NOC",
@@ -1156,7 +1561,10 @@
    "date": "2020-08-05",
    "early": true,
    "entry_day": "2020-08-05",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 23.19,
+   "eps_ttm": 31.65,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "FDX",
@@ -1164,7 +1572,10 @@
    "date": "2020-08-12",
    "early": true,
    "entry_day": "2020-08-12",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 41.3,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MRNA",
@@ -1172,7 +1583,10 @@
    "date": "2020-08-12",
    "early": true,
    "entry_day": "2020-08-12",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -7.09,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "NIO",
@@ -1180,7 +1594,10 @@
    "date": "2020-08-19",
    "early": true,
    "entry_day": "2020-08-19",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "QCOM",
@@ -1188,7 +1605,10 @@
    "date": "2020-08-19",
    "early": true,
    "entry_day": "2020-08-19",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 46.85,
+   "eps_ttm": 12.7,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "GSAT",
@@ -1196,7 +1616,10 @@
    "date": "2020-08-22",
    "early": true,
    "entry_day": "2020-08-24",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.64,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "UMC",
@@ -1204,7 +1627,10 @@
    "date": "2020-08-26",
    "early": true,
    "entry_day": "2020-08-26",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "CSCO",
@@ -1212,7 +1638,10 @@
    "date": "2020-09-02",
    "early": true,
    "entry_day": "2020-09-02",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 16.83,
+   "eps_ttm": 3.33,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "XYZ",
@@ -1220,7 +1649,10 @@
    "date": "2020-09-02",
    "early": true,
    "entry_day": "2020-09-02",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 250.58,
+   "eps_ttm": 0.7400000000000002,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "ADBE",
@@ -1228,7 +1660,10 @@
    "date": "2020-09-05",
    "early": true,
    "entry_day": "2020-09-08",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 60.97,
+   "eps_ttm": 17.91,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "LYFT",
@@ -1236,7 +1671,10 @@
    "date": "2020-09-05",
    "early": true,
    "entry_day": "2020-09-08",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 0.82,
+   "eps_ttm": 6.7299999999999995,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "BE",
@@ -1244,7 +1682,10 @@
    "date": "2020-09-12",
    "early": true,
    "entry_day": "2020-09-14",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 1.6400000000000001,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "TM",
@@ -1252,7 +1693,10 @@
    "date": "2020-09-12",
    "early": true,
    "entry_day": "2020-09-14",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "PTON",
@@ -1260,7 +1704,10 @@
    "date": "2020-09-16",
    "early": true,
    "entry_day": "2020-09-16",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 0.30000000000000004,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "CRWD",
@@ -1268,7 +1715,10 @@
    "date": "2020-09-19",
    "early": true,
    "entry_day": "2020-09-21",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 0.05000000000000001,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MCD",
@@ -1276,7 +1726,10 @@
    "date": "2020-09-19",
    "early": true,
    "entry_day": "2020-09-21",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 34.3,
+   "eps_ttm": 12.639999999999999,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "OKTA",
@@ -1284,7 +1737,10 @@
    "date": "2020-09-19",
    "early": true,
    "entry_day": "2020-09-21",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 1.6600000000000001,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "ORCL",
@@ -1292,7 +1748,10 @@
    "date": "2020-09-19",
    "early": true,
    "entry_day": "2020-09-21",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 19.19,
+   "eps_ttm": 6.380000000000001,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "TDOC",
@@ -1300,7 +1759,10 @@
    "date": "2020-09-19",
    "early": true,
    "entry_day": "2020-09-21",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.8599999999999999,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "ZS",
@@ -1308,7 +1770,10 @@
    "date": "2020-09-19",
    "early": true,
    "entry_day": "2020-09-21",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.39,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "HYLN",
@@ -1316,7 +1781,10 @@
    "date": "2020-10-20",
    "early": true,
    "entry_day": "2020-10-21",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": -0.28,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "HLF",
@@ -1324,7 +1792,10 @@
    "date": "2020-10-24",
    "early": true,
    "entry_day": "2020-10-26",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 23.08,
+   "eps_ttm": 1.6800000000000002,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "Z",
@@ -1332,7 +1803,10 @@
    "date": "2020-10-28",
    "early": true,
    "entry_day": "2020-10-28",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.5199999999999999,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "XOM",
@@ -1340,7 +1814,10 @@
    "date": "2020-10-30",
    "early": true,
    "entry_day": "2020-11-02",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 20.23,
+   "eps_ttm": 9.74,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "PFE",
@@ -1348,7 +1825,10 @@
    "date": "2020-11-11",
    "early": true,
    "entry_day": "2020-11-11",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 24.84,
+   "eps_ttm": 0.7000000000000002,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "LI",
@@ -1356,7 +1836,10 @@
    "date": "2020-11-14",
    "early": true,
    "entry_day": "2020-11-16",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "XPEV",
@@ -1364,7 +1847,10 @@
    "date": "2020-11-14",
    "early": true,
    "entry_day": "2020-11-16",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "TTD",
@@ -1372,7 +1858,10 @@
    "date": "2020-11-18",
    "early": true,
    "entry_day": "2020-11-18",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 262.73,
+   "eps_ttm": 0.6900000000000001,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "CRM",
@@ -1380,7 +1869,10 @@
    "date": "2020-11-20",
    "early": true,
    "entry_day": "2020-11-23",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 100.64,
+   "eps_ttm": 10.959999999999999,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "DASH",
@@ -1388,7 +1880,10 @@
    "date": "2020-12-09",
    "early": true,
    "entry_day": "2020-12-09",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": 2.4299999999999997,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MU",
@@ -1396,7 +1891,10 @@
    "date": "2020-12-09",
    "early": true,
    "entry_day": "2020-12-09",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 30.13,
+   "eps_ttm": 74.33,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "EXPE",
@@ -1404,7 +1902,10 @@
    "date": "2020-12-12",
    "early": true,
    "entry_day": "2020-12-14",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 17.09,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MA",
@@ -1412,7 +1913,10 @@
    "date": "2020-12-16",
    "early": true,
    "entry_day": "2020-12-16",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 49.79,
+   "eps_ttm": 19.119999999999997,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "V",
@@ -1420,7 +1924,10 @@
    "date": "2020-12-16",
    "early": true,
    "entry_day": "2020-12-16",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "BIDU",
@@ -1428,7 +1935,10 @@
    "date": "2020-12-25",
    "early": true,
    "entry_day": "2020-12-28",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "PANW",
@@ -1436,7 +1946,10 @@
    "date": "2020-12-25",
    "early": true,
    "entry_day": "2020-12-28",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 0.4,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "ASML",
@@ -1444,7 +1957,10 @@
    "date": "2021-01-16",
    "early": true,
    "entry_day": "2021-01-19",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "TXN",
@@ -1452,7 +1968,10 @@
    "date": "2021-01-16",
    "early": true,
    "entry_day": "2021-01-19",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 32.93,
+   "eps_ttm": 7.720000000000001,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "AMC",
@@ -1460,7 +1979,10 @@
    "date": "2021-01-23",
    "early": true,
    "entry_day": "2021-01-25",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.40000000000000024,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "GME",
@@ -1468,7 +1990,10 @@
    "date": "2021-01-23",
    "early": true,
    "entry_day": "2021-01-25",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 1.54,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "ETSY",
@@ -1476,7 +2001,10 @@
    "date": "2021-02-10",
    "early": true,
    "entry_day": "2021-02-10",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 124.67,
+   "eps_ttm": 8.549999999999999,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MSTR",
@@ -1484,7 +2012,10 @@
    "date": "2021-02-10",
    "early": true,
    "entry_day": "2021-02-10",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 8120.67,
+   "eps_ttm": -57.71000000000001,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "AFRM",
@@ -1492,7 +2023,10 @@
    "date": "2021-02-13",
    "early": true,
    "entry_day": "2021-02-16",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": 5.77,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "IBM",
@@ -1500,7 +2034,10 @@
    "date": "2021-02-17",
    "early": true,
    "entry_day": "2021-02-17",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 13.6,
+   "eps_ttm": 11.75,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "SNAP",
@@ -1508,7 +2045,10 @@
    "date": "2021-02-17",
    "early": true,
    "entry_day": "2021-02-17",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.09000000000000004,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "CVX",
@@ -1516,7 +2056,10 @@
    "date": "2021-02-20",
    "early": true,
    "entry_day": "2021-02-22",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 13.64,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "VOD",
@@ -1524,7 +2067,10 @@
    "date": "2021-03-03",
    "early": true,
    "entry_day": "2021-03-03",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "BLK",
@@ -1532,7 +2078,10 @@
    "date": "2021-03-10",
    "early": true,
    "entry_day": "2021-03-10",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 22.87,
+   "eps_ttm": 43.870000000000005,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "AZN",
@@ -1540,7 +2089,10 @@
    "date": "2021-03-20",
    "early": true,
    "entry_day": "2021-03-22",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "PDD",
@@ -1548,7 +2100,10 @@
    "date": "2021-03-20",
    "early": true,
    "entry_day": "2021-03-22",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "NKE",
@@ -1556,7 +2111,10 @@
    "date": "2021-03-27",
    "early": true,
    "entry_day": "2021-03-29",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 75.42,
+   "eps_ttm": 2.09,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "GS",
@@ -1564,7 +2122,10 @@
    "date": "2021-03-31",
    "early": true,
    "entry_day": "2021-03-31",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 13.22,
+   "eps_ttm": 69.58,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "ASX",
@@ -1572,7 +2133,10 @@
    "date": "2021-05-01",
    "early": true,
    "entry_day": "2021-05-03",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "STM",
@@ -1580,7 +2144,10 @@
    "date": "2021-05-15",
    "early": true,
    "entry_day": "2021-05-17",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": null,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "MRVL",
@@ -1588,7 +2155,10 @@
    "date": "2021-06-30",
    "early": true,
    "entry_day": "2021-06-30",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": 3.02,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "PEP",
@@ -1596,7 +2166,10 @@
    "date": "2021-07-17",
    "early": true,
    "entry_day": "2021-07-19",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 26.32,
+   "eps_ttm": 7.96,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "DELL",
@@ -1604,7 +2177,10 @@
    "date": "2021-08-25",
    "early": true,
    "entry_day": "2021-08-25",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 19.78,
+   "eps_ttm": 17.19,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "NVAX",
@@ -1612,7 +2188,10 @@
    "date": "2021-09-15",
    "early": true,
    "entry_day": "2021-09-15",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": "loss",
+   "eps_ttm": -0.2900000000000002,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "AXP",
@@ -1620,7 +2199,10 @@
    "date": "2021-11-17",
    "early": true,
    "entry_day": "2021-11-17",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 18.77,
+   "eps_ttm": 17.75,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "IVZ",
@@ -1628,7 +2210,10 @@
    "date": "2021-11-17",
    "early": true,
    "entry_day": "2021-11-17",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 9.86,
+   "eps_ttm": -0.6900000000000003,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "ON",
@@ -1636,7 +2221,10 @@
    "date": "2021-11-27",
    "early": true,
    "entry_day": "2021-11-29",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 41.19,
+   "eps_ttm": 1.67,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "COIN",
@@ -1644,7 +2232,10 @@
    "date": "2021-12-08",
    "early": true,
    "entry_day": "2021-12-08",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": null,
+   "eps_ttm": -2.77,
+   "eps_basis_date": "2026-11-16"
   },
   {
    "ticker": "TER",
@@ -1652,39 +2243,48 @@
    "date": "2021-12-08",
    "early": true,
    "entry_day": "2021-12-08",
-   "source": "yahoo"
+   "source": "yahoo",
+   "pe_mention": 30.21,
+   "eps_ttm": 8.7,
+   "eps_basis_date": "2026-11-16"
   }
  ],
  "wipeouts": [
   {
    "ticker": "WOLF",
    "ep": 213,
-   "entry_day": "2022-01-26"
+   "entry_day": "2022-01-26",
+   "kind": "delisted"
   },
   {
    "ticker": "LSXMA",
    "ep": 219,
-   "entry_day": "2022-02-16"
+   "entry_day": "2022-02-16",
+   "kind": "missing"
   },
   {
    "ticker": "WBA",
    "ep": 224,
-   "entry_day": "2022-03-07"
+   "entry_day": "2022-03-07",
+   "kind": "missing"
   },
   {
    "ticker": "WBD",
    "ep": 271,
-   "entry_day": "2022-08-17"
+   "entry_day": "2022-08-17",
+   "kind": "missing"
   },
   {
    "ticker": "CFLT",
    "ep": 406,
-   "entry_day": "2023-12-04"
+   "entry_day": "2023-12-04",
+   "kind": "missing"
   },
   {
    "ticker": "GETY",
    "ep": 515,
-   "entry_day": "2024-12-18"
+   "entry_day": "2024-12-18",
+   "kind": "missing"
   }
  ],
  "price_exceptions": {

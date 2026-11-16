@@ -7,13 +7,14 @@
   --hover: #ede8da;
   --win: #b42318;
   --lose: #1e7b3a;
+  --serif: "Songti TC", "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
+  --sans: -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
 }
-/* 英文版：綠＝贏、紅＝輸（歐美習慣，第九版）；實心＝贏、空心＝輸不變。白字在綠底 5.3:1、紅字在白底 6.6:1，都符合 WCAG AA */
+/* 英文版：綠＝贏、紅＝輸（歐美習慣，第九版）；實心＝贏、空心＝輸不變。白字在綠底 5.3:1、紅字在白底 6.6:1，都符合 WCAG AA。
+   只放顏色：第九版把字型變數誤放進這裡，中文版的標題和內文因此變成瀏覽器預設字型（2026-11-16 修正） */
 :root[lang="en"] {
   --win: #1e7b3a;
   --lose: #b42318;
-  --serif: "Songti TC", "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
-  --sans: -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -37,7 +38,7 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 .top {
   --big: 2.1rem;
   flex: none; display: grid; gap: 0 24px; padding: 10px 24px 6px; border-bottom: 1px solid var(--ink);
-  grid-template-columns: 1fr auto; grid-template-areas: "title controls" "headline headline" "meta meta";
+  grid-template-columns: 1fr auto; grid-template-areas: "title controls" "headline headline";
 }
 .top h1 { grid-area: title; text-align: left; font-size: var(--big); line-height: 1.25; }
 .controls { grid-area: controls; display: flex; flex-wrap: wrap; gap: 0 16px; align-items: center; justify-content: flex-end; }
@@ -45,12 +46,14 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 .lang a { padding: 4px 2px; text-decoration: none; }
 .lang a[aria-current="page"] { font-weight: 700; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
 .lang span { color: var(--muted); }
-.headline { grid-area: headline; margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 10px; }
+/* 主結論一行；「股價更新至…・集數涵蓋到…」在同一行最右邊，放不下就換到下一行（第十版） */
+.headline-row { grid-area: headline; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 20px; }
+.headline { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 10px; }
 .headline .num { font-family: var(--serif); font-size: var(--big); font-weight: 700; line-height: 1.2; }
 .headline .label { font-size: 1.05rem; }
-.meta-lines { grid-area: meta; display: flex; flex-wrap: wrap; gap: 0 20px; color: var(--muted); font-size: 0.8rem; }
-.meta-lines p { margin: 0; }
-.meta-lines .dates { margin-left: auto; }
+.dates { margin: 0 0 0 auto; color: var(--muted); font-size: 0.8rem; }
+/* 和標題同一種字型（襯線），字的大小不變（第十版）：主結論那句、股價更新日、右上角的連結、頁尾 */
+.headline .label, .dates, .controls .link-btn, .controls .lang, .foot { font-family: var(--serif); }
 
 /* 分段切換鈕 */
 .seg { display: inline-flex; border: 1px solid var(--ink); }
@@ -183,8 +186,7 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 
 /* 點選後的明細：該檔和三個大盤左右對照 */
 .detail h2 { font-size: 1.1rem; }
-.detail .meta { color: var(--muted); font-size: 0.85rem; margin: 2px 0 6px; display: flex; flex-wrap: wrap; gap: 0 12px; }
-.detail .meta .profile { margin-left: auto; }  /* 公司簡介（Yahoo Finance）放在那一行最右邊 */
+.detail .meta { color: var(--muted); font-size: 0.85rem; margin: 2px 0 6px; }
 .detail .empty { color: var(--muted); font-size: 0.85rem; margin: 0; }
 .detail blockquote { margin: 0; padding-left: 12px; border-left: 2px solid var(--ink); font-family: var(--serif); }
 .detail blockquote p { margin: 0; }
@@ -223,10 +225,8 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
    （2026-11-15 第七版：手機橫放原本是左右兩欄，高度只有約 390px，泡泡和走勢圖都太扁，改成和手機直式一樣） */
 @media (max-width: 1023px), (max-height: 599px) {
   body { display: block; height: auto; overflow: visible; }
-  .top { --big: 1.6rem; padding: 10px 16px 8px; grid-template-areas: "title title" "headline headline" "meta controls"; gap: 2px 12px; }
+  .top { --big: 1.6rem; padding: 10px 16px 8px; grid-template-areas: "title title" "headline controls"; gap: 2px 12px; }
   .controls { align-self: end; }
-  .meta-lines { flex-direction: column; }
-  .meta-lines .dates { margin-left: 0; }
   .grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; grid-template-areas: "chart" "bubbles" "detail";
           padding: 8px 16px 0; }
   .chart { flex: 1; height: 27vh; min-height: 176px; }
@@ -239,7 +239,7 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
 @media (max-width: 600px), (max-height: 500px) {
   .top { --big: 1.3rem; padding: 8px 12px 6px; }
   .headline .label { font-size: 0.85rem; }
-  .meta-lines { font-size: 0.68rem; }
+  .dates { font-size: 0.68rem; margin-left: 0; flex-basis: 100%; }  /* 手機上放不下：換到下一行、靠左 */
   .controls { flex-direction: column; align-items: flex-end; gap: 2px; }
   .controls .link-btn { font-size: 0.75rem; min-height: 24px; padding: 0; }
   .seg button { min-height: 30px; padding: 2px 8px; font-size: 0.8rem; }

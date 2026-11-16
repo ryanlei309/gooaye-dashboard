@@ -24,6 +24,11 @@ const F = {
   esc(s) {
     return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   },
+  // 本益比：數字留一位小數；虧損寫「虧損」／Loss；沒資料（剛上市、外國公司等）是「—」
+  pe(v) {
+    if (v === "loss") return T.peLoss;
+    return typeof v === "number" && isFinite(v) ? v.toFixed(1) : "—";
+  },
   day(d) {
     return d == null ? T.neverHit : T.dayN(d);
   },

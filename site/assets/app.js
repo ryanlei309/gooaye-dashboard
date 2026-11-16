@@ -17,9 +17,9 @@
   const color = (t) => Chart.STOCK_COLORS[state.picked.indexOf(t)];
 
   // 主結論：事先定好算法的研究結論，不跟著點選變動
-  const m = summary.main, w = summary.worst;
+  // 最壞情況（2026-11-16 第十版）移到方法與限制，首頁只留主結論一句
+  const m = summary.main;
   $("headline").innerHTML = T.headline(F.share(m.spy.win), m.done);
-  $("worst").textContent = T.worst(w.done, F.share(w.spy.win));
   $("price-date").textContent = T.priceDate(F.date(summary.price_date));
   $("last-ep").textContent = T.lastEp(summary.last_ep);
 
@@ -32,12 +32,6 @@
       prices.set(t, await get(path).catch(() => new Promise((r) => setTimeout(r, 800)).then(() => get(path))));
     }
     return prices.get(t);
-  }
-  // 表格「到指定日期」要全部的股價：一次最多 8 個請求（一次發 200 個會被拒），某一檔還是失敗就那檔顯示「—」，不影響其他檔
-  async function loadAll() {
-    const queue = summary.bubbles.map((b) => b.ticker).filter((t) => !prices.has(t));
-    const worker = async () => { while (queue.length) await load(queue.shift()).catch(() => null); };
-    await Promise.all(Array.from({ length: 8 }, worker));
   }
 
   async function drawChart() {
@@ -71,6 +65,8 @@
     const row = (name, f) => `<tr><th scope="row">${name}</th>${cols.map(([k]) => f(k)).join("")}</tr>`;
     const path = (name, f, c = () => "") => row(name, (k) => (p[k] ? td(p[k], f, c(p[k])) : `<td class="n">—</td>`));
     const at = (v, d) => `${F.pct(v)}<span class="u">${T.atDay(d)}</span>`;
+    // 本益比只有這一檔自己的（大盤的欄位空著）
+    const peRow = (name, v) => `<tr><th scope="row">${name}</th><td class="n">${F.pe(v)}</td><td class="n"></td><td class="n"></td></tr>`;
     const span = win.end ? T.window12(F.date(win.start), F.date(win.end)) : T.window12Open(F.date(win.start), p.stock.days);
     const sec = (text) => `<tr class="sec"><th scope="colgroup" colspan="${cols.length + 1}">${text}</th></tr>`;
     const company = LANG === "en" ? e.company_en || e.company : e.company;
@@ -78,9 +74,8 @@
       ? `<p class="tr">${F.esc(e.quote_en)} <span class="tag">${T.aiTranslation}</span></p>` : "") + "</blockquote>";
     box.innerHTML = `
       <h2>${F.esc(t)} ${F.esc(company)}${e.early ? ` <span class="early-tag">${T.early}</span>` : ""}</h2>
-      <p class="meta"><span>${T.firstMention(e.ep, F.date(e.date), T.segment[e.segment] || e.segment)}｜${T.laterEps(e.later_episodes)}
-        ${e.url ? `｜<a href="${F.esc(e.url)}" target="_blank" rel="noopener noreferrer">${T.listen(e.ep)}</a>` : ""}</span>
-        <a class="profile" href="https://finance.yahoo.com/quote/${encodeURIComponent(t)}/profile/" target="_blank" rel="noopener noreferrer">${T.profile}</a></p>
+      <p class="meta">${T.firstMention(e.ep, F.date(e.date), T.segment[e.segment] || e.segment)}｜${T.laterEps(e.later_episodes)}｜<a href="https://finance.yahoo.com/quote/${encodeURIComponent(t)}/profile/" target="_blank" rel="noopener noreferrer">${T.profile}</a>
+        ${e.url ? `｜<a href="${F.esc(e.url)}" target="_blank" rel="noopener noreferrer">${T.listen(e.ep)}</a>` : ""}</p>
       ${quote}
       <div class="cmp-box"><table class="cmp">
         <thead><tr><th scope="col"><span class="visually-hidden">${T.item}</span></th>
@@ -94,6 +89,10 @@
           ${path(T.rowUp20, (m) => F.day(m.days_to_up))}
           ${path(T.rowMaxGain, (m) => at(m.max_gain, m.max_gain_day), (m) => F.cls(m.max_gain))}
           ${path(T.rowMaxLoss, (m) => at(m.max_loss, m.max_loss_day), (m) => F.cls(m.max_loss))}
+          ${sec(T.peSection)}
+          ${peRow(T.rowPeMention, b.pe && b.pe.mention)}
+          ${peRow(T.rowPeNow, b.pe && b.pe.now)}
+          ${peRow(T.rowPeFwd, b.pe && b.pe.fwd)}
         </tbody></table></div>`;
   }
 
@@ -133,7 +132,6 @@
   function setView(v) {
     state.view = v;
     document.querySelectorAll("[data-view]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.view === v)));
-    $("table-tools").hidden = v !== "table";
     $("table-box").hidden = v !== "table";
     Bubbles.show(v === "bubbles");
     Table.render();
@@ -179,7 +177,7 @@
   Dialogs.init(summary, events, bench);
   Chart.init($("chart"), $("marks"));
   Bubbles.init($("bubbles"), items, pick, (t) => state.picked.includes(t));
-  Table.init($("table-box"), $("upto"), { summary, bench, eventOf, prices, pick, loadAll,
+  Table.init($("table-box"), { summary, bench, eventOf, prices, pick,
                                                             isPicked: (t) => state.picked.includes(t) });
   detail(); drawChart();
   Tour.init();
