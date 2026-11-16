@@ -7,14 +7,17 @@
   --hover: #ede8da;
   --win: #b42318;
   --lose: #1e7b3a;
-  --serif: "Songti TC", "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
+  --serif-base: "Songti TC", "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
+  --serif: var(--serif-base);
   --sans: -apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
 }
 /* 英文版：綠＝贏、紅＝輸（歐美習慣，第九版）；實心＝贏、空心＝輸不變。白字在綠底 5.3:1、紅字在白底 6.6:1，都符合 WCAG AA。
-   只放顏色：第九版把字型變數誤放進這裡，中文版的標題和內文因此變成瀏覽器預設字型（2026-11-16 修正） */
+   字型變數的完整清單只放在上面共用的 :root（第九版把字型變數誤放進這裡，中文版的標題和內文因此變成瀏覽器預設字型，2026-11-16 修正）；
+   這裡只在共用的襯線字前面加 Georgia（第十五版：標題、主結論那句、導覽卡片、說明視窗的內文） */
 :root[lang="en"] {
   --win: #1e7b3a;
   --lose: #b42318;
+  --serif: Georgia, var(--serif-base);
 }
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
@@ -85,7 +88,7 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 .bubbles:focus-visible { outline-offset: -2px; }
 /* 泡泡區角落：目前看到的年月（左上）、播放／暫停（右上）。aria-pressed＝true 是播放中，顯示暫停圖示 */
 .when { position: absolute; left: 0; top: 6px; margin: 0; padding: 0 6px; z-index: 3; pointer-events: none;
-        font-family: var(--serif); font-weight: 700; font-size: 1.05rem; background: var(--bg); }
+        font-family: var(--serif-base); font-weight: 700; font-size: 1.05rem; background: var(--bg); }
 .play { position: absolute; right: 0; top: 6px; z-index: 3; width: 36px; height: 36px; padding: 0; border-radius: 50%;
         border: 1px solid var(--ink); background: var(--bg); display: grid; place-items: center; }
 .play[aria-pressed="true"] .i-play, .play[aria-pressed="false"] .i-pause { display: none; }
@@ -229,6 +232,7 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
 .dialog-body { padding: 4px 20px 20px; }
 .dialog-body h3 { font-family: var(--serif); font-size: 1rem; margin: 18px 0 4px; }
 .dialog-body p, .dialog-body li { font-size: 0.9rem; }
+:root[lang="en"] .dialog-body p, :root[lang="en"] .dialog-body li { font-family: var(--serif); }  /* 英文說明視窗的內文用 Georgia（第十五版）；表格維持原本的字型 */
 .dialog-body table { border-collapse: collapse; font-size: 0.85rem; margin-top: 8px; }
 .dialog-body th, .dialog-body td { padding: 3px 14px 3px 0; text-align: right; border-bottom: 1px solid var(--rule); }
 .dialog-body th:first-child, .dialog-body td:first-child { text-align: left; }
@@ -290,9 +294,9 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
 /* 卡片和說明視窗同一種樣子：米白底、黑框；左上語言、右上 ×、
    右下下一頁（第 2 頁起左下上一頁）、最下面五個小點。文字 19px、標題 24px；第 1、5 頁在畫面中間、文字置中，其他靠左 */
 .driver-popover.tour-pop { background: var(--bg); color: var(--ink); border: 1px solid var(--ink); border-radius: 4px;
-  padding: 14px 22px 10px; min-width: 0; max-width: min(440px, calc(100vw - 32px)); width: 440px; }
-.driver-popover.tour-pop * { font-family: var(--sans); }
-.driver-popover.tour-pop.tour-center { width: 560px; max-width: calc(100vw - 32px); text-align: center; }
+  padding: 14px 22px 10px; min-width: 0; max-width: min(500px, calc(100vw - 32px)); width: 500px; }  /* 第十五版加寬 440 → 500 */
+.driver-popover.tour-pop * { font-family: var(--serif); }  /* 卡片所有文字用襯線字（第十五版） */
+.driver-popover.tour-pop.tour-center { width: 620px; max-width: calc(100vw - 32px); text-align: center; }
 .tour-pop .tour-lang { display: flex; gap: 2px; font-size: 0.95rem; padding-right: 40px; }
 .tour-pop .tour-lang a { padding: 4px 2px; text-decoration: none; color: var(--ink); }
 .tour-pop .tour-lang a[aria-current="page"] { font-weight: 700; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
@@ -303,6 +307,16 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
 .driver-popover.tour-pop .driver-popover-title { font-family: var(--serif); font-size: 24px; line-height: 1.35; margin: 10px 0 4px; }
 .driver-popover.tour-pop .driver-popover-description { font-size: 19px; line-height: 1.65; margin: 6px 0 0; }
 .tour-pop .driver-popover-description p { margin: 0; }
+.tour-pop .nw { white-space: nowrap; }  /* 不能拆開的詞（第十五版） */
+/* 不要讓單一個字（英文單字）掉到最後一行：瀏覽器自己挑換行位置（不手動指定換行） */
+.tour-pop .driver-popover-title, .tour-pop .driver-popover-description p, .tour-pop .tour-list li { text-wrap: pretty; }
+.tour-pop .tour-list { list-style: none; margin: 4px 0 0; padding: 0; }
+.tour-pop .tour-list li { padding-left: 1em; text-indent: -1em; }
+.tour-pop .tour-list li::before { content: "・"; display: inline-block; width: 1em; text-indent: 0; }
+/* 第 1 頁（第十五版）：標題粗體、更大；導言比標題小、灰色；中文不用斜體（中文沒有真正的斜體），英文斜體 */
+.driver-popover.tour-pop.tour-first .driver-popover-title { font-size: 32px; font-weight: 700; line-height: 1.3; }
+.driver-popover.tour-pop.tour-first .driver-popover-description { color: var(--muted); }
+:root[lang="en"] .driver-popover.tour-pop.tour-first .driver-popover-description { font-style: italic; }
 .tour-pop .driver-popover-description .tour-note { font-style: italic; color: var(--muted); font-size: 16px; margin-top: 8px; }
 .driver-popover.tour-pop .driver-popover-footer { margin-top: 16px; }
 .driver-popover.tour-pop .driver-popover-footer button { border: 1px solid var(--ink); border-radius: 0; background: var(--bg); color: var(--ink);
@@ -322,6 +336,7 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
     padding: 10px 16px 8px; max-height: 60vh; overflow-y: auto; }
   body.driver-active { padding-bottom: 70vh; }  /* 頁面最下面的區域也能捲到卡片上方 */
   .driver-popover.tour-pop .driver-popover-title { font-size: 22px; }
+  .driver-popover.tour-pop.tour-first .driver-popover-title { font-size: 27px; }
   .driver-popover.tour-pop .driver-popover-description { font-size: 18px; line-height: 1.55; }
 }
 

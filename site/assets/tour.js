@@ -18,9 +18,11 @@ const Tour = (() => {
       page: (i) => `第 ${i} 頁，共 ${PAGES} 頁`,
       pages: [
         { title: "謝孟恭提到的股票，後來贏過大盤嗎？", body: "我們找出他在節目中第一次提到每檔美股的日期，算出之後的報酬，和 S&amp;P 500 比較。" },
-        { body: "每個泡泡是一檔股票：代號、第一次提到的日期，以及從那天到今天贏或輸 S&amp;P 500 多少。實心紅色是贏，空心綠色是輸。切換到『表格』可以看完整清單、排序，也可以切換看報酬或本益比。" },
-        { body: "點一下股票，走勢圖會加上它的線，和 S&amp;P 500、費半一起比較。虛線是第一次提到的那天。" },
-        { body: "走勢圖下方是這檔股票的成績單：第一次提到後買進，到今天的報酬，和同期的 S&amp;P 500、費半比較；以及前 12 個月內，多久漲到 +10%、+20%，最大漲幅和最大跌幅。" },
+        { body: "每個泡泡是一檔股票：代號、第一次提到的日期，以及從那天到今天贏或輸 S&amp;P 500 多少。實心紅色是贏，空心綠色是輸。切換到『表格』可以看完整清單、排序，也可以切換看報酬或本益比。",
+          keep: ["多少", "也可以"] },
+        { body: "點一下股票，走勢圖會加上它的線，和 S&amp;P 500、費半一起比較。虛線是第一次提到的那天。", keep: ["和 S&amp;P 500"] },
+        { body: "走勢圖下方是這檔股票的成績單：",
+          items: ["第一次提到後買進，到今天的報酬，和同期大盤比較", "前 12 個月內，多久漲到 +10%、+20%，以及最大漲跌幅"] },
         { title: "那，謝孟恭提到的股票，後來贏過大盤嗎？", note: "此為非官方網站，與節目及主持人無關，內容不構成投資建議。" },
       ],
     },
@@ -31,7 +33,9 @@ const Tour = (() => {
         { title: "Did the stocks mentioned on the Gooaye podcast beat the market?", body: "We found the first time each US stock came up on the show, then tracked how it did against the S&amp;P 500." },
         { body: "Each bubble is one stock: its ticker, the date it was first mentioned, and how far it is ahead of or behind the S&amp;P 500 since then. Solid green beat the index; outlined red trailed it. Switch to Table for the full, sortable list, with returns or P/E." },
         { body: "Click a stock to add its line to the chart, alongside the S&amp;P 500 and the semiconductor index. The dotted line marks the day it was first mentioned." },
-        { body: "Below the chart is the stock’s report card: its return if you bought right after the first mention, against the S&amp;P 500 and the semiconductor index over the same period, plus how fast it rose 10% and 20%, and its biggest gain and drop in the first 12 months." },
+        { body: "Below the chart is the stock’s report card:",
+          items: ["Its return if bought right after the first mention, against the market over the same period",
+                  "In the first 12 months: how fast it rose 10% and 20%, and its biggest gain and drop"] },
         { title: "So, did they beat the market?", note: "Unofficial site, not affiliated with the show or its host. Not investment advice." },
       ],
     },
@@ -42,8 +46,20 @@ const Tour = (() => {
   const phone = matchMedia("(max-width: 600px), (max-height: 500px)");
   let drv = null, ctx = null, saved = null, opener = null;
 
+  // 每一句的最後不要只剩一個字（第十五版）：中文最後兩個字（連同後面的標點）、英文最後兩個字不拆開；換行位置仍由瀏覽器決定
+  const glue = (s) => (LANG === "zh" ? s.replace(/([\u3400-\u9fff]{2}[，。、：；！？』）]*)$/, '<span class="nw">$1</span>')
+    : s.replace(/ (?=[^ <>]*(?:<[^>]*>[^ <>]*)*$)/, "\u00a0"));
   // 每句一行（第十三版）：中文遇到「。」、英文遇到句點加空白就換行
-  const lines = (s) => s.split(/(?<=。)|(?<=\.)\s+/).filter(Boolean).join("<br>");
+  const lines = (s) => s.split(/(?<=。)|(?<=\.)\s+/).filter(Boolean).map(glue).join("<br>");
+  // 不能拆開的詞（第十五版）：每一頁的「S&P 500」，加上那一頁指定的詞；長的先比對，不會包兩層。換行位置交給瀏覽器
+  const keep = (s, words) => {
+    const all = [...new Set([...(words || []), "S&amp;P 500"])].sort((a, b) => b.length - a.length);
+    return s.replace(new RegExp(all.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g"), (w) => `<span class="nw">${w}</span>`);
+  };
+  // 卡片內文：一段（每句一行）、條列（第 4 頁，第十五版）、灰色斜體的聲明（第 5 頁）
+  const content = (p) => (p.body ? `<p>${lines(keep(p.body, p.keep))}</p>` : "") +
+    (p.items ? `<ul class="tour-list">${p.items.map((x) => `<li>${glue(keep(x, p.keep))}</li>`).join("")}</ul>` : "") +
+    (p.note ? `<p class="tour-note">${lines(p.note)}</p>` : "");
 
   // 手機：卡片在畫面底部，把亮的區域捲到畫面上方、不被卡片蓋住
   function scrollAbove(el) {
@@ -79,8 +95,8 @@ const Tour = (() => {
         element: area && (phone.matches && area.phone ? area.phone : area.element),
         onHighlightStarted: (el) => scrollAbove(el),
         popover: {
-          title: p.title || "", description: (p.body ? `<p>${lines(p.body)}</p>` : "") + (p.note ? `<p class="tour-note">${lines(p.note)}</p>` : ""),
-          side: area?.side, align: "start", popoverClass: `tour-pop ${area ? "tour-side" : "tour-center"}`,
+          title: p.title ? glue(p.title) : "", description: content(p),
+          side: area?.side, align: "start", popoverClass: `tour-pop ${area ? "tour-side" : "tour-center"}${n === 1 ? " tour-first" : ""}`,
           showButtons: n === 1 ? ["next", "close"] : ["previous", "next", "close"],
         },
       };
