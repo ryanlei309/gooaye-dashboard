@@ -41,8 +41,10 @@
     Chart.render(bench, stocks, state.days);
   }
 
-  // 已選股票的標籤：也是明細的切換鈕。正在顯示的實心、其他空心
+  // 已選股票的標籤：也是明細的切換鈕。正在顯示的實心、其他空心。
+  // 沒選股票時顯示淡灰色提示（第十四版）：這一列一開始就佔好高度，點了之後版面不跳動
   function chips() {
+    if (!state.picked.length) { $("chips").innerHTML = `<span class="chips-hint">${T.chipsHint}</span>`; return; }
     $("chips").innerHTML = state.picked.map((t) => {
       const on = t === state.focus;
       return `<span class="chip${on ? " on" : ""}" style="--c:${color(t)}">${Chart.sample({ color: on ? "#fff" : color(t) })}` +
@@ -139,10 +141,11 @@
 
   // 控制項
   document.querySelectorAll("[data-view]").forEach((btn) => btn.addEventListener("click", () => setView(btn.dataset.view)));
-  document.querySelectorAll("[data-mode]").forEach((btn) => btn.addEventListener("click", () => {
-    document.querySelectorAll("[data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
-    Table.setMode(btn.dataset.mode);
-  }));
+  function setMode(mode) {
+    document.querySelectorAll("[data-mode]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.mode === mode)));
+    Table.setMode(mode);
+  }
+  document.querySelectorAll("[data-mode]").forEach((btn) => btn.addEventListener("click", () => setMode(btn.dataset.mode)));
   Info.init();
   $("ranges").innerHTML = Chart.RANGES.map((n, i) =>
     `<button type="button" data-days="${n}" aria-pressed="false">${T.ranges[i]}</button>`).join("");
@@ -181,14 +184,31 @@
     Bubbles.setItems(items.filter(f));
     Table.setYear(f);
   });
+  const setYear = (y) => { if ($("year").value !== y) { $("year").value = y; $("year").dispatchEvent(new Event("change")); } };
 
   Dialogs.init(summary, events, bench);
   Chart.init($("chart"), $("marks"));
   Bubbles.init($("bubbles"), items, pick, (t) => state.picked.includes(t));
   Table.init($("table-box"), { summary, bench, eventOf, prices, pick,
                                                             isPicked: (t) => state.picked.includes(t) });
-  detail(); drawChart();
-  Tour.init();
+  chips(); detail(); drawChart();
+  // 導覽（第十四版聚光燈）：開始時暫時選 SMTC 和 TEAM（明細顯示 TEAM），結束或關掉後恢復訪客原本的狀態
+  // （已選的股票、正在看的那檔、泡泡／表格、報酬／本益比、年份、時間區間）
+  Tour.init({
+    save: () => ({ picked: [...state.picked], focus: state.focus, days: state.days, rangeSet: state.rangeSet, view: state.view,
+                   mode: document.querySelector('[data-mode][aria-pressed="true"]')?.dataset.mode || "ret", year: $("year").value }),
+    demo: () => {
+      setYear("all"); setView("bubbles");
+      state.picked = ["SMTC", "TEAM"].filter((t) => eventOf.has(t));
+      Object.assign(state, { focus: state.picked[state.picked.length - 1] || null, days: "mention", rangeSet: false });
+      note(""); refresh();
+    },
+    restore: (s) => {
+      setYear(s.year); setMode(s.mode); setView(s.view);
+      Object.assign(state, { picked: s.picked, focus: s.focus, days: s.days, rangeSet: s.rangeSet });
+      note(""); refresh();
+    },
+  });
 })().catch((err) => {
   document.getElementById("chart-note").textContent = T.loadFail;
   console.error(err);

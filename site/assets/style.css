@@ -40,7 +40,7 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
   flex: none; display: grid; gap: 0 24px; padding: 10px 24px 6px; border-bottom: 1px solid var(--ink);
   grid-template-columns: 1fr auto; grid-template-areas: "title controls" "headline headline";
 }
-.top h1 { grid-area: title; text-align: left; font-size: var(--big); line-height: 1.25; }
+.top h1 { grid-area: title; text-align: left; font-size: calc(var(--big) * 1.12); line-height: 1.25; }  /* 第十四版：標題放大約 12% */
 .controls { grid-area: controls; display: flex; flex-wrap: wrap; gap: 0 16px; align-items: center; justify-content: flex-end; }
 .lang { display: inline-flex; align-items: center; gap: 2px; font-size: 0.9rem; }
 .lang a { padding: 4px 2px; text-decoration: none; }
@@ -62,11 +62,12 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 .seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
 .link-btn { border: 0; background: none; padding: 4px 0; text-decoration: underline; text-underline-offset: 3px; min-height: 32px; }
 
-/* 主要兩欄：左泡泡（窄），右走勢圖，走勢圖下面是明細；走勢圖高度比第二版少 20% */
+/* 主要兩欄：左泡泡（窄），右走勢圖，走勢圖下面是明細。第十四版：明細照內容的高度，走勢圖自動填滿剩下的空間
+   （明細和頁尾之間不留空白；明細太長時走勢圖至少是原本的 48%（原本 12:13），明細在自己的框裡捲動） */
 .grid {
   flex: 1; min-height: 0; display: grid; gap: 0 24px; padding: 8px 24px 0;
   grid-template-columns: minmax(0, 7fr) minmax(0, 17fr);
-  grid-template-rows: minmax(0, 12fr) minmax(0, 13fr);
+  grid-template-rows: minmax(48%, 1fr) minmax(0, auto);
   grid-template-areas: "bubbles chart" "bubbles detail";
 }
 .bubbles-panel { grid-area: bubbles; display: flex; flex-direction: column; min-height: 0; container-type: inline-size; }
@@ -135,8 +136,8 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 /* 走勢圖 */
 /* 已選股票的標籤：左欄「泡泡｜表格」那一列和泡泡區之間，橫向排列、太多就換行（第九版） */
 .chart-body { flex: 1; min-height: 0; display: flex; }
-.bubbles-panel .chips { padding: 0 0 8px; }
-.bubbles-panel .chips:empty { display: none; }
+.bubbles-panel .chips { padding: 0 0 8px; min-height: 40px; }  /* 一開始就留好一列標籤的高度（第十四版） */
+.chips-hint { color: #767676; font-size: 0.85rem; }
 /* 左欄上方三組（第十二版）：泡泡｜表格、報酬｜本益比、年份，和時間區間一樣是純文字、「｜」分隔、選中的粗體加底線；
    組和組之間的間距比組內大；手機放不下時整組換行 */
 .bubbles-panel .panel-head { gap: 6px 22px; }
@@ -275,24 +276,54 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
   .cmp .u { display: block; font-size: 0.66rem; }
 }
 
-/* 第一次進站的導覽（第九版）：樣式和說明視窗一致；左上語言、右上 ×、右下下一頁（第 2 頁起左下上一頁）、最下面五個小點 */
-dialog.tour { max-width: 760px; }
-.tour-head { display: flex; justify-content: space-between; align-items: center; padding: 10px 16px 0; }
-.tour-x { border: 0; background: none; font-size: 1.6rem; line-height: 1; width: 40px; height: 40px; border-radius: 50%; }
-.tour-x:hover { background: var(--hover); }
-.tour-body { padding: 4px 24px 8px; min-height: 180px; }
-.tour-body h2 { font-size: 1.4rem; margin: 6px 0 10px; }
-.tour-body p { margin: 8px 0 0; line-height: 1.7; }
-.tour-note { font-style: italic; color: var(--muted); font-size: 0.85rem; }
-.tour-fig { margin: 4px 0 calc(6px + 1.7em); }  /* 文字和圖片之間多空一行（第十三版） */
-.tour-fig img { display: block; width: 100%; height: auto; border: 1px solid var(--rule); }
-.tour-foot { display: flex; justify-content: space-between; padding: 8px 24px 4px; }
-.tour-btn { border: 1px solid var(--ink); background: var(--bg); padding: 6px 18px; min-height: 40px; font-size: 0.95rem; }
-.tour-next { margin-left: auto; }
-.tour-next.start { background: var(--ink); color: #fff; }
-.tour-dots { display: flex; justify-content: center; gap: 8px; padding: 6px 0 16px; }
+/* 第一次進站的導覽（第十四版：聚光燈式，Driver.js 1.3.1）。Driver.js 自己的樣式表不用（有陰影），它需要的幾條版面規則寫在這裡：
+   導覽時後面的網頁不能點、亮的區域也不能點（只能看），卡片固定在畫面上，不顯示箭頭 */
+.driver-active .driver-overlay, .driver-active * { pointer-events: none; }
+.driver-popover, .driver-popover * { pointer-events: auto; }
+.driver-no-interaction, .driver-no-interaction * { pointer-events: none !important; }
+.driver-popover { box-sizing: border-box; position: fixed; top: 0; right: 0; margin: 0; z-index: 1000000000; }
+.driver-popover-arrow { display: none; }
+.driver-popover-btn-disabled { opacity: 0.5; pointer-events: none; }
+.driver-popover-close-btn { position: absolute; border: 0; background: none; padding: 0; cursor: pointer; text-align: center; }
+.driver-popover-footer { display: flex; align-items: center; }
+.driver-popover-navigation-btns { display: flex; flex-grow: 1; gap: 8px; }
+/* 卡片和說明視窗同一種樣子：米白底、黑框；左上語言、右上 ×、
+   右下下一頁（第 2 頁起左下上一頁）、最下面五個小點。文字 19px、標題 24px；第 1、5 頁在畫面中間、文字置中，其他靠左 */
+.driver-popover.tour-pop { background: var(--bg); color: var(--ink); border: 1px solid var(--ink); border-radius: 4px;
+  padding: 14px 22px 10px; min-width: 0; max-width: min(440px, calc(100vw - 32px)); width: 440px; }
+.driver-popover.tour-pop * { font-family: var(--sans); }
+.driver-popover.tour-pop.tour-center { width: 560px; max-width: calc(100vw - 32px); text-align: center; }
+.tour-pop .tour-lang { display: flex; gap: 2px; font-size: 0.95rem; padding-right: 40px; }
+.tour-pop .tour-lang a { padding: 4px 2px; text-decoration: none; color: var(--ink); }
+.tour-pop .tour-lang a[aria-current="page"] { font-weight: 700; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+.tour-pop .tour-lang span { color: var(--muted); }
+.driver-popover.tour-pop .driver-popover-close-btn { top: 8px; right: 10px; width: 40px; height: 40px; border-radius: 50%;
+  font-size: 1.8rem; line-height: 40px; color: var(--ink); }
+.driver-popover.tour-pop .driver-popover-close-btn:hover, .driver-popover.tour-pop .driver-popover-close-btn:focus-visible { background: var(--hover); }
+.driver-popover.tour-pop .driver-popover-title { font-family: var(--serif); font-size: 24px; line-height: 1.35; margin: 10px 0 4px; }
+.driver-popover.tour-pop .driver-popover-description { font-size: 19px; line-height: 1.65; margin: 6px 0 0; }
+.tour-pop .driver-popover-description p { margin: 0; }
+.tour-pop .driver-popover-description .tour-note { font-style: italic; color: var(--muted); font-size: 16px; margin-top: 8px; }
+.driver-popover.tour-pop .driver-popover-footer { margin-top: 16px; }
+.driver-popover.tour-pop .driver-popover-footer button { border: 1px solid var(--ink); border-radius: 0; background: var(--bg); color: var(--ink);
+  padding: 6px 18px; min-height: 40px; font-size: 16px; }
+.driver-popover.tour-pop .driver-popover-footer button:hover { background: var(--hover); }
+.driver-popover.tour-pop .driver-popover-footer button:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.driver-popover.tour-pop .driver-popover-footer button.start { background: var(--ink); color: #fff; }
+.driver-popover.tour-pop .driver-popover-navigation-btns { justify-content: space-between; }
+.driver-popover.tour-pop .driver-popover-navigation-btns button[hidden] + button { margin-left: auto; }
+.tour-dots { display: flex; justify-content: center; gap: 8px; padding: 10px 0 4px; }
 .tour-dots span:not(.visually-hidden) { width: 8px; height: 8px; border-radius: 50%; background: var(--rule); }
 .tour-dots span.on { background: var(--ink); }
+/* 手機：卡片固定在畫面底部（不蓋住亮的區域：導覽會把亮的區域捲到畫面上方），不顯示箭頭 */
+@media (max-width: 600px), (max-height: 500px) {
+  .driver-popover.tour-pop, .driver-popover.tour-pop.tour-center { position: fixed; top: auto !important; bottom: 0 !important;
+    left: 0 !important; right: 0 !important; width: auto; max-width: none; border-radius: 0; border-width: 1px 0 0;
+    padding: 10px 16px 8px; max-height: 60vh; overflow-y: auto; }
+  body.driver-active { padding-bottom: 70vh; }  /* 頁面最下面的區域也能捲到卡片上方 */
+  .driver-popover.tour-pop .driver-popover-title { font-size: 22px; }
+  .driver-popover.tour-pop .driver-popover-description { font-size: 18px; line-height: 1.55; }
+}
 
 /* 本益比的 ⓘ 說明（第十一版） */
 .info { border: 1px solid var(--muted); background: var(--bg); color: var(--muted); border-radius: 50%; width: 20px; height: 20px;

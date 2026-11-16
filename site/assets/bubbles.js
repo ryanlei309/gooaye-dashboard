@@ -75,7 +75,7 @@ const Bubbles = (() => {
       const top = h - (pos - o.e), visible = top < h && top + o.d > 0;
       if (visible) seen.push(o.it.date);
       let b = shown.get(o.it.ticker);
-      if (visible && !b) {
+      if (visible && !b?.isConnected) {  // 不在畫面上的按鈕（被清掉了）也要重新放
         b = button(o.it);
         b.style.width = b.style.height = o.d + "px";
         root.appendChild(b);
@@ -127,10 +127,18 @@ const Bubbles = (() => {
     frame = requestAnimationFrame(tick);
   }
 
+  // 清掉畫面上的泡泡。焦點在泡泡上時先移到泡泡區再清：直接移除有焦點的按鈕會立刻觸發 focusout，它的重畫用舊版面
+  // 把泡泡放回 shown，接著又被一起移除，之後 draw 以為它們還在畫面上、不再放（2026-11-16 第十四版修：剛打開點第一個
+  // 泡泡，左欄多出股票標籤那一列、泡泡區變矮、重新排列，泡泡全部不見，要捲動才出現）
+  function clear() {
+    if (root.contains(document.activeElement) && document.activeElement !== root) root.focus({ preventScroll: true });
+    root.innerHTML = "";
+    shown.clear();
+  }
+
   function start() {
     cancelAnimationFrame(frame);
-    shown.clear();
-    root.innerHTML = "";
+    clear();
     reduced = motion.matches;
     root.classList.toggle("static", reduced);
     playBtn.hidden = whenEl.hidden = reduced;
@@ -151,7 +159,7 @@ const Bubbles = (() => {
     items = [...newItems].sort((a, b) => b.date.localeCompare(a.date) || a.ticker.localeCompare(b.ticker));
     laid = [];
     if (!root.parentElement.hidden) start();
-    else { shown.clear(); root.innerHTML = ""; }
+    else clear();
   }
 
   function refreshPicked() {
