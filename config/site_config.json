@@ -88,7 +88,7 @@
    "entry_day": "2022-01-26",
    "source": "nasdaq",
    "pe_mention": "loss",
-   "eps_ttm": null,
+   "eps_ttm": -13.81,
    "eps_basis_date": "2026-11-16",
    "delisted_later": true
   },
@@ -308,8 +308,8 @@
    "early": false,
    "entry_day": "2022-06-15",
    "source": "yahoo",
-   "pe_mention": null,
-   "eps_ttm": null,
+   "pe_mention": 23.08,
+   "eps_ttm": 9.3,
    "eps_basis_date": "2026-11-16"
   },
   {
@@ -342,7 +342,7 @@
    "entry_day": "2022-08-17",
    "source": "yahoo",
    "pe_mention": null,
-   "eps_ttm": null,
+   "eps_ttm": 2.0738,
    "eps_basis_date": "2026-11-16"
   },
   {
@@ -594,7 +594,7 @@
    "early": false,
    "entry_day": "2023-10-09",
    "source": "yahoo",
-   "pe_mention": null,
+   "pe_mention": "loss",
    "eps_ttm": 3.5000000000000004,
    "eps_basis_date": "2026-11-16"
   },
@@ -771,7 +771,7 @@
    "entry_day": "2024-11-04",
    "source": "yahoo",
    "pe_mention": 24.88,
-   "eps_ttm": 10.26,
+   "eps_ttm": 12.48,
    "eps_basis_date": "2026-11-16"
   },
   {
@@ -782,7 +782,7 @@
    "entry_day": "2024-11-04",
    "source": "yahoo",
    "pe_mention": 20.22,
-   "eps_ttm": null,
+   "eps_ttm": 3.01,
    "eps_basis_date": "2026-11-16"
   },
   {
@@ -1012,7 +1012,7 @@
    "early": false,
    "entry_day": "2026-03-23",
    "source": "yahoo",
-   "pe_mention": null,
+   "pe_mention": "loss",
    "eps_ttm": 4.63,
    "eps_basis_date": "2026-11-16"
   },
@@ -1089,8 +1089,8 @@
    "early": false,
    "entry_day": "2026-10-05",
    "source": "yahoo",
-   "pe_mention": "loss",
-   "eps_ttm": null,
+   "pe_mention": 129.42,
+   "eps_ttm": 1.49,
    "eps_basis_date": "2026-11-16"
   },
   {
@@ -1232,7 +1232,7 @@
    "early": true,
    "entry_day": "2020-03-26",
    "source": "yahoo",
-   "pe_mention": 525.0,
+   "pe_mention": 262.5,
    "eps_ttm": -1.97,
    "eps_basis_date": "2026-11-16"
   },
@@ -1431,7 +1431,7 @@
    "entry_day": "2020-06-10",
    "source": "yahoo",
    "pe_mention": 7.74,
-   "eps_ttm": null,
+   "eps_ttm": 10.27,
    "eps_basis_date": "2026-11-16"
   },
   {

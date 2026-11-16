@@ -43,15 +43,15 @@
 <main class="grid">
   <section class="bubbles-panel" aria-label="每一檔第一次提到之後至今，和 S&amp;P 500 比">
     <div class="panel-head">
-      <div class="seg" role="group" aria-label="顯示方式">
+      <div class="textseg" role="group" aria-label="顯示方式">
         <button type="button" data-view="bubbles" aria-pressed="true">泡泡</button>
         <button type="button" data-view="table" aria-pressed="false">表格</button>
       </div>
-      <label class="year-pick"><span class="visually-hidden">首次提及的年份</span><select id="year"></select></label>
-      <div class="seg" role="group" aria-label="表格內容" id="table-mode" hidden>
+      <div class="textseg" role="group" aria-label="表格內容" id="table-mode" hidden>
         <button type="button" data-mode="ret" aria-pressed="true">報酬</button>
         <button type="button" data-mode="pe" aria-pressed="false">本益比</button>
       </div>
+      <label class="year-pick">年份：<select id="year" aria-label="首次提及的年份"></select><span class="caret" aria-hidden="true">▾</span></label>
     </div>
     <div class="chips" id="chips"></div>
     <div class="bubbles-wrap">

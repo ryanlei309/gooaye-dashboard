@@ -1,10 +1,13 @@
-// 本益比欄名旁的 ⓘ 說明（2026-11-16 第十一版）：表格和明細表共用。
+// 本益比欄名旁的 ⓘ 說明（2026-11-16 第十一版；第十二版起只在表格，說明視窗共用同一份文字）。
 // 電腦：滑過顯示、點一下固定；手機：點一下顯示、再點一次或點別處關閉；鍵盤：Enter／空白鍵打開、Esc 關閉並回到按鈕。
 // 每個按鈕有自己的可存取名稱（例如「現在本益比說明」），打開時用 aria-describedby 連到說明文字。
 "use strict";
 const Info = (() => {
   let pop, current = null, pinned = false;
   const hover = matchMedia("(hover: hover) and (pointer: fine)");
+
+  // 說明文字：第一行標題（粗體），之後每一行一段（公式、說明）；文字是網站自己的，沒有外來內容
+  const peInfoHtml = (kind) => T.peInfo[kind].split("\n").map((line, i) => (i ? `<span>${line}</span>` : `<strong>${line}</strong>`)).join("");
 
   const button = (kind) => `<button type="button" class="info" data-info="${kind}" aria-label="${T.peInfoLabel[kind]}" ` +
     `aria-expanded="false" aria-controls="info-pop">ⓘ</button>`;
@@ -19,7 +22,7 @@ const Info = (() => {
   function show(btn, pin) {
     if (current && current !== btn) hide();
     current = btn; pinned = pinned || pin;
-    pop.textContent = T.peInfo[btn.dataset.info];
+    pop.innerHTML = peInfoHtml(btn.dataset.info);
     pop.hidden = false;
     btn.setAttribute("aria-expanded", "true");
     btn.setAttribute("aria-describedby", "info-pop");
@@ -62,5 +65,5 @@ const Info = (() => {
     addEventListener("resize", () => current && place(current));
   }
 
-  return { init, button };
+  return { init, button, peInfoHtml };
 })();

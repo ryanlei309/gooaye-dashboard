@@ -96,7 +96,7 @@ const Dialogs = (() => {
 
   // 本益比怎麼看（只供參考；第十一版：三個說明和表格、明細表的 ⓘ 同一份文字）
   function peSection() {
-    const items = ["mention", "now", "fwd"].map((k) => `<li>${T.peInfo[k]}</li>`).join("");
+    const items = ["mention", "now", "fwd"].map((k) => `<li class="pe-info">${Info.peInfoHtml(k)}</li>`).join("");
     if (en) return `
       <h3>How to read the P/E ratios (reference only)</h3>
       <ul>

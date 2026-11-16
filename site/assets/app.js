@@ -65,9 +65,6 @@
     const row = (name, f) => `<tr><th scope="row">${name}</th>${cols.map(([k]) => f(k)).join("")}</tr>`;
     const path = (name, f, c = () => "") => row(name, (k) => (p[k] ? td(p[k], f, c(p[k])) : `<td class="n">—</td>`));
     const at = (v, d) => `${F.pct(v)}<span class="u">${T.atDay(d)}</span>`;
-    // 本益比只有這一檔自己的（大盤的欄位空著）
-    const peRow = (name, v, kind) => `<tr><th scope="row">${name} ${Info.button(kind)}</th><td class="n">${F.pe(v)}</td>` +
-      `<td class="n"></td><td class="n"></td></tr>`;
     const span = win.end ? T.window12(F.date(win.start), F.date(win.end)) : T.window12Open(F.date(win.start), p.stock.days);
     const sec = (text) => `<tr class="sec"><th scope="colgroup" colspan="${cols.length + 1}">${text}</th></tr>`;
     const company = LANG === "en" ? e.company_en || e.company : e.company;
@@ -90,10 +87,6 @@
           ${path(T.rowUp20, (m) => F.day(m.days_to_up))}
           ${path(T.rowMaxGain, (m) => at(m.max_gain, m.max_gain_day), (m) => F.cls(m.max_gain))}
           ${path(T.rowMaxLoss, (m) => at(m.max_loss, m.max_loss_day), (m) => F.cls(m.max_loss))}
-          ${sec(T.peSection)}
-          ${peRow(T.rowPeMention, b.pe && b.pe.mention, "mention")}
-          ${peRow(T.rowPeNow, b.pe && b.pe.now, "now")}
-          ${peRow(T.rowPeFwd, b.pe && b.pe.fwd, "fwd")}
         </tbody></table></div>`;
   }
 
@@ -175,6 +168,14 @@
   $("year").innerHTML = [["all", T.yearAll], ...years.map((y) => [y, y]), ["early", T.yearEarly]]
     .map(([v, n]) => `<option value="${v}">${n}</option>`).join("");
   const inYear = (y) => (b) => (y === "all" ? true : y === "early" ? b.early : !b.early && b.date.startsWith(y));
+  // 年份選單的寬度跟著目前選的那一項（原生 select 預設是最長選項的寬度，▾ 會離文字很遠）
+  const fitYear = () => {
+    const sel = $("year"), c = document.createElement("canvas").getContext("2d");
+    c.font = getComputedStyle(sel).font;
+    sel.style.width = Math.ceil(c.measureText(sel.options[sel.selectedIndex].text).width) + 26 + "px";  // 文字＋▾ 的空間
+  };
+  fitYear();
+  $("year").addEventListener("change", fitYear);
   $("year").addEventListener("change", () => {
     const f = inYear($("year").value);
     Bubbles.setItems(items.filter(f));
