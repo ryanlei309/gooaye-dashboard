@@ -294,9 +294,11 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
 /* 卡片和說明視窗同一種樣子：米白底、黑框；左上語言、右上 ×、
    右下下一頁（第 2 頁起左下上一頁）、最下面五個小點。文字 19px、標題 24px；第 1、5 頁在畫面中間、文字置中，其他靠左 */
 .driver-popover.tour-pop { background: var(--bg); color: var(--ink); border: 1px solid var(--ink); border-radius: 4px;
-  padding: 14px 22px 10px; min-width: 0; max-width: min(500px, calc(100vw - 32px)); width: 500px; }  /* 第十五版加寬 440 → 500 */
+  padding: 14px 22px 10px; width: max-content; min-width: min(500px, calc(100vw - 32px)); max-width: calc(100vw - 32px); }
+/* 第十七版：電腦上完全照使用者給的換行——卡片寬度跟著最長的一行（至少第十五版的 500px／中間 620px），標題不撐寬卡片、太長就換行 */
+.tour-pop .driver-popover-title { width: 0; min-width: 100%; }
 .driver-popover.tour-pop * { font-family: var(--serif); }  /* 卡片所有文字用襯線字（第十五版） */
-.driver-popover.tour-pop.tour-center { width: 620px; max-width: calc(100vw - 32px); text-align: center; }
+.driver-popover.tour-pop.tour-center { min-width: min(620px, calc(100vw - 32px)); text-align: center; }
 .tour-pop .tour-lang { display: flex; gap: 2px; font-size: 0.95rem; padding-right: 40px; }
 .tour-pop .tour-lang a { padding: 4px 2px; text-decoration: none; color: var(--ink); }
 .tour-pop .tour-lang a[aria-current="page"] { font-weight: 700; text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
@@ -333,7 +335,7 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
 /* 手機：卡片固定在畫面底部（不蓋住亮的區域：導覽會把亮的區域捲到畫面上方），不顯示箭頭 */
 @media (max-width: 600px), (max-height: 500px) {
   .driver-popover.tour-pop, .driver-popover.tour-pop.tour-center { position: fixed; top: auto !important; bottom: 0 !important;
-    left: 0 !important; right: 0 !important; width: auto; max-width: none; border-radius: 0; border-width: 1px 0 0;
+    left: 0 !important; right: 0 !important; width: auto; min-width: 0; max-width: none; border-radius: 0; border-width: 1px 0 0;
     padding: 10px 16px 8px; max-height: 60vh; overflow-y: auto; }
   body.driver-active { padding-bottom: 70vh; }  /* 頁面最下面的區域也能捲到卡片上方 */
   .driver-popover.tour-pop .driver-popover-title { font-size: 22px; }
