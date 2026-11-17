@@ -1,13 +1,14 @@
 // 第一次進站的導覽（2026-11-16 第九版；第十四版改成聚光燈式）：在真的網頁上進行，整個畫面變暗，只把要介紹的區域挖亮，
 // 旁邊放說明卡片（Driver.js 1.3.1，MIT，放在 assets/vendor/，不向其他網站發請求）。
-// 第 1、5 頁：畫面中間的卡片、不挖亮；第 2 頁左欄（泡泡和表格）、第 3 頁走勢圖、第 4 頁明細表。
+// 第 1、2、6 頁：畫面中間的卡片、不挖亮；第 3 頁左欄（泡泡和表格）、第 4 頁走勢圖、第 5 頁明細表
+// （2026-11-17 插入第 2 頁「為什麼做這個」，原本的第 2～5 頁變成第 3～6 頁）。
 // 導覽開始時暫時選 SMTC 和 TEAM（明細顯示 TEAM），結束或關掉後恢復訪客原本的狀態（app.js 提供 save／demo／restore）。
 // 只在第一次自動打開，看完或關掉後記在瀏覽器裡（localStorage，只存兩個「看過了」的記號，不送出任何資料；瀏覽器不讓存時照樣能用，
 // 只是每次都會打開）。語言：第一次進中文版首頁、瀏覽器語言不是中文時，自動轉到英文版（只轉一次）。導覽裡切換語言＝整個網站切換，
 // 切過去後導覽停在同一頁（網址 #tour-頁數）。
 "use strict";
 const Tour = (() => {
-  const KEY_DONE = "gooaye.tour.done", KEY_LANG = "gooaye.lang.checked", PAGES = 5;
+  const KEY_DONE = "gooaye.tour.done", KEY_LANG = "gooaye.lang.checked", PAGES = 6;
   const store = {
     get(k) { try { return localStorage.getItem(k); } catch { return null; } },
     set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } },
@@ -18,6 +19,11 @@ const Tour = (() => {
       page: (i) => `第 ${i} 頁，共 ${PAGES} 頁`,
       pages: [
         { title: "謝孟恭提到的股票，後來贏過大盤嗎？", body: "我們找出他在節目中第一次提到每檔美股的日期，算出之後的報酬，和 S&amp;P 500 比較。" },
+        // 第 2 頁「為什麼做這個」（2026-11-17）：天數和勝率由程式帶入（summary.main.up10、summary.main.spy.win）
+        { title: "為什麼做這個？", body: (f) => "孟恭一集常提到很多股票，事後很難記得哪些真的漲了。" +
+            "只看「第一次」提到，因為那是最新的消息；之後再提，股價可能早就反映了。" +
+            (f.days != null ? `一半的股票在 ${f.days} 天內曾漲到 +10%，但持有一年後，只有 ${f.win} 贏過 S&amp;P 500。` : "") +
+            "本網站適合當研究的起點，不適合當買賣訊號。" },
         { body: "每個泡泡是一檔股票：代號、第一次提到的日期，以及從那天到今天贏或輸 S&amp;P 500 多少。實心紅色是贏，空心綠色是輸。切換到『表格』可以看完整清單、排序，也可以切換看報酬或本益比。",
           keep: ["多少", "也可以"] },
         { body: "點一下股票，走勢圖會加上它的線，和 S&amp;P 500、費半一起比較。虛線是第一次提到的那天。", keep: ["和 S&amp;P 500"] },
@@ -31,6 +37,10 @@ const Tour = (() => {
       page: (i) => `Page ${i} of ${PAGES}`,
       pages: [
         { title: "Did the stocks mentioned on the Gooaye podcast beat the market?", body: "We found the first time each US stock came up on the show, then tracked how it did against the S&amp;P 500." },
+        { title: "Why this exists", body: (f) => "MK mentions many stocks each episode, and it’s hard to remember which ones actually went up. " +
+            "I only look at the first mention, when the news was fresh. By later mentions, the price may have already moved. " +
+            (f.days != null ? `Half the stocks touched +10% within ${f.days} days, yet after a year only ${f.win} beat the S&amp;P 500. ` : "") +
+            "Use it as a starting point for your own research, not as a buy or sell signal." },
         { body: "Each bubble is one stock: its ticker, the date it was first mentioned, and how far it is ahead of or behind the S&amp;P 500 since then. Solid green beat the index; outlined red trailed it. Switch to Table for the full, sortable list, with returns or P/E." },
         { body: "Click a stock to add its line to the chart, alongside the S&amp;P 500 and the semiconductor index. The dotted line marks the day it was first mentioned." },
         { body: "Below the chart is the stock’s report card:",
@@ -41,8 +51,8 @@ const Tour = (() => {
     },
   }[LANG];
   // 挖亮的區域與卡片的位置（電腦；手機的卡片固定在畫面底部，見 style.css）。手機第 4 頁只挖亮明細的對照表（整個明細比畫面高）
-  const AREA = { 2: { element: ".bubbles-panel", side: "right" }, 3: { element: ".chart-panel", side: "left" },
-                 4: { element: "#detail", phone: "#detail .cmp-box", side: "left" } };
+  const AREA = { 3: { element: ".bubbles-panel", side: "right" }, 4: { element: ".chart-panel", side: "left" },
+                 5: { element: "#detail", phone: "#detail .cmp-box", side: "left" } };
   const phone = matchMedia("(max-width: 600px), (max-height: 500px)");
   let drv = null, ctx = null, saved = null, opener = null;
 
@@ -56,8 +66,8 @@ const Tour = (() => {
     const all = [...new Set([...(words || []), "S&amp;P 500"])].sort((a, b) => b.length - a.length);
     return s.replace(new RegExp(all.map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"), "g"), (w) => `<span class="nw">${w}</span>`);
   };
-  // 卡片內文：一段（每句一行）、條列（第 4 頁，第十五版）、灰色斜體的聲明（第 5 頁）
-  const content = (p) => (p.body ? `<p>${lines(keep(p.body, p.keep))}</p>` : "") +
+  // 卡片內文：一段（每句一行）、條列（第十五版，現在是第 5 頁）、灰色斜體的聲明（最後一頁）
+  const content = (p) => (p.body ? `<p>${lines(keep(typeof p.body === "function" ? p.body(ctx.facts) : p.body, p.keep))}</p>` : "") +
     (p.items ? `<ul class="tour-list">${p.items.map((x) => `<li>${glue(keep(x, p.keep))}</li>`).join("")}</ul>` : "") +
     (p.note ? `<p class="tour-note">${lines(p.note)}</p>` : "");
 
@@ -74,7 +84,7 @@ const Tour = (() => {
     lang.querySelectorAll("a").forEach((a) => { a.href = a.getAttribute("href").split("#")[0] + `#tour-${n}`; });
     pop.wrapper.prepend(lang);
     pop.closeButton.setAttribute("aria-label", TEXT.close);
-    if (!p.title) {  // 沒有標題的頁：標題念「第 n 頁，共 5 頁」（讀屏軟體用），畫面上不顯示
+    if (!p.title) {  // 沒有標題的頁：標題念「第 n 頁，共 6 頁」（讀屏軟體用），畫面上不顯示
       pop.title.textContent = TEXT.page(n);
       pop.title.style.display = "block";
       pop.title.classList.add("visually-hidden");
@@ -96,7 +106,7 @@ const Tour = (() => {
         onHighlightStarted: (el) => scrollAbove(el),
         popover: {
           title: p.title ? glue(p.title) : "", description: content(p),
-          side: area?.side, align: "start", popoverClass: `tour-pop ${area ? "tour-side" : "tour-center"}${n === 1 ? " tour-first" : ""}`,
+          side: area?.side, align: "start", popoverClass: `tour-pop ${area ? "tour-side" : "tour-center"}${n === 1 ? " tour-first" : n === 2 ? " tour-why" : ""}`,
           showButtons: n === 1 ? ["next", "close"] : ["previous", "next", "close"],
         },
       };
@@ -136,7 +146,7 @@ const Tour = (() => {
     addEventListener("orientationchange", () => setTimeout(() => { if (drv) { scrollAbove(drv.getActiveElement()); drv.refresh(); } }, 300));
     phone.addEventListener("change", () => { if (drv) { scrollAbove(drv.getActiveElement()); drv.refresh(); } });
 
-    const m = /^#tour-([1-5])$/.exec(location.hash);  // 從另一個語言的導覽切過來
+    const m = /^#tour-([1-6])$/.exec(location.hash);  // 從另一個語言的導覽切過來
     if (m) {
       history.replaceState(null, "", location.pathname + location.search);
       store.set(KEY_LANG, "1");

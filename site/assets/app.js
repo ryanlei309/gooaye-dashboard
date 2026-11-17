@@ -195,6 +195,7 @@
   // 導覽（第十四版聚光燈）：開始時暫時選 SMTC 和 TEAM（明細顯示 TEAM），結束或關掉後恢復訪客原本的狀態
   // （已選的股票、正在看的那檔、泡泡／表格、報酬／本益比、年份、時間區間）
   Tour.init({
+    facts: { days: m.up10?.median_days ?? null, win: F.share(m.spy.win) },  // 導覽第 2 頁的數字（和主結論同一組）
     save: () => ({ picked: [...state.picked], focus: state.focus, days: state.days, rangeSet: state.rangeSet, view: state.view,
                    mode: document.querySelector('[data-mode][aria-pressed="true"]')?.dataset.mode || "ret", year: $("year").value }),
     demo: () => {

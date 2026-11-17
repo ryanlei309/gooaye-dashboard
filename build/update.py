@@ -250,6 +250,20 @@ def r6(x):
     return None if x is None else round(x, 6)
 
 
+def up10_half(bubbles: list[dict]) -> dict:
+    """For the tour (2026-11-17): the main-result stocks (2022 on, 12 months done, USD). "Half the stocks touched +10%
+    within X trading days": a stock that never reached +10% in its 12 months counts as infinitely long; X is the median,
+    rounded up. median_days is None when fewer than half reached +10% (the tour sentence then needs rewording)."""
+    main = [b for b in bubbles if not b["early"] and b["paths"]["USD"]["stock"]["done"] and b["paths"]["USD"]["spy"]["done"]]
+    if not main:
+        return {"n": 0, "hit_share": None, "median_days": None}
+    days = sorted(math.inf if (d := b["paths"]["USD"]["stock"]["days_to_up_10"]) is None else d for b in main)
+    n = len(days)
+    mid = days[n // 2] if n % 2 else (days[n // 2 - 1] + days[n // 2]) / 2
+    return {"n": n, "hit_share": r6(sum(d != math.inf for d in days) / n),
+            "median_days": None if mid == math.inf else math.ceil(mid)}
+
+
 def compute(cfg: dict, series: dict, spy: Series, sox: Series, splits: dict | None = None, fwd: dict | None = None) -> dict:
     """All price-based numbers. series: ticker -> Series (adjusted). splits/fwd: optional per-ticker split ratios and
     forward P/E (reference only). Returns the site's data files."""
@@ -324,6 +338,7 @@ def compute(cfg: dict, series: dict, spy: Series, sox: Series, splits: dict | No
         "etfs": cfg["etfs"], "reclassified": cfg.get("reclassified", []), "bubbles": bubbles,
         "path_summary": {str(round(th * 100)): {"USD": summary_paths(th)} for th in THRESHOLDS},
     }
+    summary["main"]["up10"] = up10_half(bubbles)  # 導覽「為什麼做這個」那一頁的數字
     chart_days = [d for d in days if d >= CHART_START]
     aligned = lambda x: [round(c, 4) if c is not None else None
                          for c in (dict(zip(x.dates, x.closes)).get(d) for d in chart_days)]
