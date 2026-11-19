@@ -473,79 +473,28 @@ def insight_warnings(ins: dict) -> list[str]:
 
 # ---- CSV download (2026-11-19): numbers only, no quotes; one row per main-result stock ----------------
 
+
+# Column names say what each column is (2026-11-19 v20); the full definitions are in the "Column guide" dialog on the
+# Insights page (site/assets/insights.js, COLUMNS), which must use these exact names.
 CSV_HEAD = {
-    "zh": ["代號", "公司名", "第一次提到的集數", "第一次提到的日期", "買進日", "出場日", "買進價（美元）", "出場價（美元）",
-           "個股一年報酬（%）", "S&P 500 同期報酬（%）", "超額報酬（%）", "是否贏", "提到前 60 個交易日的超額報酬（%）",
-           "第幾天碰到 +10%", "第幾天碰到 +20%", "第幾天碰到 +100%", "第幾天碰到 -10%", "第幾天碰到 -20%", "第幾天碰到 -50%"],
-    "en": ["Ticker", "Company", "First-mention episode", "First-mention date", "Entry day", "Exit day", "Entry price (USD)",
-           "Exit price (USD)", "Stock 1-year return (%)", "S&P 500 return, same days (%)", "Excess return (%)", "Beat the S&P 500",
-           "Excess return in the 60 trading days before the mention (%)",
-           "Day it hit +10%", "Day it hit +20%", "Day it hit +100%", "Day it hit -10%", "Day it hit -20%", "Day it hit -50%"],
+    "zh": ["代號", "公司名稱", "第一次提到的集數", "第一次提到的日期", "買進日（提到後第一個交易日）", "出場日（買進後第 252 個交易日）",
+           "買進價（買進日開盤，美元）", "出場價（出場日收盤，美元）", "個股一年報酬（%）", "S&P 500 同期報酬（%）",
+           "一年後比大盤多漲（%）", "是否贏過大盤", "提到前 60 個交易日比大盤多漲（%）",
+           "第幾個交易日首次漲到 +10%", "第幾個交易日首次漲到 +20%", "第幾個交易日首次漲到 +100%（翻倍）",
+           "第幾個交易日首次跌到 -10%", "第幾個交易日首次跌到 -20%", "第幾個交易日首次跌到 -50%（腰斬）"],
+    "en": ["Ticker", "Company", "First-mention episode", "First-mention date", "Entry day (first trading day after the mention)",
+           "Exit day (252nd trading day after entry)", "Entry price (entry-day open, USD)", "Exit price (exit-day close, USD)",
+           "Stock 1-year return (%)", "S&P 500 return, same days (%)", "1-year return above the market (%)", "Beat the market",
+           "Rise above the market in the 60 trading days before the mention (%)",
+           "Trading day it first rose +10%", "Trading day it first rose +20%", "Trading day it first rose +100% (doubled)",
+           "Trading day it first fell -10%", "Trading day it first fell -20%", "Trading day it first fell -50% (halved)"],
 }
 CSV_YES = {"zh": ("是", "否"), "en": ("yes", "no")}
-CSV_FILES = {"zh": ("data/insights-data.csv", "data/insights-columns.txt"),
-             "en": ("data/insights-data-en.csv", "data/insights-columns-en.txt")}
-COLUMNS_TXT = {
-    "zh": """《股癌》提到的股票：數據觀察的原始數據（欄位說明）
-
-這份 CSV 是數據觀察第 1～3 章和首頁主結論用的同一組股票：2022 年起第一次被提到、而且已經滿一年（252 個交易日）的美股個股，每一檔一列。
-只有數字，沒有節目原話。每天和網站一起更新。股價是 Yahoo Finance 調整過分割和配息的價格（少數幾檔用 Nasdaq），所以可能和當時看到的報價不同。
-非官方網站，與節目及主持人無關，內容不構成投資建議。
-
-代號：美股代號。
-公司名：公司名稱。
-第一次提到的集數、第一次提到的日期：2022 年起第一次被提到的那一集和它的發布日期。
-買進日：那一集發布之後，第一個開盤的美股交易日（發布時間早於美東時間 9:30 開盤，就是當天）。
-出場日：買進日之後第 252 個交易日（約一年；交易日照 S&P 500 ETF（SPY）的交易日）。
-買進價（美元）：買進日的開盤價。
-出場價（美元）：出場日的收盤價。
-個股一年報酬（%）：出場價 ÷ 買進價 − 1。
-S&P 500 同期報酬（%）：SPY 用同一個買進日的開盤價、同一個出場日的收盤價，同樣算法。
-超額報酬（%）：個股一年報酬減 S&P 500 同期報酬。可能小於 −100%。
-是否贏：超額報酬大於 0 是「是」，其他是「否」。網頁上的勝率＝「是」的檔數 ÷ 全部檔數。
-提到前 60 個交易日的超額報酬（%）：買進日前 60 個交易日到買進日，個股比 S&P 500 多漲多少（負的是少漲）。算法和數據觀察第 2 章一樣：
-  以買進日的開盤價為基準，（1 − 第 −60 天收盤 ÷ 買進價）減去 S&P 500 同樣算法，也就是第 2 章圖上第 −60 天那個數字的相反數。
-  那一天還沒有股價（例如剛上市）的留空。
-第幾天碰到 +10%／+20%／+100%：從買進日（第 0 天）起，收盤價第一次比買進價高 10%、20%、100%（翻倍）是第幾個交易日；一年內沒碰到的留空。
-第幾天碰到 -10%／-20%／-50%：收盤價第一次比買進價低 10%、20%、50%（腰斬）是第幾個交易日；一年內沒碰到的留空。
-
-和網頁數字的關係：超額報酬的中位數、平均數，「是」的比例，+100% 和 -50% 有填的比例，都和數據觀察頁上的數字完全一樣（有自動測試核對）。
-""",
-    "en": """Stocks mentioned on the Gooaye podcast: raw data behind the Insights page (column definitions)
-
-This CSV covers the same stocks as Insights chapters 1-3 and the main result: US stocks first mentioned from 2022 on whose
-one-year window (252 trading days) is complete, one row per stock. Numbers only, no quotes from the show. Updated daily with
-the site. Prices are Yahoo Finance prices adjusted for splits and dividends (Nasdaq for a few), so they can differ from the
-quotes you saw at the time. Unofficial site, not affiliated with the show or its host. Not investment advice.
-
-Ticker: US ticker.
-Company: company name.
-First-mention episode, First-mention date: the episode in which the stock was first mentioned (from 2022 on) and its release date.
-Entry day: the first US trading session that opens after the episode is released (released before the 9:30 a.m. ET open = that day).
-Exit day: the 252nd trading day after the entry day (about a year; trading days follow the S&P 500 ETF, SPY).
-Entry price (USD): open on the entry day.
-Exit price (USD): close on the exit day.
-Stock 1-year return (%): exit price / entry price - 1.
-S&P 500 return, same days (%): the same calculation for SPY, entry-day open to exit-day close.
-Excess return (%): stock 1-year return minus the S&P 500 return. Can be below -100%.
-Beat the S&P 500: "yes" if the excess return is above 0, otherwise "no". The page's win rate = yes / all rows.
-Excess return in the 60 trading days before the mention (%): how much more the stock rose than the S&P 500 from 60 trading
-  days before the entry day to the entry day (negative = rose less). Same as Insights chapter 2: based on the entry-day
-  open, (1 - close on day -60 / entry price) minus the same for the S&P 500, i.e. minus the chapter 2 chart's day -60 value.
-  Blank if there was no price yet (for example, a recent IPO).
-Day it hit +10% / +20% / +100%: the trading day (entry day = day 0) on which the close first reached 10%, 20%, 100% (doubled)
-  above the entry price; blank if it never did within the year.
-Day it hit -10% / -20% / -50%: the trading day on which the close first fell 10%, 20%, 50% (halved) below the entry price;
-  blank if it never did within the year.
-
-How it matches the page: the median and mean excess return, the share of "yes", and the share of rows with +100% and -50%
-filled in equal the numbers on the Insights page exactly (checked by automated tests).
-""",
-}
+CSV_FILES = {"zh": "data/insights-data.csv", "en": "data/insights-data-en.csv"}
 
 
 def downloads(stocks: list[dict], series: dict, spy: Series, names: dict) -> dict:
-    """The Insights CSV downloads, Chinese and English, and their column definitions: {site path: text}. Sorted by first
+    """The Insights CSV downloads, Chinese and English: {site path: text}. Sorted by first
     mention. Percentages have 4 decimals (the page's numbers are rounded to 6 decimals as fractions, the same precision)."""
     import csv
     import io
@@ -563,9 +512,7 @@ def downloads(stocks: list[dict], series: dict, spy: Series, names: dict) -> dic
                         f"{r['buy']:.4f}", f"{r['sell']:.4f}", pct(r["ret"]), pct(r["spy_ret"]), pct(r["x"]),
                         CSV_YES[lang][0 if r["x"] > 0 else 1], pct(None if r["path"] is None else -r["path"][0]),
                         *(day(r["up"][th]) for th in UP_TH), *(day(r["down"][th]) for th in DOWN_TH)])
-        data_path, col_path = CSV_FILES[lang]
-        out[data_path] = "\ufeff" + buf.getvalue()  # the BOM lets Excel read the Chinese correctly
-        out[col_path] = "\ufeff" + COLUMNS_TXT[lang]
+        out[CSV_FILES[lang]] = "\ufeff" + buf.getvalue()  # the BOM lets Excel read the Chinese correctly
     return out
 
 

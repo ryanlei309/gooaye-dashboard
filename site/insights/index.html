@@ -45,7 +45,7 @@
   <p class="ins-kicker">數據觀察</p>
   <p class="ins-intro" id="ins-intro"></p>
   <div id="chapters" aria-live="polite"></div>
-  <p class="ins-download"><a href="../data/insights-data.csv" download>下載原始數據（CSV）</a><span class="sep" aria-hidden="true">｜</span><a href="../data/insights-columns.txt">欄位說明</a><br><span class="dl-note">主結論那 83 檔，每一檔一列；只有數字，沒有原話，每天更新。</span></p>
+  <p class="ins-download"><a href="../data/insights-data.csv" download>下載原始數據（CSV）</a><span class="sep" aria-hidden="true">｜</span><button type="button" id="columns-open" class="link-btn">欄位說明</button></p>
   <p class="ins-back"><a href="../">← 回首頁</a></p>
 </main>
 
@@ -58,6 +58,15 @@
   <span class="sep" aria-hidden="true">｜</span>
   <span>回饋歡迎透過 <a href="https://www.linkedin.com/in/yuan-chun-lei-8b533bb3/" target="_blank" rel="noopener noreferrer">LinkedIn</a> 聯絡</span>
 </footer>
+
+<dialog id="columns" aria-labelledby="columns-title">
+  <div class="dialog-head">
+    <h2 id="columns-title">欄位說明</h2>
+    <button type="button" class="link-btn" data-close>關閉</button>
+  </div>
+  <div class="dialog-body" id="columns-body"></div>
+</dialog>
+
 <script src="../assets/i18n.js"></script>
 <script src="../assets/format.js"></script>
 <script src="../assets/insights.js"></script>

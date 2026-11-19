@@ -168,6 +168,78 @@
     },
   }[LANG];
 
+  // 欄位說明視窗（第二十版，原本是 txt 檔）：和首頁「方法與限制」一樣，網址 #columns、Esc 關閉、關掉後焦點回到「欄位說明」。
+  // 欄位名稱必須和 CSV 的表頭（public/build/update.py 的 CSV_HEAD）一模一樣，測試會核對。
+  const COLUMNS = {
+    zh: {
+      intro: ["這份 CSV 是數據觀察第 1～3 章和首頁主結論用的同一組股票：2022 年起第一次被提到、而且已經滿一年（252 個交易日）的美股個股，每一檔一列。",
+        "只有數字，沒有節目原話，每天和網站一起更新。股價是 Yahoo Finance 調整過分割和配息的價格（少數幾檔用 Nasdaq），所以可能和當時看到的報價不同。"],
+      cols: [
+        ["代號", "美股代號。"],
+        ["公司名稱", "公司名稱。"],
+        ["第一次提到的集數", "2022 年起第一次被提到的那一集。"],
+        ["第一次提到的日期", "那一集的發布日期。"],
+        ["買進日（提到後第一個交易日）", "那一集發布之後，第一個開盤的美股交易日（發布時間早於美東時間 9:30 開盤，就是當天）。"],
+        ["出場日（買進後第 252 個交易日）", "買進日之後第 252 個交易日，約一年。交易日照 S&amp;P 500 ETF（SPY）的交易日。"],
+        ["買進價（買進日開盤，美元）", "買進日的開盤價。"],
+        ["出場價（出場日收盤，美元）", "出場日的收盤價。"],
+        ["個股一年報酬（%）", "出場價 ÷ 買進價 − 1。"],
+        ["S&amp;P 500 同期報酬（%）", "SPY 用同一個買進日的開盤價、同一個出場日的收盤價，同樣算法。"],
+        ["一年後比大盤多漲（%）", "個股一年報酬減 S&amp;P 500 同期報酬（也叫超額報酬），負的是少漲。可能小於 −100%。"],
+        ["是否贏過大盤", "上一欄大於 0 是「是」，其他是「否」。網頁上的勝率＝「是」的檔數 ÷ 全部檔數。"],
+        ["提到前 60 個交易日比大盤多漲（%）", "買進日前 60 個交易日到買進日，個股比 S&amp;P 500 多漲多少（負的是少漲）。算法和第 2 章一樣：以買進價為基準，（1 − 第 −60 天收盤 ÷ 買進價）減去 S&amp;P 500 同樣算法，也就是第 2 章圖上第 −60 天那個數字的相反數。那一天還沒有股價（例如剛上市）的留空。"],
+        ["第幾個交易日首次漲到 +10%", "從買進日（第 0 天）起，收盤價第一次比買進價高 10% 是第幾個交易日；一年內沒碰到的留空。"],
+        ["第幾個交易日首次漲到 +20%", "同上，門檻是高 20%。"],
+        ["第幾個交易日首次漲到 +100%（翻倍）", "同上，門檻是高 100%（變 2 倍）。"],
+        ["第幾個交易日首次跌到 -10%", "收盤價第一次比買進價低 10% 是第幾個交易日；一年內沒碰到的留空。"],
+        ["第幾個交易日首次跌到 -20%", "同上，門檻是低 20%。"],
+        ["第幾個交易日首次跌到 -50%（腰斬）", "同上，門檻是低 50%（變一半）。"],
+      ],
+      end: "和網頁數字的關係：「一年後比大盤多漲」的中位數和平均數、「是」的比例、翻倍和腰斬有填的比例，都和這一頁上的數字完全一樣（有自動測試核對）。",
+      head: ["欄位", "意思"],
+    },
+    en: {
+      intro: ["This CSV covers the same stocks as chapters 1–3 and the main result: US stocks first mentioned from 2022 on whose one year (252 trading days) is complete, one row per stock.",
+        "Numbers only, no quotes from the show; updated daily with the site. Prices are Yahoo Finance prices adjusted for splits and dividends (Nasdaq for a few), so they can differ from the quotes you saw at the time."],
+      cols: [
+        ["Ticker", "US ticker."],
+        ["Company", "Company name."],
+        ["First-mention episode", "The episode in which the stock was first mentioned (from 2022 on)."],
+        ["First-mention date", "That episode’s release date."],
+        ["Entry day (first trading day after the mention)", "The first US trading session that opens after the episode is released (released before the 9:30 a.m. ET open = that day)."],
+        ["Exit day (252nd trading day after entry)", "About a year later. Trading days follow the S&amp;P 500 ETF (SPY)."],
+        ["Entry price (entry-day open, USD)", "Open on the entry day."],
+        ["Exit price (exit-day close, USD)", "Close on the exit day."],
+        ["Stock 1-year return (%)", "Exit price ÷ entry price − 1."],
+        ["S&amp;P 500 return, same days (%)", "The same calculation for SPY, entry-day open to exit-day close."],
+        ["1-year return above the market (%)", "Stock 1-year return minus the S&amp;P 500 return (the excess return); negative means it rose less. Can be below −100%."],
+        ["Beat the market", "“yes” if the previous column is above 0, otherwise “no”. The page’s win rate = yes ÷ all rows."],
+        ["Rise above the market in the 60 trading days before the mention (%)", "How much more the stock rose than the S&amp;P 500 from 60 trading days before the entry day to the entry day (negative = rose less). Same as chapter 2: based on the entry price, (1 − close on day −60 ÷ entry price) minus the same for the S&amp;P 500, i.e. minus the chapter 2 chart’s day −60 value. Blank if there was no price yet (for example, a recent IPO)."],
+        ["Trading day it first rose +10%", "Counting the entry day as day 0, the trading day on which the close first reached 10% above the entry price; blank if it never did within the year."],
+        ["Trading day it first rose +20%", "Same, 20% above."],
+        ["Trading day it first rose +100% (doubled)", "Same, 100% above (2×)."],
+        ["Trading day it first fell -10%", "The trading day on which the close first fell 10% below the entry price; blank if it never did within the year."],
+        ["Trading day it first fell -20%", "Same, 20% below."],
+        ["Trading day it first fell -50% (halved)", "Same, 50% below (½×)."],
+      ],
+      end: "How it matches this page: the median and mean of “1-year return above the market”, the share of “yes”, and the share of rows with doubled and halved filled in equal the numbers on this page exactly (checked by automated tests).",
+      head: ["Column", "Meaning"],
+    },
+  }[LANG];
+  const colDlg = document.getElementById("columns"), colOpen = document.getElementById("columns-open");
+  document.getElementById("columns-body").innerHTML = COLUMNS.intro.map((p) => `<p>${p}</p>`).join("") +
+    `<dl class="cols">${COLUMNS.cols.map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join("")}</dl><p>${COLUMNS.end}</p>`;
+  const openCols = (push) => { if (!colDlg.open) colDlg.showModal(); if (push && location.hash !== "#columns") history.pushState(null, "", "#columns"); };
+  colOpen.addEventListener("click", () => openCols(true));
+  colDlg.querySelector("[data-close]").addEventListener("click", () => colDlg.close());
+  colDlg.addEventListener("close", () => {
+    if (location.hash === "#columns") history.replaceState(null, "", location.pathname + location.search);
+    colOpen.focus();
+  });
+  const syncCols = () => (location.hash === "#columns" ? openCols(false) : colDlg.open && colDlg.close());
+  window.addEventListener("hashchange", syncCols);
+  syncCols();
+
   const s = await fetch(ROOT + "data/summary.json").then((r) => { if (!r.ok) throw new Error(r.status); return r.json(); });
   const $ = (id) => document.getElementById(id);
   $("headline").innerHTML = T.headline(F.share(s.main.spy.win), s.main.done);
@@ -185,6 +257,12 @@
     const out = [];
     for (let v = Math.ceil(lo / step) * step; v <= hi + 1e-9; v += step) out.push(Math.round(v * 1e6) / 1e6);
     return out;
+  };
+  // 標籤文字的寬度（和 .fig .lab 同樣的字型、13px），用來判斷放不放得下
+  const measure = document.createElement("canvas").getContext("2d");
+  const textWidth = (str) => {
+    measure.font = `13px ${getComputedStyle(document.body).getPropertyValue("--sans") || "sans-serif"}`;
+    return measure.measureText(str.replace(/&amp;/g, "&")).width;
   };
   const line = (pts) => pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)},${y.toFixed(1)}`).join("");
 
@@ -266,8 +344,13 @@
 
   // 第 4 章：累計提過的不同股票數（階梯線），標出 2022-01-01 的分界
   function ch4(w) {
-    const c = I.ch4, h = Math.round(Math.min(380, Math.max(280, w * 0.5))), m = { l: 44, r: 16, t: 28, b: 30 };
+    const c = I.ch4, h0 = Math.round(Math.min(380, Math.max(280, w * 0.5))), m = { l: 44, r: 16, t: 28, b: 30 };
     const t = (d) => Date.parse(d + "T00:00:00Z"), t0 = t("2020-02-01"), t1 = t(c.last_ep_date || c.steps[c.steps.length - 1].date);
+    // 「暖身期（2020–2021）」放在 2022 分界線左邊；手機上放不下（會被切掉）就拆成兩行，圖的上緣多留一行（第二十版）
+    const xs0 = m.l + ((t("2022-01-01") - t0) / (t1 - t0)) * (w - m.r - m.l);
+    const split = textWidth(TEXT.ch4.early) > xs0 - 10 ? TEXT.ch4.early.split(/(?=（|\s\()/) : [TEXT.ch4.early];
+    if (split.length > 1) m.t += 16;
+    const h = h0 + (split.length > 1 ? 16 : 0);
     const x = scale(t0, t1, m.l, w - m.r), y = scale(0, c.n, h - m.b, m.t);
     let body = ticks(0, c.n, 4).map((v) => `<line x1="${m.l}" x2="${w - m.r}" y1="${y(v)}" y2="${y(v)}" class="grid"/>` +
       txt(m.l - 6, y(v) + 4, v, { class: "tick", "text-anchor": "end" })).join("");
@@ -275,7 +358,8 @@
     const xs = x(t("2022-01-01"));
     body += `<rect x="${m.l}" y="${m.t}" width="${xs - m.l}" height="${h - m.b - m.t}" class="warm"/>`;
     body += `<line x1="${xs}" x2="${xs}" y1="${m.t - 12}" y2="${h - m.b}" class="mark"/>` +
-      txt(xs - 6, m.t - 14, TEXT.ch4.early, { class: "lab", "text-anchor": "end" }) + txt(xs + 6, m.t - 14, TEXT.ch4.since, { class: "lab" });
+      split.map((p, i) => txt(xs - 6, m.t - 14 - (split.length - 1 - i) * 16, p.trim(), { class: "lab", "text-anchor": "end" })).join("") +
+      txt(xs + 6, m.t - 14, TEXT.ch4.since, { class: "lab" });
     const pts = [[x(t0), y(0)]];
     c.steps.forEach((p) => { const xx = x(t(p.date)); pts.push([xx, pts[pts.length - 1][1]], [xx, y(p.n)]); });
     pts.push([x(t1), pts[pts.length - 1][1]]);
@@ -311,7 +395,7 @@
   const draw = () => figs.forEach((f) => { const w = Math.round(f.clientWidth); if (w && Number(f.dataset.w) !== w) { f.dataset.w = w; f.innerHTML = chapters[f.dataset.ch].draw(w); } });
   draw();
   new ResizeObserver(draw).observe(document.getElementById("chapters"));
-  if (location.hash) document.querySelector(location.hash)?.scrollIntoView();
+  if (location.hash && location.hash !== "#columns") document.querySelector(location.hash)?.scrollIntoView();
 })().catch((err) => {
   document.getElementById("chapters").textContent = T.loadFail;
   console.error(err);

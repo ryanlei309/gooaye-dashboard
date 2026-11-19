@@ -410,9 +410,14 @@ a.link-btn { display: inline-flex; align-items: center; color: var(--ink); }
 .chapter .axis-title { margin: 0 0 6px; font-size: 0.85rem; color: var(--muted); line-height: 1.5; }
 .chapter .axis-title.x { margin: 6px 0 0; text-align: center; }
 .fig .side { fill: #9a9586; font-size: 13px; font-family: var(--sans); }
-.ins-download { margin: 0 0 28px; font-size: 1rem; line-height: 1.8; }
-.ins-download .sep { color: var(--muted); margin: 0 6px; }
-.ins-download .dl-note { font-size: 0.85rem; color: var(--muted); }
+/* 第二十版：最下方只留一行小字「下載原始數據（CSV）｜欄位說明」；欄位說明是視窗 */
+.ins-download { margin: 0 0 28px; font-size: 0.85rem; line-height: 1.8; color: var(--muted); }
+.ins-download .sep { margin: 0 6px; }
+.ins-download .link-btn { font-size: inherit; color: var(--ink); }
+.dialog-body dl.cols { margin: 12px 0; }
+.dialog-body dl.cols dt { font-weight: 700; font-size: 0.9rem; margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--rule); }
+.dialog-body dl.cols dd { margin: 2px 0 0; font-size: 0.9rem; line-height: 1.6; }
+:root[lang="en"] .dialog-body dl.cols dd { font-family: var(--serif); }
 .ins-back { margin: 0; }
 .fig .grid { stroke: #e6e1d3; stroke-width: 1; }
 .fig .axis0 { stroke: #a9a395; stroke-width: 1; }
