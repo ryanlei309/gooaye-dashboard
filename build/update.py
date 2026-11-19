@@ -19,6 +19,7 @@ Formulas (same as the research code):
 import argparse
 import json
 import math
+import os
 import shutil
 import sys
 from bisect import bisect_left, bisect_right
@@ -41,7 +42,37 @@ EPS = 1e-9
 
 
 class BuildError(Exception):
-    pass
+    """A reason not to deploy today. zh: a plain-language Chinese explanation for the Actions summary page."""
+
+    def __init__(self, msg, zh=None):
+        super().__init__(msg)
+        self.zh = zh
+
+
+NOTES: list[str] = []  # plain-language notes for the Actions summary (e.g. a stock that used Nasdaq today)
+
+
+def step_summary(text: str) -> None:
+    """Write to the GitHub Actions summary page (what the owner sees after clicking a failure email)."""
+    path = os.environ.get("GITHUB_STEP_SUMMARY")
+    if path:
+        with open(path, "a", encoding="utf-8") as fh:
+            fh.write(text + "\n")
+
+
+def explain(t: str, exc: Exception) -> str:
+    """One plain-language Chinese line per problem (2026-11-19)."""
+    if getattr(exc, "zh", None):
+        return exc.zh
+    msg = str(exc)
+    if "close/open" in msg:
+        return (f"{t}：{msg.split(':')[0]} 這一天的收盤和開盤差超過一倍，可能是資料錯誤。要用 Nasdaq 核對：真的就加進放行清單"
+                f"（price_exceptions），資料錯誤就照規則處理。")
+    if "returned no data" in msg:
+        return f"{t}：Yahoo（和 Nasdaq）都抓不到股價。可能是網路問題或這一檔停止交易；明天會自動再試，連續幾天都失敗就要查是不是下市。"
+    if "far behind" in msg:
+        return f"{t}：最新股價比 S&P 500 晚兩週以上，可能停止交易或下市。查證後照下市規則處理。"
+    return f"{t}：{msg}"
 
 
 # ---- prices ---------------------------------------------------------------------------------------
@@ -158,6 +189,42 @@ def fetch_nasdaq(ticker: str):
     return pd.DataFrame({"Open": [num(r["open"]) for r in rows], "Close": [num(r["close"]) for r in rows]}, index=idx)
 
 
+def incomplete(s: Series, spy: Series, entry) -> str | None:
+    """Why a stock's history looks incomplete, or None: it must have the entry day and almost every S&P 500 trading day
+    from the entry day on (a few missing days are normal halts; more than 5 means the source lost part of the history)."""
+    have = set(s.dates)
+    if entry not in have:
+        return f"沒有進場日 {entry} 的股價（Yahoo 只給了 {len(s.dates)} 天，從 {s.dates[0]} 起）"
+    missing = [d for d in spy.dates if d >= entry and d <= s.dates[-1] and d not in have]
+    return f"從進場日起少了 {len(missing)} 個交易日" if len(missing) > 5 else None
+
+
+def nasdaq_fallback(t: str, yahoo: Series, why: str, entry, jumps, now) -> Series:
+    """Use Nasdaq for one stock when Yahoo's history is incomplete, only if it checks out: it has the entry day, its
+    closes match Yahoo's within 1% on the days both have, and there is no split-like overnight jump after the entry day
+    (Nasdaq prices are not split-adjusted). Otherwise stop with a plain explanation."""
+    try:
+        s = frame_to_series(fetch_nasdaq(t), now, jumps)
+    except (BuildError, ValueError, OSError) as exc:
+        raise BuildError(f"{t}: Yahoo incomplete ({why}); Nasdaq failed: {exc}",
+                         f"{t}：Yahoo 的歷史股價不完整（{why}），Nasdaq 也抓不到（{exc}）。明天會自動再試。")
+    ny = dict(zip(s.dates, s.closes))
+    off = [d for d, c in zip(yahoo.dates, yahoo.closes) if d in ny and abs(ny[d] / c - 1) > 0.01]
+    i = bisect_left(s.dates, entry)
+    jump = next((s.dates[k] for k in range(max(i, 1), len(s.dates))
+                 if not 0.6 < s.closes[k] / s.closes[k - 1] < 1.8 and s.dates[k] not in jumps), None)
+    problem = ("Nasdaq 沒有進場日的股價" if i >= len(s.dates) or s.dates[i] != entry
+               else f"兩邊的收盤價在 {off[0]} 差超過 1%" if off
+               else f"Nasdaq 在 {jump} 有像股票分割的大跳動（Nasdaq 的價格沒有調整分割）" if jump else None)
+    if problem:
+        raise BuildError(f"{t}: Yahoo incomplete ({why}); Nasdaq check failed ({problem})",
+                         f"{t}：Yahoo 的歷史股價不完整（{why}），改用 Nasdaq 但核對沒過（{problem}）。要人工查證後處理。")
+    NOTES.append(f"- {t}：Yahoo 的歷史股價不完整（{why}），今天改用 Nasdaq 的股價（核對過：有進場日、和 Yahoo 重疊的日子收盤差不到 1%、"
+                 f"沒有像分割的大跳動）。Nasdaq 的價格沒有調整配息，有配息的股票報酬會略低一點。")
+    print(f"note: {t} used Nasdaq ({why})", file=sys.stderr)
+    return s
+
+
 # ---- formulas ---------------------------------------------------------------------------------------
 
 def exit_day(entry, n, days):
@@ -264,6 +331,92 @@ def up10_half(bubbles: list[dict]) -> dict:
             "median_days": None if mid == math.inf else math.ceil(mid)}
 
 
+# ---- Insights page (2026-11-18; definitions fixed in the research spec before computing) -----------------
+
+PRE, POST = 60, 250            # chapter 2: trading days before and after the entry day
+UP_TH = (0.10, 0.20, 1.00)     # chapter 3: rose +10%, +20%, doubled
+DOWN_TH = (0.10, 0.20, 0.50)   # fell -10%, -20%, halved
+SPY_TH = (0.10, 0.20)          # the S&P 500 over the same windows: only ±10%, ±20%
+TOP = 5                        # chapter 1: share of the total excess return from the top 5
+
+
+def quantile(xs, q):
+    """Linear interpolation between order statistics (the usual definition; quantile(xs, 0.5) is the median)."""
+    v = sorted(xs)
+    k = (len(v) - 1) * q
+    i = math.floor(k)
+    return v[i] if i + 1 >= len(v) else v[i] + (v[i + 1] - v[i]) * (k - i)
+
+
+def event_path(s: Series, spy: Series, entry, days):
+    """Chapter 2: excess return on trading days -60..+250 (trading days = S&P 500 days). Day t =
+    (stock close on day t / stock open on the entry day - 1) - (same for the S&P 500). None if any day is missing."""
+    k = bisect_left(days, entry)
+    if k - PRE < 0 or k + POST >= len(days):
+        return None
+    so, po = s.opens[s.index(entry)], spy.opens[spy.index(entry)]
+    out = []
+    for t in range(-PRE, POST + 1):
+        d = days[k + t]
+        i = bisect_left(s.dates, d)
+        if i >= len(s.dates) or s.dates[i] != d:
+            return None
+        out.append((s.closes[i] / so - 1) - (spy.closes[spy.index(d)] / po - 1))
+    return out
+
+
+def hit_curve(day_lists, n):
+    """Share of the n stocks that had reached the threshold by trading day N (N = 0..252); None = never in 12 months."""
+    return [r6(sum(d is not None and d <= N for d in day_lists) / n) for N in range(HORIZON + 1)]
+
+
+def insights(stocks: list[dict], series: dict, spy: Series, last_ep_date: str | None) -> dict:
+    """The four Insights chapters. Chapters 1-3 use the main-result stocks (2022 on, 12 months done, USD), the same set and
+    entry as the headline; chapter 4 counts every stock on the site by its first-mention date."""
+    days = spy.dates
+    rows = []
+    for st in stocks:
+        if st["early"]:
+            continue
+        t, entry = st["ticker"], date.fromisoformat(st["entry_day"])
+        s = series[t]
+        end = exit_day(entry, HORIZON, days)
+        if end is None or s.dates[-1] < end:
+            continue
+        rows.append({"t": t, "x": hold_return(s, entry, end) - hold_return(spy, entry, end),
+                     "path": event_path(s, spy, entry, days),
+                     "up": {th: path_metrics(s, entry, end, th)["days_to_up"] for th in UP_TH},
+                     "down": {th: path_metrics(s, entry, end, th)["days_to_down"] for th in DOWN_TH},
+                     "spy_up": {th: path_metrics(spy, entry, end, th)["days_to_up"] for th in SPY_TH},
+                     "spy_down": {th: path_metrics(spy, entry, end, th)["days_to_down"] for th in SPY_TH}})
+    n = len(rows)
+    xs = [r["x"] for r in rows]
+    ranked = sorted(rows, key=lambda r: (-r["x"], r["t"]))
+    total = sum(xs)
+    ch1 = {"n": n, "bars": [{"t": r["t"], "x": r6(r["x"])} for r in ranked],
+           "top": TOP, "top_share": r6(sum(r["x"] for r in ranked[:TOP]) / total) if n and total > 0 else None,
+           "tests": tests(xs) if xs else None}
+    paths = [r["path"] for r in rows if r["path"] is not None]
+    by_day = list(zip(*paths)) if paths else []
+    ch2 = {"n": len(paths), "pre": PRE, "post": POST,
+           "median": [r6(median(v)) for v in by_day], "mean": [r6(sum(v) / len(v)) for v in by_day],
+           "q25": [r6(quantile(v, 0.25)) for v in by_day], "q75": [r6(quantile(v, 0.75)) for v in by_day]}
+    key = lambda th: str(round(th * 100))
+    ch3 = {"n": n, "days": HORIZON,
+           "up": {key(th): hit_curve([r["up"][th] for r in rows], n) for th in UP_TH} if n else {},
+           "down": {key(th): hit_curve([r["down"][th] for r in rows], n) for th in DOWN_TH} if n else {},
+           "spy_up": {key(th): hit_curve([r["spy_up"][th] for r in rows], n) for th in SPY_TH} if n else {},
+           "spy_down": {key(th): hit_curve([r["spy_down"][th] for r in rows], n) for th in SPY_TH} if n else {},
+           "doubled": sum(r["up"][1.00] is not None for r in rows), "halved": sum(r["down"][0.50] is not None for r in rows)}
+    dates = sorted(st["date"] for st in stocks)
+    steps = [{"date": d, "n": i + 1} for i, d in enumerate(dates) if i + 1 == len(dates) or dates[i + 1] != d]
+    since = sum(d >= "2022-01-01" for d in dates)
+    quarters = ((date.fromisoformat(last_ep_date) - date(2022, 1, 1)).days / (365.25 / 4)) if last_ep_date else None
+    ch4 = {"n": len(dates), "early": len(dates) - since, "since_2022": since, "steps": steps, "last_ep_date": last_ep_date,
+           "per_quarter": r6(since / quarters) if quarters and quarters > 0 else None}
+    return {"ch1": ch1, "ch2": ch2, "ch3": ch3, "ch4": ch4}
+
+
 def compute(cfg: dict, series: dict, spy: Series, sox: Series, splits: dict | None = None, fwd: dict | None = None) -> dict:
     """All price-based numbers. series: ticker -> Series (adjusted). splits/fwd: optional per-ticker split ratios and
     forward P/E (reference only). Returns the site's data files."""
@@ -339,6 +492,7 @@ def compute(cfg: dict, series: dict, spy: Series, sox: Series, splits: dict | No
         "path_summary": {str(round(th * 100)): {"USD": summary_paths(th)} for th in THRESHOLDS},
     }
     summary["main"]["up10"] = up10_half(bubbles)  # 導覽「為什麼做這個」那一頁的數字
+    summary["insights"] = insights(cfg["stocks"], series, spy, cfg.get("last_ep_date"))  # 數據觀察（2026-11-18）
     chart_days = [d for d in days if d >= CHART_START]
     aligned = lambda x: [round(c, 4) if c is not None else None
                          for c in (dict(zip(x.dates, x.closes)).get(d) for d in chart_days)]
@@ -362,19 +516,37 @@ def fetch_all(cfg: dict, now: datetime) -> tuple[dict, Series, Series, dict]:
         split_map[t] = frame_splits(df)
         return frame_to_series(df, now, jumps.get(t, frozenset()))
 
+    def get_stock(st, spy):
+        """Yahoo sometimes returns an incomplete history for one stock (2026-11-19: SNDK came back with only its last
+        two days). Retry, and if it is still incomplete, use Nasdaq after checking it (see nasdaq_fallback)."""
+        t, src, entry = st["ticker"], st.get("source", "yahoo"), date.fromisoformat(st["entry_day"])
+        if src == "nasdaq":
+            return get(t, src)
+        for attempt in range(3):
+            s = get(t, src)
+            short = incomplete(s, spy, entry)
+            if not short:
+                return s
+            if attempt < 2:
+                import time as _t
+                _t.sleep(20 * (attempt + 1))
+        return nasdaq_fallback(t, s, short, entry, jumps.get(t, frozenset()), now)
+
     errors, series = [], {}
     spy, sox = get("SPY", "yahoo"), get("^SOX", "yahoo")
     if spy.dates[-1] < now.date() - timedelta(days=MAX_STALE_DAYS):
         raise BuildError(f"SPY's latest close is {spy.dates[-1]}: data looks stale")
     if sox.dates[-1] != spy.dates[-1]:
         raise BuildError(f"^SOX latest {sox.dates[-1]} differs from SPY {spy.dates[-1]}")
+    zh = []
     for st in cfg["stocks"]:
         try:
-            series[st["ticker"]] = get(st["ticker"], st.get("source", "yahoo"))
+            series[st["ticker"]] = get_stock(st, spy)
         except (BuildError, KeyError, ValueError) as exc:
             errors.append(f"{st['ticker']}: {exc}")
+            zh.append(explain(st["ticker"], exc))
     if errors:
-        raise BuildError("price problems:\n  " + "\n  ".join(errors))
+        raise BuildError("price problems:\n  " + "\n  ".join(errors), "\n".join(f"- {z}" for z in zh))
     return series, spy, sox, split_map
 
 
@@ -399,14 +571,21 @@ def main(argv=None) -> int:
     try:
         series, spy, sox, split_map = fetch_all(cfg, datetime.now(timezone.utc))
         fwd = {st["ticker"]: fetch_forward_pe(st["ticker"]) for st in cfg["stocks"]}  # reference only; never fails
-        data = compute(cfg, series, spy, sox, split_map, fwd)
+        try:
+            data = compute(cfg, series, spy, sox, split_map, fwd)
+        except (KeyError, ValueError) as exc:  # 2026-11-19: a missing price used to end in a bare traceback
+            raise BuildError(f"computing failed: {exc}", f"計算時缺股價：{exc}。通常是某一檔的資料來源少了幾天，要查是哪一檔。")
     except BuildError as exc:
         print(f"BUILD FAILED, nothing deployed: {exc}", file=sys.stderr)
+        step_summary("## ❌ 今天沒有更新網站\n\n網站維持上一次成功更新的版本，明天早上會自動再試。原因：\n\n"
+                     + (exc.zh or f"- {exc}") + "\n\n<details><summary>技術細節</summary>\n\n```\n" + str(exc) + "\n```\n</details>")
         return 1
     write_site(data, args.out)
     s = data["summary"]
     print(f"prices through {s['price_date']}; main {s['main']['spy']['win']:.0%} of {s['main']['done']} beat SPY; "
           f"{len(s['bubbles'])} stocks")
+    step_summary(f"## ✅ 網站已更新\n\n股價更新到 {s['price_date']}，{len(s['bubbles'])} 檔；主結論 {s['main']['spy']['win']:.0%} 贏過 S&P 500"
+                 f"（{s['main']['done']} 檔）。" + ("\n\n要注意：\n\n" + "\n".join(NOTES) if NOTES else ""))
     return 0
 
 
