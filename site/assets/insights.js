@@ -4,27 +4,61 @@
 "use strict";
 (async () => {
   const pct = (x, d = 1) => F.pct(x, d), share = (x) => F.share(x);
+  const abs = (x, d = 1) => F.pct(Math.abs(x), d).replace("+", "");  // 沒有正負號的百分比（「輸大盤 10.2%」）
+  const ZH_NUM = ["零", "一", "兩", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"];
+  const EN_NUM = ["zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten", "eleven", "twelve"];
+  // 交易日 → 大約幾個月（約 21 個交易日一個月，取到半個月）：50 天 → 兩個半月
+  const halfMonths = (days) => Math.round((days / 21) * 2) / 2;
   const TEXT = {
     zh: {
       n: (n) => `n = ${n} 檔`,
+      // 頁面最上方的資料說明（2026-11-19）
+      intro: (s, c) => `股價更新至 ${F.date(s.price_date)}，集數涵蓋到 EP${s.last_ep}。` +
+        `第 1～3 章只算 2022 年起第一次提到、而且已經滿一年的 ${c.n} 檔：每一檔各自從第一次提到後的第一個交易日買進，抱 252 個交易日（約一年），和同一段時間的 S&amp;P 500 比。` +
+        `每一檔的一年是不同的時間，不是統一切在某一天；和首頁泡泡的「至今」不同。` +
+        `這 ${c.n} 檔第一次提到的日期，最早是 ${F.date(c.first_date)}，最晚是 ${F.date(c.last_date)}。`,
+      name: (w) => w.zh,
       ch1: {
         q: "為什麼只有 42% 贏過大盤？", qf: (w) => `為什麼只有 ${w} 贏過大盤？`,
         note: (n) => `主結論那組 ${n} 檔（2022 年起首次提及、已滿 12 個月），每一條是一檔的 12 個月超額報酬（對 S&amp;P 500），由高到低。超過圖右邊的，數字寫在旁邊。`,
-        text: (c, t) => `${c.n} 檔裡只有 ${t.wins} 檔（${share(t.wins / t.n)}）贏過 S&amp;P 500。` +
-          `超額報酬的中位數是 ${pct(t.median)}（95% 區間 ${pct(t.median_ci[0])}～${pct(t.median_ci[1])}），平均數卻是 ${pct(t.mean)}（${pct(t.mean_ci[0])}～${pct(t.mean_ci[1])}）。` +
-          (c.top_share == null ? "" : c.top_share > 1
-            ? `前 ${c.top} 名的超額報酬加起來，是全部 ${c.n} 檔總和的 ${share(c.top_share)}，也就是其他 ${c.n - c.top} 檔合起來是輸的。`
-            : `前 ${c.top} 名的超額報酬加起來，佔全部 ${c.n} 檔總和的 ${share(c.top_share)}。`) +
-          "大部分輸一點、少數大贏，所以平均很好看，典型的一檔卻輸。研究發現，大部分個股長期本來就跑輸大盤，50% 不是公平的標準。",
+        axis: "一年後，和 S&amp;P 500 比的報酬差（%）",
+        // 2026-11-19 使用者給的文字，數字由程式帶入；每一句一行
+        text: (c, t, name) => [
+          `我們把 ${c.n} 檔股票，各自從第一次被提到後買進、抱一年，和同一段時間買 S&amp;P 500 比。`,
+          `結果 ${t.wins} 檔贏、${t.n - t.wins} 檔輸。`,
+          `把 ${c.n} 檔照成績排隊，排在中間的那一檔，一年下來${t.median < 0 ? "輸" : "贏"}大盤 ${abs(t.median)}。`,
+          { aside: "中位數：把所有股票照成績排隊，站在最中間的那一檔，比平均更能代表一般情況，因為不會被少數漲翻天的股票拉高。" },
+          t.mean > t.median
+            ? `但如果算平均，${t.mean > 0 ? (t.median < 0 ? "反而是贏" : "是贏") : "也是輸"} ${abs(t.mean)}，因為少數幾檔漲翻天：${name(c.best)} 一檔就贏了 ${abs(c.best.x, 0)}。`
+            : `如果算平均，是${t.mean > 0 ? "贏" : "輸"} ${abs(t.mean)}。`,
+          c.top_share == null ? "" : c.top_share > 1
+            ? `前 ${c.top} 名加起來，就比 ${c.n} 檔的總和還多，也就是其他 ${c.n - c.top} 檔合起來是輸的。`
+            : `前 ${c.top} 名加起來，佔了 ${c.n} 檔總和的 ${share(c.top_share)}。`,
+          c.worst.x < 0 ? `輸最多的是 ${name(c.worst)}，輸了 ${abs(c.worst.x)}。` : "",
+        ],
       },
       ch2: {
         q: "他提到之前，股價已經漲了嗎？",
         note: (n, pre, post) => `主結論那組裡，第 −${pre} 天就有股價的 ${n} 檔。第 0 天是首次提及後的進場日；每一天的超額報酬＝（當天收盤 ÷ 進場日開盤 − 1）減去 S&amp;P 500 同樣算法，看第 −${pre} 到第 +${post} 個交易日。`,
         median: "中位數", mean: "平均數", band: "中間 50% 的股票", mention: "首次提及", day: (d) => `第 ${d} 天`,
-        // 第 −60 天中位數的相反數：負的＝提到前已經比大盤多漲；變成正的就自動改成「少漲」（2026-11-19 使用者定）
-        text: (c, m) => `典型的一檔，在他提到前的 ${c.pre} 個交易日裡，已經比大盤${m.pre <= 0 ? "多" : "少"}漲了約 ${pct(Math.abs(m.pre)).replace("+", "")}。` +
-          `之後中位數在第 ${m.peakDay} 天最高（${pct(m.peak)}），到第 ${c.post} 天是 ${pct(m.end)}；平均數是 ${pct(m.endMean)}，被少數大漲的拉高。` +
-          "這只能說明提及前後股價怎麼走，不能說是因為他提到才漲或才跌。",
+        before: "提到前", after: "提到後",
+        yAxis: "和 S&amp;P 500 比，多漲或少漲（%），買進那天＝0%", xAxis: "距離提到的交易日（0＝買進那天）",
+        months: (h) => (h === 0.5 ? "半個月" : Number.isInteger(h) ? `${ZH_NUM[h] ?? h} 個月`.replace(/^(\D+) /, "$1") : `${ZH_NUM[Math.floor(h)] ?? Math.floor(h)}個半月`),
+        // 2026-11-19 使用者給的文字；方向改變時改寫，「也就是說…」只在「先漲、短暫續漲、之後落後」時顯示（匯出時會提醒）
+        text: (c, m, T2) => {
+          const pre = `${Math.round(c.pre / 21)} 個月`, post = c.post >= 240 ? "1 年" : `${Math.round(c.post / 21)} 個月`;
+          const h = halfMonths(m.peakDay), when = h >= 0.5 ? `提到後約${T2.months(h)}` : `提到後第 ${m.peakDay} 個交易日`;
+          return [
+            `這張圖看每一檔股票，從他提到前 ${pre}，到提到後 ${post}，比大盤多漲或少漲多少。`,
+            "買進那天是 0%。",
+            `把 ${c.n} 檔排隊，看排在中間的那一檔：`,
+            `提到前 ${pre}，它已經比大盤${m.pre <= 0 ? "多" : "少"}漲了約 ${abs(m.pre)}；`,
+            m.peak > 0 ? `${when}，${m.pre <= 0 ? "再" : ""}多漲到 ${pct(m.peak, 0)}，是最高點；` : "提到後一直沒有比買進那天多漲；",
+            m.end < 0 ? `一年後，${m.peak > 0 ? "反而" : ""}輸大盤 ${abs(m.end, 0)}。` : `一年後，贏大盤 ${abs(m.end, 0)}。`,
+            c.story ? "也就是說，常常是股票先漲了一段，他才提到；提到後短暫續漲，之後慢慢落後。" : "",
+            "這只能說明前後股價怎麼走，不代表是因為他提到才漲或才跌。",
+          ];
+        },
       },
       ch3: {
         q: "一年內，有多少股票翻倍？多少腰斬？",
@@ -42,26 +76,66 @@
         text: (c) => `網站上一共有 ${c.n} 檔美股個股：暖身期（2020–2021）${c.early} 檔，2022 年起 ${c.since_2022} 檔，` +
           `2022 年起平均每季新增 ${c.per_quarter == null ? "—" : c.per_quarter.toFixed(1)} 檔。ETF 和台股不在這裡。`,
       },
+      // 總結（2026-11-19 使用者給的文字）：第 1 點的「幾成」照勝率四捨五入，p ≥ 0.05 才寫「和擲銅板沒有明顯差別」；
+      // 第 2 點只有提到前比大盤多漲時才顯示；第 3 點的「一半」和翻倍的比例照實際帶入
+      sum: {
+        title: "總結",
+        points: (k) => [
+          `被提到的股票，一年後贏大盤的大約${ZH_NUM[k.win_tenths]}成，${k.coin_flip ? "和擲銅板沒有明顯差別" : k.beat_more ? "明顯比擲銅板好" : "明顯比擲銅板差"}。`,
+          k.pre_outran ? "孟恭常在股票已經漲了一段之後才聊到。" : "",
+          `提到的標的波動比大盤大很多：一年內有${k.fell20_tenths === 5 ? "一半" : `${ZH_NUM[k.fell20_tenths]}成`}曾跌 20% 以上；但也有 ${share(k.doubled)} 曾經翻倍。`,
+        ],
+        end: "所以，這份名單適合當「找研究題目」的清單，不適合照著買。",
+      },
     },
     en: {
       n: (n) => `n = ${n} stocks`,
+      intro: (s, c) => `Prices as of ${F.date(s.price_date)}; episodes through EP${s.last_ep}. ` +
+        `Chapters 1–3 count only the ${c.n} stocks first mentioned from 2022 on whose one year is complete: each one is bought on the first trading day after its first mention, held for 252 trading days (about a year), and compared with the S&amp;P 500 over the same days. ` +
+        `Each stock’s year is a different stretch of time, not cut off on one common date, so this differs from the “to date” numbers in the bubbles on the main page. ` +
+        `These ${c.n} stocks were first mentioned between ${F.date(c.first_date)} and ${F.date(c.last_date)}.`,
+      // 英文句子裡用品牌名（例如 SanDisk），不用 “Sandisk Corporation” 這種正式名稱；中文名不是英文字母才用英文名
+      name: (w) => (/^[\x20-\x7e]+$/.test(w.zh) ? w.zh : w.en),
       ch1: {
         q: "Why did only 42% beat the market?", qf: (w) => `Why did only ${w} beat the market?`,
         note: (n) => `The ${n} stocks in the main result (first mentioned from 2022, 12 months done). Each bar is one stock’s 12-month excess return over the S&amp;P 500, highest first. Bars past the right edge show their number.`,
-        text: (c, t) => `Only ${t.wins} of ${c.n} stocks (${share(t.wins / t.n)}) beat the S&amp;P 500. ` +
-          `The median excess return was ${pct(t.median)} (95% interval ${pct(t.median_ci[0])} to ${pct(t.median_ci[1])}), yet the mean was ${pct(t.mean)} (${pct(t.mean_ci[0])} to ${pct(t.mean_ci[1])}). ` +
-          (c.top_share == null ? "" : c.top_share > 1
-            ? `The top ${c.top} add up to ${share(c.top_share)} of the total excess return of all ${c.n}, so the other ${c.n - c.top} lost money together. `
-            : `The top ${c.top} make up ${share(c.top_share)} of the total excess return of all ${c.n}. `) +
-          "Most trailed a little and a few won big, so the average looks good while the typical stock lost. Research has found that most individual stocks trail the market over time anyway, so 50% isn’t a fair bar.",
+        axis: "One-year return minus the S&amp;P 500’s (%)",
+        text: (c, t, name) => [
+          `We took the ${c.n} stocks, bought each one after its first mention, held it for a year, and compared that with buying the S&amp;P 500 over the same days.`,
+          `${t.wins} beat the market and ${t.n - t.wins} lost.`,
+          `Line up the ${c.n} by result, and the stock in the middle (the median) ${t.median < 0 ? "trailed" : "beat"} the market by ${abs(t.median)} over the year.`,
+          { aside: "The median: line up all the stocks by result, and the one standing in the very middle shows the usual case better than the average does, because a few stocks that soared can’t pull it up." },
+          t.mean > t.median
+            ? `But the average ${t.mean > 0 ? "beat" : "still trailed"} the market by ${abs(t.mean)}, because a few stocks soared: ${name(c.best)} alone beat it by ${abs(c.best.x, 0)}.`
+            : `The average ${t.mean > 0 ? "beat" : "trailed"} the market by ${abs(t.mean)}.`,
+          c.top_share == null ? "" : c.top_share > 1
+            ? `The top ${c.top} together add up to more than the total of all ${c.n}, which means the other ${c.n - c.top} together lost.`
+            : `The top ${c.top} together make up ${share(c.top_share)} of the total of all ${c.n}.`,
+          c.worst.x < 0 ? `The biggest loser was ${name(c.worst)}, which trailed by ${abs(c.worst.x)}.` : "",
+        ],
       },
       ch2: {
         q: "Had the price already moved before he mentioned it?",
         note: (n, pre, post) => `The ${n} stocks in the main result with a price on day −${pre}. Day 0 is the entry day after the first mention; each day’s excess return = (that day’s close ÷ the entry-day open − 1) minus the same for the S&amp;P 500, from trading day −${pre} to +${post}.`,
         median: "Median", mean: "Mean", band: "Middle 50% of stocks", mention: "First mention", day: (d) => `Day ${d}`,
-        text: (c, m) => `For the typical stock, in the ${c.pre} trading days before he mentioned it, it had already ${m.pre <= 0 ? "outrun" : "lagged"} the market by about ${pct(Math.abs(m.pre)).replace("+", "")}. ` +
-          `Afterward the median peaked on day ${m.peakDay} (${pct(m.peak)}) and was ${pct(m.end)} by day ${c.post}; the mean was ${pct(m.endMean)}, pulled up by a few big winners. ` +
-          "This only shows how prices moved around the mention; it doesn’t mean they rose or fell because he mentioned them.",
+        before: "Before", after: "After",
+        yAxis: "Rose more (+) or less (−) than the S&amp;P 500 (%), entry day = 0%", xAxis: "Trading days from the mention (0 = entry day)",
+        months: (h) => (h === 0.5 ? "half a month" : Number.isInteger(h) ? `${EN_NUM[h] ?? h} month${h === 1 ? "" : "s"}`
+          : `${EN_NUM[Math.floor(h)] ?? Math.floor(h)} and a half months`),
+        text: (c, m, T2) => {
+          const n = Math.round(c.pre / 21), pre = `${n} month${n === 1 ? "" : "s"}`, post = c.post >= 240 ? "1 year" : `${Math.round(c.post / 21)} months`;
+          const h = halfMonths(m.peakDay), when = h >= 0.5 ? `about ${T2.months(h)} after the mention` : `on trading day ${m.peakDay} after the mention`;
+          return [
+            `This chart follows each stock from ${pre} before he mentioned it to ${post} after, and how much more or less it rose than the market.`,
+            "The entry day is 0%.",
+            `Line up the ${c.n} stocks and look at the one in the middle (the median):`,
+            `in the ${pre} before the mention, it had already ${m.pre <= 0 ? "outrun" : "lagged"} the market by about ${abs(m.pre)};`,
+            m.peak > 0 ? `${when}, it ${m.pre <= 0 ? "pulled further ahead" : "got ahead"} to ${pct(m.peak, 0)}, its high point;` : "after the mention it never got ahead of the entry day;",
+            m.end < 0 ? `a year later, it ${m.peak > 0 ? "instead " : ""}trailed the market by ${abs(m.end, 0)}.` : `a year later, it beat the market by ${abs(m.end, 0)}.`,
+            c.story ? "In other words, the stock often rose for a while before he mentioned it, kept rising briefly afterward, then slowly fell behind." : "",
+            "This only shows how prices moved around the mention; it doesn’t mean they rose or fell because he mentioned them.",
+          ];
+        },
       },
       ch3: {
         q: "Within a year, how many doubled, and how many halved?",
@@ -79,6 +153,18 @@
         text: (c) => `This site has ${c.n} US stocks: ${c.early} from the warm-up years (2020–2021) and ${c.since_2022} from 2022 on, ` +
           `an average of ${c.per_quarter == null ? "—" : c.per_quarter.toFixed(1)} new stocks a quarter since 2022. ETFs and Taiwan stocks aren’t included.`,
       },
+      sum: {
+        title: "Takeaways",
+        points: (k) => {
+          const w = EN_NUM[k.win_tenths];
+          return [
+            `About ${w} in ten mentioned stocks beat the market a year later, ${k.coin_flip ? "not clearly different from a coin flip" : k.beat_more ? "clearly better than a coin flip" : "clearly worse than a coin flip"}.`,
+            k.pre_outran ? "The host often brings a stock up after it has already risen for a while." : "",
+            `These stocks swing far more than the market: within a year, ${k.fell20_tenths === 5 ? "about half" : `about ${EN_NUM[k.fell20_tenths]} in ten`} fell 20% or more at some point, yet ${share(k.doubled)} doubled at some point.`,
+          ];
+        },
+        end: "So this list works as a source of research ideas, not as a list to buy.",
+      },
     },
   }[LANG];
 
@@ -88,6 +174,7 @@
   $("price-date").textContent = T.priceDate(F.date(s.price_date));
   $("last-ep").textContent = T.lastEp(s.last_ep);
   const I = s.insights;
+  $("ins-intro").innerHTML = TEXT.intro(s, I.ch1);
 
   // ---- SVG 小工具 ----
   const svg = (w, h, body, label) => `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="${label}">${body}</svg>`;
@@ -119,6 +206,15 @@
         ly += 16;
       }
     });
+    // 輸最多的 5 檔（2026-11-19）：標籤也排在右邊一欄、由下往上；那幾列右半邊是空的（橫條往左），細線從 0 的位置拉過去
+    let by = h - 22 - 4;
+    for (let i = bars.length - 1; i >= Math.max(c.top, bars.length - c.top); i--) {
+      const b = bars[i], y = top + i * row;
+      by = Math.min(by, y + row / 2 + 4);
+      body += `<path d="M${(x0 + 2).toFixed(1)},${(y + row / 2).toFixed(1)}L${right + 4},${(by - 4).toFixed(1)}" class="leader"/>` +
+        txt(right + 8, by, `${b.t} ${pct(b.x, 0)}`, { class: "lab" });
+      by -= 16;
+    }
     body += `<line x1="${x0}" x2="${x0}" y1="${top - 6}" y2="${h - 22}" class="axis0"/>`;
     return svg(w, h, body, TEXT.ch1.qf(share(c.tests.wins / c.tests.n)));
   }
@@ -139,6 +235,9 @@
     body += `<path d="${line(days.map((d, i) => [x(d), y(c.q75[i])]))}${line(days.map((d, i) => [x(d), y(c.q25[i])]).reverse()).replace("M", "L")}Z" class="band"/>`;
     body += `<line x1="${m.l}" x2="${w - m.r}" y1="${y(0)}" y2="${y(0)}" class="axis0"/>`;
     body += `<line x1="${x(0)}" x2="${x(0)}" y1="${m.t - 10}" y2="${h - m.b}" class="mark"/>` + txt(x(0) + 5, m.t - 12, TEXT.ch2.mention, { class: "lab" });
+    // 第 0 天左右的淺色標註（2026-11-19）：放在圖的下緣，第 0 天附近那裡沒有線
+    body += txt(x(0) - 6, h - m.b - 8, TEXT.ch2.before, { class: "side", "text-anchor": "end" }) +
+      txt(x(0) + 6, h - m.b - 8, TEXT.ch2.after, { class: "side" });
     body += `<path d="${line(days.map((d, i) => [x(d), y(c.mean[i])]))}" class="mean"/>`;
     body += `<path d="${line(days.map((d, i) => [x(d), y(c.median[i])]))}" class="median"/>`;
     return svg(w, h, body, TEXT.ch2.q);
@@ -184,25 +283,30 @@
     return svg(w, h, body, TEXT.ch4.q);
   }
 
-  // 第 2 章的結論用的幾個數字（都從資料算，不寫死）
+  // 第 2 章的結論用的幾個數字（都從資料算，不寫死；最高點是哪一天由 update.py 算，和匯出時的提醒同一個判斷）
   const c2 = I.ch2, at = (d) => c2.median[d + c2.pre];
-  let peakDay = 1;
-  for (let d = 1; d <= c2.post; d++) if (at(d) > at(peakDay)) peakDay = d;
-  const m2 = { pre: at(-c2.pre), peakDay, peak: at(peakDay), end: at(c2.post), endMean: c2.mean[c2.post + c2.pre] };
+  const m2 = { pre: at(-c2.pre), peakDay: c2.peak_day, peak: at(c2.peak_day), end: at(c2.post) };
+  // 一句一行；{ aside } 是較小的補充說明；空字串（條件不成立）不顯示
+  const lines = (xs) => xs.filter(Boolean).map((x) => (typeof x === "string" ? `<span class="ln">${x}</span>` : `<span class="ln aside">${x.aside}</span>`)).join("");
 
   const chapters = [
-    { id: "ch1", q: TEXT.ch1.qf(share(I.ch1.tests.wins / I.ch1.tests.n)), n: I.ch1.n, note: TEXT.ch1.note(I.ch1.n), draw: ch1, text: TEXT.ch1.text(I.ch1, I.ch1.tests) },
-    { id: "ch2", q: TEXT.ch2.q, n: c2.n, note: TEXT.ch2.note(c2.n, c2.pre, c2.post), draw: ch2, text: TEXT.ch2.text(c2, m2),
+    { id: "ch1", q: TEXT.ch1.qf(share(I.ch1.tests.wins / I.ch1.tests.n)), n: I.ch1.n, note: TEXT.ch1.note(I.ch1.n), draw: ch1,
+      text: lines(TEXT.ch1.text(I.ch1, I.ch1.tests, TEXT.name)), xAxis: TEXT.ch1.axis },
+    { id: "ch2", q: TEXT.ch2.q, n: c2.n, note: TEXT.ch2.note(c2.n, c2.pre, c2.post), draw: ch2, text: lines(TEXT.ch2.text(c2, m2, TEXT.ch2)),
+      yAxis: TEXT.ch2.yAxis, xAxis: TEXT.ch2.xAxis,
       legend: [["median", TEXT.ch2.median], ["mean", TEXT.ch2.mean], ["band", TEXT.ch2.band]] },
     { id: "ch3", q: TEXT.ch3.q, n: I.ch3.n, note: TEXT.ch3.note(I.ch3.n), draw: ch3, text: TEXT.ch3.text(I.ch3) },
     { id: "ch4", q: TEXT.ch4.q, n: I.ch4.n, note: TEXT.ch4.note, draw: ch4, text: TEXT.ch4.text(I.ch4) },
   ];
   $("chapters").innerHTML = chapters.map((c, i) => `<section class="chapter" id="${c.id}" aria-labelledby="${c.id}-q">
       <h2 id="${c.id}-q"><span class="no">${i + 1}</span>${c.q}</h2>
-      <figure><div class="fig" data-ch="${i}"></div>
+      <figure>${c.yAxis ? `<p class="axis-title y">${c.yAxis}</p>` : ""}<div class="fig" data-ch="${i}"></div>${c.xAxis ? `<p class="axis-title x">${c.xAxis}</p>` : ""}
         <figcaption><span class="n">${TEXT.n(c.n)}</span>${c.legend ? c.legend.map(([k, v]) => `<span class="key key-${k}">${v}</span>`).join("") : ""}
           <span class="note">${c.note}</span></figcaption></figure>
-      <p class="takeaway">${c.text}</p></section>`).join("");
+      <p class="takeaway">${c.text}</p></section>`).join("") +
+    // 總結（第 4 章之後、下載檔之前）
+    `<section class="chapter summary" id="summary" aria-labelledby="summary-q"><h2 id="summary-q">${TEXT.sum.title}</h2>
+      <p class="takeaway">${lines(TEXT.sum.points(I.takeaways))}</p><p class="takeaway end">${TEXT.sum.end}</p></section>`;
   const figs = [...document.querySelectorAll(".fig")];
   const draw = () => figs.forEach((f) => { const w = Math.round(f.clientWidth); if (w && Number(f.dataset.w) !== w) { f.dataset.w = w; f.innerHTML = chapters[f.dataset.ch].draw(w); } });
   draw();

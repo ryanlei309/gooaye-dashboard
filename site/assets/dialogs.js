@@ -53,7 +53,7 @@ const Dialogs = (() => {
         <li><strong>Compared with 50%:</strong> ${t.wins} of ${t.n} stocks beat the S&amp;P 500 (${F.share(t.wins / t.n)}). The 95% confidence interval is ${share(t.win_ci)}. An exact binomial test against 50% gives p = ${p}, so ${sig ? "the win rate is statistically different from 50%" : "this is not statistically different from a coin flip (50%)"}.</li>
         <li><strong>50% is not a fair bar.</strong> Most individual stocks trail the index over time, because a few big winners drive most of the index's gain. A better comparison would be "stocks picked at random on the same days"; that comparison was not done here.</li>
         <li><strong>The stocks are not independent.</strong> Their holding periods overlap and many move together (for example, AI stocks after 2023), so the real uncertainty is larger than these intervals show.</li>
-        <li><strong>Mean vs median.</strong> The average excess return is ${F.pct(t.mean)} (95% bootstrap interval ${ci(t.mean_ci)}), but the median is ${F.pct(t.median)} (${ci(t.median_ci)}). The gap comes from a few huge winners; the typical stock trailed the index.</li>
+        <li><strong>Mean vs median.</strong> The average excess return is ${F.pct(t.mean)} (95% bootstrap interval ${ci(t.mean_ci)}), but the median is ${F.pct(t.median)} (${ci(t.median_ci)}). The gap comes from a few huge winners; the stock in the middle (the median) trailed the index.</li>
       </ul>
       <p>Method: exact two-sided binomial test, Clopper–Pearson interval, and bootstrap intervals from ${t.boot_n.toLocaleString("en-US")} resamples (fixed seed ${t.boot_seed}), all defined before computing. Reference only; they do not change the main result.</p>`;
     return `
@@ -62,7 +62,7 @@ const Dialogs = (() => {
         <li><strong>和 50% 比：</strong>${t.n} 檔裡 ${t.wins} 檔贏過 S&amp;P 500（${F.share(t.wins / t.n)}），95% 信賴區間 ${share(t.win_ci)}。和 50% 做二項檢定，p ＝ ${p}，${sig ? "勝率和 50% 在統計上有差別" : "和擲銅板（50%）在統計上沒有差別"}。</li>
         <li><strong>50% 不是公平的標準。</strong>大部分個股長期本來就會跑輸大盤，因為大盤的漲幅主要來自少數大贏家。更好的比較是「和同一天隨機挑股票比」，這次沒有做。</li>
         <li><strong>各檔不是獨立事件。</strong>持有期間互相重疊，很多股票會一起漲跌（例如 2023 年後的 AI 股），所以實際的不確定性比這些區間顯示的更大。</li>
-        <li><strong>平均數和中位數差很多。</strong>超額報酬的平均數是 ${F.pct(t.mean)}（bootstrap 95% 區間 ${ci(t.mean_ci)}），中位數是 ${F.pct(t.median)}（${ci(t.median_ci)}）。差這麼多是因為少數大贏家把平均拉高；典型的一檔是輸給大盤的。</li>
+        <li><strong>平均數和中位數差很多。</strong>超額報酬的平均數是 ${F.pct(t.mean)}（bootstrap 95% 區間 ${ci(t.mean_ci)}），中位數是 ${F.pct(t.median)}（${ci(t.median_ci)}）。差這麼多是因為少數大贏家把平均拉高；排在中間的那一檔是輸給大盤的。</li>
       </ul>
       <p>方法：雙尾精確二項檢定、Clopper–Pearson 信賴區間、bootstrap 重複抽樣 ${t.boot_n.toLocaleString("en-US")} 次（固定亂數種子 ${t.boot_seed}），都在算之前定下。只當參考，不改主結論。</p>`;
   }

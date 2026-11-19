@@ -370,11 +370,18 @@ def hit_curve(day_lists, n):
     return [r6(sum(d is not None and d <= N for d in day_lists) / n) for N in range(HORIZON + 1)]
 
 
-def insights(stocks: list[dict], series: dict, spy: Series, last_ep_date: str | None) -> dict:
-    """The four Insights chapters. Chapters 1-3 use the main-result stocks (2022 on, 12 months done, USD), the same set and
-    entry as the headline; chapter 4 counts every stock on the site by its first-mention date."""
-    days = spy.dates
-    rows = []
+def company_names(events: list[dict]) -> dict:
+    """Ticker -> (Chinese name, English name) from the site's events (first one per ticker)."""
+    out = {}
+    for e in events:
+        out.setdefault(e["ticker"], (e.get("company") or e["ticker"], e.get("company_en") or e.get("company") or e["ticker"]))
+    return out
+
+
+def insight_rows(stocks: list[dict], series: dict, spy: Series) -> list[dict]:
+    """The main-result stocks (2022 on, 12 months done, USD), the same set and entry as the headline: one row each with
+    everything the Insights page and its CSV download use."""
+    days, rows = spy.dates, []
     for st in stocks:
         if st["early"]:
             continue
@@ -383,24 +390,49 @@ def insights(stocks: list[dict], series: dict, spy: Series, last_ep_date: str | 
         end = exit_day(entry, HORIZON, days)
         if end is None or s.dates[-1] < end:
             continue
-        rows.append({"t": t, "x": hold_return(s, entry, end) - hold_return(spy, entry, end),
+        ret, bench = hold_return(s, entry, end), hold_return(spy, entry, end)
+        rows.append({"t": t, "ep": st.get("ep"), "date": st["date"], "entry": entry, "exit": end,
+                     "buy": s.opens[s.index(entry)], "sell": s.closes[s.index(end)], "ret": ret, "spy_ret": bench, "x": ret - bench,
                      "path": event_path(s, spy, entry, days),
                      "up": {th: path_metrics(s, entry, end, th)["days_to_up"] for th in UP_TH},
                      "down": {th: path_metrics(s, entry, end, th)["days_to_down"] for th in DOWN_TH},
                      "spy_up": {th: path_metrics(spy, entry, end, th)["days_to_up"] for th in SPY_TH},
                      "spy_down": {th: path_metrics(spy, entry, end, th)["days_to_down"] for th in SPY_TH}})
+    return rows
+
+
+def tenths(share):
+    """0.42 -> 4 ("about four in ten"); halves round up (0.45 -> 5)."""
+    return math.floor(share * 10 + 0.5)
+
+
+def insights(stocks: list[dict], series: dict, spy: Series, last_ep_date: str | None, names: dict | None = None) -> dict:
+    """The Insights page. Chapters 1-3 use the main-result stocks (insight_rows); chapter 4 counts every stock on the site
+    by its first-mention date. names: ticker -> (zh, en) company names (company_names). "takeaways" holds the numbers and
+    conditions for the closing summary (2026-11-19); insight_warnings turns failed conditions into reminders."""
+    names = names or {}
+    rows = insight_rows(stocks, series, spy)
     n = len(rows)
     xs = [r["x"] for r in rows]
     ranked = sorted(rows, key=lambda r: (-r["x"], r["t"]))
     total = sum(xs)
+    who = lambda r: {"t": r["t"], "zh": names.get(r["t"], (r["t"], r["t"]))[0], "en": names.get(r["t"], (r["t"], r["t"]))[1],
+                     "x": r6(r["x"])}
     ch1 = {"n": n, "bars": [{"t": r["t"], "x": r6(r["x"])} for r in ranked],
            "top": TOP, "top_share": r6(sum(r["x"] for r in ranked[:TOP]) / total) if n and total > 0 else None,
-           "tests": tests(xs) if xs else None}
+           "tests": tests(xs) if xs else None,
+           "best": who(ranked[0]) if n else None, "worst": who(ranked[-1]) if n else None,
+           "first_date": min(r["date"] for r in rows) if n else None, "last_date": max(r["date"] for r in rows) if n else None}
     paths = [r["path"] for r in rows if r["path"] is not None]
     by_day = list(zip(*paths)) if paths else []
+    med = [r6(median(v)) for v in by_day]
+    peak = max(range(PRE + 1, PRE + POST + 1), key=lambda i: (med[i], -i)) - PRE if med else None  # first highest day after 0
     ch2 = {"n": len(paths), "pre": PRE, "post": POST,
-           "median": [r6(median(v)) for v in by_day], "mean": [r6(sum(v) / len(v)) for v in by_day],
-           "q25": [r6(quantile(v, 0.25)) for v in by_day], "q75": [r6(quantile(v, 0.75)) for v in by_day]}
+           "median": med, "mean": [r6(sum(v) / len(v)) for v in by_day],
+           "q25": [r6(quantile(v, 0.25)) for v in by_day], "q75": [r6(quantile(v, 0.75)) for v in by_day],
+           "peak_day": peak,
+           # the "it often rose first, kept rising briefly, then fell behind" sentence holds only in this direction
+           "story": bool(med) and med[0] < 0 and med[PRE + peak] > 0 and med[-1] < 0}
     key = lambda th: str(round(th * 100))
     ch3 = {"n": n, "days": HORIZON,
            "up": {key(th): hit_curve([r["up"][th] for r in rows], n) for th in UP_TH} if n else {},
@@ -414,7 +446,127 @@ def insights(stocks: list[dict], series: dict, spy: Series, last_ep_date: str | 
     quarters = ((date.fromisoformat(last_ep_date) - date(2022, 1, 1)).days / (365.25 / 4)) if last_ep_date else None
     ch4 = {"n": len(dates), "early": len(dates) - since, "since_2022": since, "steps": steps, "last_ep_date": last_ep_date,
            "per_quarter": r6(since / quarters) if quarters and quarters > 0 else None}
-    return {"ch1": ch1, "ch2": ch2, "ch3": ch3, "ch4": ch4}
+    t = ch1["tests"]
+    takeaways = None if not n else {
+        "win_tenths": tenths(t["wins"] / n), "coin_flip": t["p_value"] >= 0.05, "beat_more": t["wins"] / n > 0.5,
+        "pre_outran": bool(med) and med[0] < 0,
+        "fell20": ch3["down"]["20"][-1], "fell20_tenths": tenths(ch3["down"]["20"][-1]), "doubled": r6(ch3["doubled"] / n)}
+    return {"ch1": ch1, "ch2": ch2, "ch3": ch3, "ch4": ch4, "takeaways": takeaways}
+
+
+def insight_warnings(ins: dict) -> list[str]:
+    """Reminders when a fixed sentence on the Insights page no longer fits the data (shown at export and on the Actions
+    summary page). The page itself already rewrites or hides those sentences."""
+    out, k = [], ins.get("takeaways")
+    if not k:
+        return ["數據觀察：沒有滿一年的股票，第 1～3 章和總結都沒有數字"]
+    t = ins["ch1"]["tests"]
+    if not k["coin_flip"]:
+        out.append(f"數據觀察總結第 1 點：勝率 {t['wins']}/{t['n']}，和 50% 比的 p＝{t['p_value']:.3f}（小於 0.05），"
+                   f"不能再寫「和擲銅板沒有明顯差別」，頁面已自動改成「明顯比擲銅板{'好' if k['beat_more'] else '差'}」，請確認文字")
+    if not k["pre_outran"]:
+        out.append("數據觀察總結第 2 點：第 2 章提到前 60 天的中位數變成「比大盤少漲」，「孟恭常在股票已經漲了一段之後才聊到」已自動不顯示")
+    if not ins["ch2"]["story"]:
+        out.append("數據觀察第 2 章：方向不再是「提到前多漲、提到後短暫續漲、一年後輸大盤」，「也就是說…」那句已自動不顯示，要改寫")
+    return out
+
+
+# ---- CSV download (2026-11-19): numbers only, no quotes; one row per main-result stock ----------------
+
+CSV_HEAD = {
+    "zh": ["代號", "公司名", "第一次提到的集數", "第一次提到的日期", "買進日", "出場日", "買進價（美元）", "出場價（美元）",
+           "個股一年報酬（%）", "S&P 500 同期報酬（%）", "超額報酬（%）", "是否贏", "提到前 60 個交易日的超額報酬（%）",
+           "第幾天碰到 +10%", "第幾天碰到 +20%", "第幾天碰到 +100%", "第幾天碰到 -10%", "第幾天碰到 -20%", "第幾天碰到 -50%"],
+    "en": ["Ticker", "Company", "First-mention episode", "First-mention date", "Entry day", "Exit day", "Entry price (USD)",
+           "Exit price (USD)", "Stock 1-year return (%)", "S&P 500 return, same days (%)", "Excess return (%)", "Beat the S&P 500",
+           "Excess return in the 60 trading days before the mention (%)",
+           "Day it hit +10%", "Day it hit +20%", "Day it hit +100%", "Day it hit -10%", "Day it hit -20%", "Day it hit -50%"],
+}
+CSV_YES = {"zh": ("是", "否"), "en": ("yes", "no")}
+CSV_FILES = {"zh": ("data/insights-data.csv", "data/insights-columns.txt"),
+             "en": ("data/insights-data-en.csv", "data/insights-columns-en.txt")}
+COLUMNS_TXT = {
+    "zh": """《股癌》提到的股票：數據觀察的原始數據（欄位說明）
+
+這份 CSV 是數據觀察第 1～3 章和首頁主結論用的同一組股票：2022 年起第一次被提到、而且已經滿一年（252 個交易日）的美股個股，每一檔一列。
+只有數字，沒有節目原話。每天和網站一起更新。股價是 Yahoo Finance 調整過分割和配息的價格（少數幾檔用 Nasdaq），所以可能和當時看到的報價不同。
+非官方網站，與節目及主持人無關，內容不構成投資建議。
+
+代號：美股代號。
+公司名：公司名稱。
+第一次提到的集數、第一次提到的日期：2022 年起第一次被提到的那一集和它的發布日期。
+買進日：那一集發布之後，第一個開盤的美股交易日（發布時間早於美東時間 9:30 開盤，就是當天）。
+出場日：買進日之後第 252 個交易日（約一年；交易日照 S&P 500 ETF（SPY）的交易日）。
+買進價（美元）：買進日的開盤價。
+出場價（美元）：出場日的收盤價。
+個股一年報酬（%）：出場價 ÷ 買進價 − 1。
+S&P 500 同期報酬（%）：SPY 用同一個買進日的開盤價、同一個出場日的收盤價，同樣算法。
+超額報酬（%）：個股一年報酬減 S&P 500 同期報酬。可能小於 −100%。
+是否贏：超額報酬大於 0 是「是」，其他是「否」。網頁上的勝率＝「是」的檔數 ÷ 全部檔數。
+提到前 60 個交易日的超額報酬（%）：買進日前 60 個交易日到買進日，個股比 S&P 500 多漲多少（負的是少漲）。算法和數據觀察第 2 章一樣：
+  以買進日的開盤價為基準，（1 − 第 −60 天收盤 ÷ 買進價）減去 S&P 500 同樣算法，也就是第 2 章圖上第 −60 天那個數字的相反數。
+  那一天還沒有股價（例如剛上市）的留空。
+第幾天碰到 +10%／+20%／+100%：從買進日（第 0 天）起，收盤價第一次比買進價高 10%、20%、100%（翻倍）是第幾個交易日；一年內沒碰到的留空。
+第幾天碰到 -10%／-20%／-50%：收盤價第一次比買進價低 10%、20%、50%（腰斬）是第幾個交易日；一年內沒碰到的留空。
+
+和網頁數字的關係：超額報酬的中位數、平均數，「是」的比例，+100% 和 -50% 有填的比例，都和數據觀察頁上的數字完全一樣（有自動測試核對）。
+""",
+    "en": """Stocks mentioned on the Gooaye podcast: raw data behind the Insights page (column definitions)
+
+This CSV covers the same stocks as Insights chapters 1-3 and the main result: US stocks first mentioned from 2022 on whose
+one-year window (252 trading days) is complete, one row per stock. Numbers only, no quotes from the show. Updated daily with
+the site. Prices are Yahoo Finance prices adjusted for splits and dividends (Nasdaq for a few), so they can differ from the
+quotes you saw at the time. Unofficial site, not affiliated with the show or its host. Not investment advice.
+
+Ticker: US ticker.
+Company: company name.
+First-mention episode, First-mention date: the episode in which the stock was first mentioned (from 2022 on) and its release date.
+Entry day: the first US trading session that opens after the episode is released (released before the 9:30 a.m. ET open = that day).
+Exit day: the 252nd trading day after the entry day (about a year; trading days follow the S&P 500 ETF, SPY).
+Entry price (USD): open on the entry day.
+Exit price (USD): close on the exit day.
+Stock 1-year return (%): exit price / entry price - 1.
+S&P 500 return, same days (%): the same calculation for SPY, entry-day open to exit-day close.
+Excess return (%): stock 1-year return minus the S&P 500 return. Can be below -100%.
+Beat the S&P 500: "yes" if the excess return is above 0, otherwise "no". The page's win rate = yes / all rows.
+Excess return in the 60 trading days before the mention (%): how much more the stock rose than the S&P 500 from 60 trading
+  days before the entry day to the entry day (negative = rose less). Same as Insights chapter 2: based on the entry-day
+  open, (1 - close on day -60 / entry price) minus the same for the S&P 500, i.e. minus the chapter 2 chart's day -60 value.
+  Blank if there was no price yet (for example, a recent IPO).
+Day it hit +10% / +20% / +100%: the trading day (entry day = day 0) on which the close first reached 10%, 20%, 100% (doubled)
+  above the entry price; blank if it never did within the year.
+Day it hit -10% / -20% / -50%: the trading day on which the close first fell 10%, 20%, 50% (halved) below the entry price;
+  blank if it never did within the year.
+
+How it matches the page: the median and mean excess return, the share of "yes", and the share of rows with +100% and -50%
+filled in equal the numbers on the Insights page exactly (checked by automated tests).
+""",
+}
+
+
+def downloads(stocks: list[dict], series: dict, spy: Series, names: dict) -> dict:
+    """The Insights CSV downloads, Chinese and English, and their column definitions: {site path: text}. Sorted by first
+    mention. Percentages have 4 decimals (the page's numbers are rounded to 6 decimals as fractions, the same precision)."""
+    import csv
+    import io
+    rows = sorted(insight_rows(stocks, series, spy), key=lambda r: (r["date"], r["t"]))
+    pct = lambda v: "" if v is None else f"{v * 100:.4f}"
+    day = lambda v: "" if v is None else str(v)
+    out = {}
+    for lang in ("zh", "en"):
+        buf = io.StringIO()
+        w = csv.writer(buf, lineterminator="\r\n")
+        w.writerow(CSV_HEAD[lang])
+        for r in rows:
+            name = names.get(r["t"], (r["t"], r["t"]))[0 if lang == "zh" else 1]
+            w.writerow([r["t"], name, f"EP{r['ep']}", r["date"], r["entry"].isoformat(), r["exit"].isoformat(),
+                        f"{r['buy']:.4f}", f"{r['sell']:.4f}", pct(r["ret"]), pct(r["spy_ret"]), pct(r["x"]),
+                        CSV_YES[lang][0 if r["x"] > 0 else 1], pct(None if r["path"] is None else -r["path"][0]),
+                        *(day(r["up"][th]) for th in UP_TH), *(day(r["down"][th]) for th in DOWN_TH)])
+        data_path, col_path = CSV_FILES[lang]
+        out[data_path] = "\ufeff" + buf.getvalue()  # the BOM lets Excel read the Chinese correctly
+        out[col_path] = "\ufeff" + COLUMNS_TXT[lang]
+    return out
 
 
 def compute(cfg: dict, series: dict, spy: Series, sox: Series, splits: dict | None = None, fwd: dict | None = None) -> dict:
@@ -492,13 +644,15 @@ def compute(cfg: dict, series: dict, spy: Series, sox: Series, splits: dict | No
         "path_summary": {str(round(th * 100)): {"USD": summary_paths(th)} for th in THRESHOLDS},
     }
     summary["main"]["up10"] = up10_half(bubbles)  # 導覽「為什麼做這個」那一頁的數字
-    summary["insights"] = insights(cfg["stocks"], series, spy, cfg.get("last_ep_date"))  # 數據觀察（2026-11-18）
+    names = company_names(cfg["events"])
+    summary["insights"] = insights(cfg["stocks"], series, spy, cfg.get("last_ep_date"), names)  # 數據觀察（2026-11-18）
     chart_days = [d for d in days if d >= CHART_START]
     aligned = lambda x: [round(c, 4) if c is not None else None
                          for c in (dict(zip(x.dates, x.closes)).get(d) for d in chart_days)]
     benchmarks = {"dates": [d.isoformat() for d in chart_days], "spy": aligned(spy), "sox": aligned(sox)}
     prices = {t: {"c": aligned(series[t])} for t in {s["ticker"] for s in cfg["stocks"]}}
-    return {"summary": summary, "benchmarks": benchmarks, "prices": prices, "events": cfg["events"]}
+    return {"summary": summary, "benchmarks": benchmarks, "prices": prices, "events": cfg["events"],
+            "downloads": downloads(cfg["stocks"], series, spy, names)}
 
 
 # ---- build ------------------------------------------------------------------------------------------
@@ -560,6 +714,8 @@ def write_site(data: dict, out: Path) -> None:
         dump(out / "data" / f"{name}.json", data[name])
     for t, p in data["prices"].items():
         dump(out / "data" / "prices" / f"{t}.json", p)
+    for path, body in data.get("downloads", {}).items():  # 數據觀察的 CSV 下載檔和欄位說明（2026-11-19）
+        (out / path).write_text(body, encoding="utf-8")
     (out / ".nojekyll").write_text("")
 
 
@@ -582,6 +738,7 @@ def main(argv=None) -> int:
         return 1
     write_site(data, args.out)
     s = data["summary"]
+    NOTES.extend(f"- {w}" for w in insight_warnings(s["insights"]))
     print(f"prices through {s['price_date']}; main {s['main']['spy']['win']:.0%} of {s['main']['done']} beat SPY; "
           f"{len(s['bubbles'])} stocks")
     step_summary(f"## ✅ 網站已更新\n\n股價更新到 {s['price_date']}，{len(s['bubbles'])} 檔；主結論 {s['main']['spy']['win']:.0%} 贏過 S&P 500"
