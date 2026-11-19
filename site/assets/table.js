@@ -90,5 +90,15 @@ const Table = (() => {
     });
   }
 
-  return { init, render, setYear, setMode };
+  // 搜尋選了這一檔（第十八版）：表格捲到那一列，亮起來約 2.5 秒
+  function reveal(t) {
+    render();
+    const row = box.querySelector(`tr[data-ticker="${CSS.escape(t)}"]`);
+    if (!row) return;
+    row.scrollIntoView({ block: "center" });
+    row.classList.add("found");
+    setTimeout(() => row.classList.remove("found"), 2500);
+  }
+
+  return { init, render, setYear, setMode, reveal };
 })();

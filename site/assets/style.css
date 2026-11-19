@@ -5,6 +5,8 @@
   --muted: #5c5c5c;
   --rule: #d8d3c4;
   --hover: #ede8da;
+  --panel: #fcfaf5;       /* 區塊底色：比背景再淺一點（第十八版） */
+  --panel-line: #e4dfd1;  /* 區塊外框：很淡的細線 */
   --win: #b42318;
   --lose: #1e7b3a;
   --serif-base: "Songti TC", "Noto Serif TC", "Source Han Serif TC", "PMingLiU", serif;
@@ -68,14 +70,16 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 /* 主要兩欄：左泡泡（窄），右走勢圖，走勢圖下面是明細。第十四版：明細照內容的高度，走勢圖自動填滿剩下的空間
    （明細和頁尾之間不留空白；明細太長時走勢圖至少是原本的 48%（原本 12:13），明細在自己的框裡捲動） */
 .grid {
-  flex: 1; min-height: 0; display: grid; gap: 0 24px; padding: 8px 24px 0;
+  flex: 1; min-height: 0; display: grid; gap: 14px 18px; padding: 10px 24px 0;
   grid-template-columns: minmax(0, 7fr) minmax(0, 17fr);
   grid-template-rows: minmax(48%, 1fr) minmax(0, auto);
   grid-template-areas: "bubbles chart" "bubbles detail";
 }
 .bubbles-panel { grid-area: bubbles; display: flex; flex-direction: column; min-height: 0; container-type: inline-size; }
 .chart-panel { grid-area: chart; display: flex; flex-direction: column; min-width: 0; min-height: 0; }
-.detail { grid-area: detail; min-height: 0; overflow: auto; border-top: 1px solid var(--rule); padding: 8px 0; }
+.detail { grid-area: detail; min-height: 0; overflow: auto; }
+/* 區塊分隔（第十八版）：不用陰影（設計規則），每個區塊用比背景再淺一點的底色、一圈很淡的細框，區塊之間多留一點間距 */
+.bubbles-panel, .chart-panel, .detail { background: var(--panel); border: 1px solid var(--panel-line); border-radius: 4px; padding: 8px 12px; }
 .panel-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding-bottom: 8px; }
 .upto { font-size: 0.85rem; display: inline-flex; align-items: center; gap: 4px; }
 .upto input { font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--ink); padding: 2px 4px; min-height: 32px; }
@@ -88,9 +92,9 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 .bubbles:focus-visible { outline-offset: -2px; }
 /* 泡泡區角落：目前看到的年月（左上）、播放／暫停（右上）。aria-pressed＝true 是播放中，顯示暫停圖示 */
 .when { position: absolute; left: 0; top: 6px; margin: 0; padding: 0 6px; z-index: 3; pointer-events: none;
-        font-family: var(--serif-base); font-weight: 700; font-size: 1.05rem; background: var(--bg); }
+        font-family: var(--serif-base); font-weight: 700; font-size: 1.05rem; background: var(--panel); }
 .play { position: absolute; right: 0; top: 6px; z-index: 3; width: 36px; height: 36px; padding: 0; border-radius: 50%;
-        border: 1px solid var(--ink); background: var(--bg); display: grid; place-items: center; }
+        border: 1px solid var(--ink); background: var(--panel); display: grid; place-items: center; }
 .play[aria-pressed="true"] .i-play, .play[aria-pressed="false"] .i-pause { display: none; }
 .bubble {
   position: absolute; left: 0; top: 0; border-radius: 50%; border: 2px solid; background: var(--bg);
@@ -99,6 +103,7 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 }
 .bubble:hover, .bubble:focus-visible { scale: 1.15; z-index: 2; }
 .bubble[aria-pressed="true"] { outline: 3px solid var(--ink); outline-offset: 2px; }
+.bubble.found { scale: 1.15; z-index: 2; outline: 4px solid var(--ink); outline-offset: 5px; }  /* 搜尋選了這一檔（第十八版） */
 .bubble .t { font-weight: 700; font-size: 0.95rem; white-space: nowrap; }
 .bubble .e { font-size: 0.62rem; font-weight: 700; padding: 0 5px; border-radius: 999px; border: 1px solid currentColor;
              margin-bottom: 1px; letter-spacing: 0.02em; }
@@ -116,7 +121,7 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 /* 表格：在自己的框裡捲動，表頭固定 */
 .table-box { flex: 1; min-height: 0; overflow: auto; border-top: 1px solid var(--rule); }
 .list { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
-.list thead th { position: sticky; top: 0; z-index: 1; background: var(--bg); border-bottom: 1px solid var(--ink);
+.list thead th { position: sticky; top: 0; z-index: 1; background: var(--panel); border-bottom: 1px solid var(--ink);
                  vertical-align: bottom; text-align: left; padding: 0; }
 .list thead th.n { text-align: right; }
 .list thead button { border: 0; background: none; padding: 4px; color: var(--muted); text-align: inherit; font-size: inherit;
@@ -128,6 +133,7 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 .list tbody tr:hover { background: var(--hover); }
 .list tbody th button { border: 0; background: none; padding: 0; font-weight: 700; min-height: 24px; }
 .list tbody tr.picked th { border-left: 3px solid var(--ink); }
+.list tbody tr.found { background: var(--hover); }
 .list thead button { white-space: nowrap; }
 .list .col-date { white-space: nowrap; font-size: 0.75rem; }
 .list tbody th { white-space: nowrap; }
@@ -183,7 +189,7 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 .chips { display: flex; flex-wrap: wrap; gap: 6px 8px; align-items: center; }
 /* 已選股票的標籤也是明細的切換：正在顯示的實心（該線顏色底、白字），其他空心 */
 .chip { display: inline-flex; align-items: center; gap: 2px; padding: 0 3px 0 10px; border-radius: 999px; font-size: 0.85rem;
-        border: 2px solid var(--c); background: var(--bg); color: var(--c); }
+        border: 2px solid var(--c); background: var(--panel); color: var(--c); }
 .chip.on { background: var(--c); color: #fff; }
 .chip.on .x { color: #fff; }
 .chip .early-tag { border-color: currentColor; font-weight: 700; margin-left: 2px; vertical-align: 1px; }
@@ -195,12 +201,12 @@ body { display: flex; flex-direction: column; height: 100vh; height: 100dvh; ove
 .note { margin: 0; font-size: 0.8rem; color: var(--muted); flex-basis: 100%; }
 .note:empty { display: none; }
 .tip { position: absolute; left: 0; top: 0; z-index: 5; background: var(--bg); border: 1px solid var(--ink);
-       padding: 6px 8px; font-size: 0.75rem; pointer-events: none; white-space: nowrap; }
+       padding: 6px 8px; font-size: 14px; pointer-events: none; white-space: nowrap; }  /* 第十八版：11 → 14px */
 .tip table { border-collapse: collapse; }
 .tip td { padding: 1px 4px; }
 .tip td:first-child { padding-left: 0; }
 .tip-day { font-weight: 700; margin: 0 0 2px; }
-.tip-note { margin: 4px 0 0; color: var(--muted); font-size: 0.68rem; }
+.tip-note { margin: 4px 0 0; color: var(--muted); font-size: 14px; }
 
 /* 點選後的明細：該檔和三個大盤左右對照 */
 .detail h2 { font-size: 1.1rem; }
@@ -246,7 +252,8 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
   body { display: block; height: auto; overflow: visible; }
   .top { --big: 1.6rem; padding: 10px 16px 8px; grid-template-areas: "title title" "headline controls"; gap: 2px 12px; }
   .controls { align-self: end; }
-  .grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; grid-template-areas: "chart" "bubbles" "detail";
+  /* 第十八版：直式排版（平板直放、電腦視窗拉窄）的順序和手機一樣：結論 → 泡泡 → 走勢圖 → 明細 */
+  .grid { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto; grid-template-areas: "bubbles" "chart" "detail";
           padding: 8px 16px 0; }
   .chart { flex: 1; height: 27vh; min-height: 176px; }
   .bubbles-wrap, .table-box { flex: none; height: 30vh; min-height: 220px; }
@@ -262,8 +269,8 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
   .controls { flex-direction: column; align-items: flex-end; gap: 2px; }
   .controls .link-btn { font-size: 0.75rem; min-height: 24px; padding: 0; }
   .seg button { min-height: 30px; padding: 2px 8px; font-size: 0.8rem; }
-  .grid { padding: 4px 12px 0; grid-template-areas: "bubbles" "chart" "detail"; }
-  .chart-panel { margin-top: 10px; }
+  .grid { padding: 6px 10px 0; grid-template-areas: "bubbles" "chart" "detail"; }
+  .bubbles-panel, .chart-panel, .detail { padding: 6px 8px; }
   .chart-head { flex-wrap: wrap; }
   .chart-head .marks { flex-basis: 100%; }
   .chart-head .ranges { flex: 1 1 100%; justify-content: flex-start; }  /* 手機上可以換行，不超出畫面 */
@@ -355,3 +362,64 @@ dialog::backdrop { background: rgba(26, 26, 26, 0.35); }
 /* 表頭的按鈕規則（填滿整欄、最小高度 32px）不能套到 ⓘ：否則 ⓘ 變成整欄寬，打開時是一大塊黑色橢圓（第十一版修正） */
 .list thead th button.info { width: 20px; height: 20px; min-height: 0; padding: 0; color: var(--muted); font-size: 0.72rem; }
 .list .sub { display: block; font-size: 0.65rem; font-weight: 400; color: var(--muted); white-space: normal; }
+
+/* 搜尋（第十八版）：泡泡區那一列最右邊的放大鏡，展開的搜尋框和結果 */
+.search-btn { margin-left: auto; width: 34px; height: 34px; min-height: 0; padding: 0; border: 1px solid var(--ink); border-radius: 50%;
+  background: var(--panel); display: grid; place-items: center; }
+.search-btn[aria-expanded="true"] { background: var(--ink); color: var(--bg); }
+.search-box { padding: 0 0 8px; }
+.search-box input { width: 100%; font: inherit; font-size: 16px; color: var(--ink); background: #fff; border: 1px solid var(--ink);
+  border-radius: 4px; padding: 6px 10px; min-height: 38px; }
+.search-results { list-style: none; margin: 4px 0 0; padding: 0; max-height: 280px; overflow-y: auto; }
+.search-results:empty { display: none; }
+.search-results li { padding: 6px 8px; border-bottom: 1px solid var(--rule); font-size: 0.95rem; cursor: pointer; }
+.search-results li[aria-selected="true"] { background: var(--hover); }
+.search-results li.off, .search-results li.none { cursor: default; color: var(--muted); }
+.search-results .why { color: var(--muted); }
+
+/* 數據觀察（第十八版）：數據新聞的長文，往下滑閱讀；每章「問題 → 一張圖 → 一兩句白話結論」 */
+body.page-insights { display: block; height: auto; overflow: visible; }
+.home-link { color: inherit; text-decoration: none; }
+a.link-btn { display: inline-flex; align-items: center; color: var(--ink); }
+.headline .why-link { font-family: var(--sans); font-size: 0.95rem; white-space: nowrap; }
+.insights { max-width: 800px; margin: 0 auto; padding: 18px 20px 40px; }
+.ins-kicker { margin: 6px 0 0; font-family: var(--serif); font-weight: 700; font-size: 1.05rem; color: var(--muted); }
+.chapter { margin: 26px 0 44px; scroll-margin-top: 16px; }
+.chapter h2 { font-size: 1.55rem; line-height: 1.35; }
+.chapter h2 .no { display: inline-block; min-width: 1.4em; color: var(--muted); }
+.chapter figure { margin: 14px 0 12px; background: var(--panel); border: 1px solid var(--panel-line); border-radius: 4px; padding: 12px; }
+.chapter .fig { width: 100%; }
+.chapter .fig svg { display: block; }
+.chapter figcaption { display: flex; flex-wrap: wrap; gap: 4px 14px; margin-top: 8px; font-size: 0.85rem; color: var(--muted); line-height: 1.55; }
+.chapter figcaption .n { font-weight: 700; color: var(--ink); }
+.chapter figcaption .note { flex-basis: 100%; }
+.key::before { content: ""; display: inline-block; width: 18px; height: 10px; margin-right: 5px; vertical-align: 0; }
+.key-median::before { border-top: 3px solid var(--ink); height: 0; vertical-align: 3px; }
+.key-mean::before { border-top: 1.5px dashed #555; height: 0; vertical-align: 3px; }
+.key-band::before { background: #d8d3c4; }
+.takeaway { font-family: var(--serif); font-size: 1.15rem; line-height: 1.8; margin: 0; }
+.ins-back { margin: 0; }
+.fig .grid { stroke: #e6e1d3; stroke-width: 1; }
+.fig .axis0 { stroke: #a9a395; stroke-width: 1; }
+.fig .mark { stroke: var(--ink); stroke-width: 1.2; stroke-dasharray: 3 3; }
+.fig .tick { fill: var(--muted); font-size: 13px; font-family: var(--sans); }
+.fig .lab { fill: var(--ink); font-size: 13px; font-family: var(--sans); }
+.fig .bar-win { fill: var(--win); }
+.fig .bar-lose { fill: #fff; stroke: var(--lose); stroke-width: 1; }
+.fig .band { fill: #d8d3c4; opacity: 0.7; }
+.fig .median { fill: none; stroke: var(--ink); stroke-width: 2.6; }
+.fig .mean { fill: none; stroke: #555; stroke-width: 1.4; stroke-dasharray: 5 3; }
+.fig .warm { fill: #000; opacity: 0.035; }
+.fig .up, .fig .down { fill: none; }
+.fig .up { stroke: var(--win); } .fig .down { stroke: var(--lose); }
+.fig .up10, .fig .down10 { stroke-width: 1.4; } .fig .up20, .fig .down20 { stroke-width: 2.2; }
+.fig .up100, .fig .down50 { stroke-width: 3.4; }
+.fig .spy { fill: none; stroke: #6b6b6b; stroke-width: 1.4; stroke-dasharray: 5 4; }
+.fig .end-up { fill: var(--win); } .fig .end-down { fill: var(--lose); } .fig .end-spy { fill: #555; }
+@media (max-width: 600px) {
+  .insights { padding: 12px 12px 32px; }
+  .chapter h2 { font-size: 1.3rem; }
+  .chapter figure { padding: 8px; }
+  .takeaway { font-size: 1.05rem; }
+}
+.fig .leader { fill: none; stroke: #a9a395; stroke-width: 1; }

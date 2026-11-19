@@ -1,6 +1,6 @@
 // 第一次進站的導覽（2026-11-16 第九版；第十四版改成聚光燈式）：在真的網頁上進行，整個畫面變暗，只把要介紹的區域挖亮，
 // 旁邊放說明卡片（Driver.js 1.3.1，MIT，放在 assets/vendor/，不向其他網站發請求）。
-// 第 1、2、6 頁：畫面中間的卡片、不挖亮；第 3 頁左欄（泡泡和表格）、第 4 頁走勢圖、第 5 頁明細表
+// 第 1、2、7 頁：畫面中間的卡片、不挖亮；第 3 頁左欄（泡泡和表格）、第 4 頁走勢圖、第 5 頁明細表、第 6 頁右上角的連結
 // （2026-11-17 插入第 2 頁，原本的第 2～5 頁變成第 3～6 頁；第十七版標題改成「為什麼分析「第一次」？」）。
 // 導覽開始時暫時選 SMTC 和 TEAM（明細顯示 TEAM），結束或關掉後恢復訪客原本的狀態（app.js 提供 save／demo／restore）。
 // 只在第一次自動打開，看完或關掉後記在瀏覽器裡（localStorage，只存兩個「看過了」的記號，不送出任何資料；瀏覽器不讓存時照樣能用，
@@ -8,7 +8,7 @@
 // 切過去後導覽停在同一頁（網址 #tour-頁數）。
 "use strict";
 const Tour = (() => {
-  const KEY_DONE = "gooaye.tour.done", KEY_LANG = "gooaye.lang.checked", PAGES = 6;
+  const KEY_DONE = "gooaye.tour.done", KEY_LANG = "gooaye.lang.checked", PAGES = 7;
   const store = {
     get(k) { try { return localStorage.getItem(k); } catch { return null; } },
     set(k, v) { try { localStorage.setItem(k, v); return true; } catch { return false; } },
@@ -30,6 +30,9 @@ const Tour = (() => {
                   "切換到『表格』可以看完整清單、排序，", "也可以切換看報酬或本益比。"], keep: ["多少", "也可以"] },
         { lines: ["點一下股票，走勢圖會加上它的線，", "和 S&amp;P 500、費半一起比較。", "虛線是第一次提到的那天。"], keep: ["和 S&amp;P 500"] },
         { lines: ["走勢圖下方是這檔股票的成績單："], items: ["第一次提到後買進至今日的報酬", "一年內，多久漲到 +10%，以及最大漲跌幅"] },
+        // 第 6 頁（第十八版）：挖亮右上角那一排連結，卡片在它下方；勝率由程式帶入
+        { lines: ["右上角可以找到："], items: ["方法與限制：資料怎麼算、有哪些限制", "製作過程：這個網站怎麼做出來的",
+          (f) => `數據觀察：為什麼只有 ${f.win}？更多統計`, "導覽：隨時再看一次", "中文｜English：切換語言"] },
         { title: "那，謝孟恭提到的股票，後來贏過大盤嗎？", note: ["此為非官方網站，與節目及主持人無關，內容不構成投資建議。"] },
       ],
     },
@@ -50,13 +53,16 @@ const Tour = (() => {
         { lines: ["Click a stock to add its line to the chart,", "alongside the S&amp;P 500 and the semiconductor index.", "The dotted line marks the day it was first mentioned."] },
         { lines: ["Below the chart is the stock’s report card:"],
           items: ["Its return from the first mention to today", "Within a year: how fast it rose 10%, and its biggest gain and drop"] },
+        { lines: ["In the top right:"], items: ["Method: how the numbers are made, and their limits", "How I built this: how this site was made",
+          (f) => `Insights: why only ${f.win}? More statistics`, "Tour: replay this tour anytime", "中文｜English: switch language"] },
         { title: "So, did they beat the market?", note: ["Unofficial site, not affiliated with the show or its host.", "Not investment advice."] },
       ],
     },
   }[LANG];
   // 挖亮的區域與卡片的位置（電腦；手機的卡片固定在畫面底部，見 style.css）。手機第 4 頁只挖亮明細的對照表（整個明細比畫面高）
   const AREA = { 3: { element: ".bubbles-panel", side: "right" }, 4: { element: ".chart-panel", side: "left" },
-                 5: { element: "#detail", phone: "#detail .cmp-box", side: "left" } };
+                 5: { element: "#detail", phone: "#detail .cmp-box", side: "left" },
+                 6: { element: ".controls", side: "bottom", align: "end" } };  // 第十八版：右上角那一排連結
   const phone = matchMedia("(max-width: 600px), (max-height: 500px)");
   let drv = null, ctx = null, saved = null, opener = null;
 
@@ -72,7 +78,7 @@ const Tour = (() => {
   const rows = (xs, words) => xs.map((x) => glue(keep(x, words))).join("<br>");
   // 卡片內文：幾行、條列（第 5 頁）、灰色斜體的聲明（最後一頁）
   const content = (p) => (p.lines ? `<p>${rows(typeof p.lines === "function" ? p.lines(ctx.facts) : p.lines, p.keep)}</p>` : "") +
-    (p.items ? `<ul class="tour-list">${p.items.map((x) => `<li>${glue(keep(x, p.keep))}</li>`).join("")}</ul>` : "") +
+    (p.items ? `<ul class="tour-list">${p.items.map((x) => `<li>${glue(keep(typeof x === "function" ? x(ctx.facts) : x, p.keep))}</li>`).join("")}</ul>` : "") +
     (p.note ? `<p class="tour-note">${rows(p.note)}</p>` : "");
 
   // 手機：卡片在畫面底部，把亮的區域捲到畫面上方、不被卡片蓋住
@@ -110,7 +116,7 @@ const Tour = (() => {
         onHighlightStarted: (el) => scrollAbove(el),
         popover: {
           title: p.title ? glue(p.title) : "", description: content(p),
-          side: area?.side, align: "start", popoverClass: `tour-pop ${area ? "tour-side" : "tour-center"}${n === 1 ? " tour-first" : n === 2 ? " tour-why" : ""}`,
+          side: area?.side, align: area?.align || "start", popoverClass: `tour-pop ${area ? "tour-side" : "tour-center"}${n === 1 ? " tour-first" : n === 2 ? " tour-why" : ""}`,
           showButtons: n === 1 ? ["next", "close"] : ["previous", "next", "close"],
         },
       };
@@ -150,7 +156,7 @@ const Tour = (() => {
     addEventListener("orientationchange", () => setTimeout(() => { if (drv) { scrollAbove(drv.getActiveElement()); drv.refresh(); } }, 300));
     phone.addEventListener("change", () => { if (drv) { scrollAbove(drv.getActiveElement()); drv.refresh(); } });
 
-    const m = /^#tour-([1-6])$/.exec(location.hash);  // 從另一個語言的導覽切過來
+    const m = /^#tour-([1-7])$/.exec(location.hash);  // 從另一個語言的導覽切過來
     if (m) {
       history.replaceState(null, "", location.pathname + location.search);
       store.set(KEY_LANG, "1");

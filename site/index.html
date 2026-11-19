@@ -31,6 +31,7 @@
   <div class="controls">
     <button type="button" id="method-open" class="link-btn">方法與限制</button>
     <button type="button" id="build-open" class="link-btn">製作過程</button>
+    <a href="insights/" class="link-btn" id="insights-link">數據觀察</a>
     <button type="button" id="tour-open" class="link-btn">導覽</button>
     <nav class="lang" aria-label="語言"><a href="./" lang="zh-Hant" hreflang="zh-Hant" data-lang-link aria-current="page">中文</a><span aria-hidden="true">｜</span><a href="en/" lang="en" hreflang="en" data-lang-link>English</a></nav>
   </div>
@@ -52,6 +53,14 @@
         <button type="button" data-mode="pe" aria-pressed="false">本益比</button>
       </div>
       <label class="year-pick">年份：<select id="year" aria-label="首次提及的年份"></select><span class="caret" aria-hidden="true">▾</span></label>
+      <button type="button" class="search-btn" id="search-open" aria-label="搜尋標的" aria-expanded="false" aria-controls="search-box">
+        <svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><circle cx="6.8" cy="6.8" r="4.8" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10.4 10.4l4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+    <div class="search-box" id="search-box" hidden>
+      <input type="search" id="search-input" role="combobox" aria-autocomplete="list" aria-expanded="false"
+             aria-controls="search-results" aria-label="搜尋標的" placeholder="代號或名稱，例如 NVDA、輝達" autocomplete="off" spellcheck="false">
+      <ul class="search-results" id="search-results" role="listbox" aria-label="搜尋標的"></ul>
     </div>
     <div class="chips" id="chips"></div>
     <div class="bubbles-wrap">
@@ -125,6 +134,7 @@
 <script src="assets/format.js"></script>
 <script src="assets/tour.js"></script>
 <script src="assets/info.js"></script>
+<script src="assets/search.js"></script>
 <script src="assets/dialogs.js"></script>
 <script src="assets/chart.js"></script>
 <script src="assets/bubbles.js"></script>

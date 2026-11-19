@@ -19,7 +19,8 @@
   // 主結論：事先定好算法的研究結論，不跟著點選變動
   // 最壞情況（2026-11-16 第十版）移到方法與限制，首頁只留主結論一句
   const m = summary.main;
-  $("headline").innerHTML = T.headline(F.share(m.spy.win), m.done);
+  $("headline").innerHTML = T.headline(F.share(m.spy.win), m.done) +  // 第十八版：連到數據觀察第 1 章
+    ` <a class="why-link" href="insights/#ch1">${T.whyLink(F.share(m.spy.win))}</a>`;
   $("price-date").textContent = T.priceDate(F.date(summary.price_date));
   $("last-ep").textContent = T.lastEp(summary.last_ep);
 
@@ -192,6 +193,17 @@
   Table.init($("table-box"), { summary, bench, eventOf, prices, pick,
                                                             isPicked: (t) => state.picked.includes(t) });
   chips(); detail(); drawChart();
+  // 搜尋選了一檔（第十八版）：加進走勢圖、顯示明細；被年份篩掉的就切回「全部」；泡泡模式把時間捲到那一檔並亮起來，表格捲到那一列
+  Search.init({
+    reveal: (t) => {
+      const b = bubbleOf.get(t);
+      if (!b) return;
+      if (!inYear($("year").value)(b)) setYear("all");
+      if (!state.picked.includes(t)) pick(t);
+      if (state.picked.includes(t)) { state.focus = t; chips(); detail(); }
+      if (state.view === "bubbles") Bubbles.reveal(t); else Table.reveal(t);
+    },
+  });
   // 導覽（第十四版聚光燈）：開始時暫時選 SMTC 和 TEAM（明細顯示 TEAM），結束或關掉後恢復訪客原本的狀態
   // （已選的股票、正在看的那檔、泡泡／表格、報酬／本益比、年份、時間區間）
   Tour.init({

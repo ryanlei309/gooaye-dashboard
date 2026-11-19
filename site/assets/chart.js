@@ -6,9 +6,13 @@ const Chart = (() => {
   const RANGES = ["mention", 5, 20, 60, 126, 252, 756, 1260, Infinity];
   const MENTION_PAD = 0.05, MENTION_PAD_MIN = 10;  // 首次提及：往前多顯示整段期間的 5%，最少 10 個交易日
   const BENCH = [
-    { key: "spy", name: T.spyLong, short: T.spy, color: "#4d4d4d", dash: [2, 3], priceCur: "USD" },
-    { key: "sox", name: T.soxLong, short: T.sox, color: "#767676", dash: [10, 3, 2, 3], priceCur: "IDX" },
+    // 第十八版：大盤線加粗約 40%、顏色加深；S&P 500 從點線改成間距大一點的虛線（13 吋螢幕、40–50 公分外也看得清楚）
+    { key: "spy", name: T.spyLong, short: T.spy, color: "#2e2e2e", dash: [6, 4], priceCur: "USD" },
+    { key: "sox", name: T.soxLong, short: T.sox, color: "#555555", dash: [10, 3, 2, 3], priceCur: "IDX" },
   ];
+  const BENCH_W = 2.1, STOCK_W = 2.5;  // 第十八版：大盤 1.5 → 2.1、個股 2 → 2.5（個股仍然比大盤粗）
+  const FONT_PX = 14;  // 軸上的字、線尾名稱（第十八版：12 → 14px）
+  const faded = (hex) => hex + "8c";  // 選了股票之後，大盤線變淡一點（約 55%）但不變細
   const STOCK_COLORS = ["#1f4e8c", "#a0631c", "#6b3fa0", "#2f6f7e", "#7a5c3e"];
   const FONT = '-apple-system, "PingFang TC", "Noto Sans TC", "Microsoft JhengHei", sans-serif';
   let u = null, el, marksEl, tip, view = null, focused = null;
@@ -41,8 +45,8 @@ const Chart = (() => {
     }
     const xs = b.dates.slice(start).map((d) => Date.parse(d + "T00:00:00Z") / 1000);
     const lines = [
-      ...BENCH.map((x) => ({ ...x, width: 1.5, price: b[x.key] })),
-      ...stocks.map((s) => ({ name: s.ticker, short: s.ticker, color: s.color, dash: null, width: 2, price: s.c,
+      ...BENCH.map((x) => ({ ...x, width: BENCH_W, stroke: stocks.length ? faded(x.color) : x.color, price: b[x.key] })),
+      ...stocks.map((s) => ({ name: s.ticker, short: s.ticker, color: s.color, dash: null, width: STOCK_W, price: s.c,
                               priceCur: "USD", entry: s.entry_day, date: s.date })),
     ];
     lines.forEach((l) => {
@@ -98,9 +102,9 @@ const Chart = (() => {
       while (j >= 0 && l.ys[j] == null) j--;
       return j < 0 ? null : { l, k: k + 1, y: plot.valToPos(l.ys[j], "y", true) };
     }).filter(Boolean).sort((a, b) => a.y - b.y);
-    const gap = 14 * dpr;
+    const gap = (FONT_PX + 2) * dpr;
     ends.forEach((e, i) => { if (i && e.y - ends[i - 1].y < gap) e.y = ends[i - 1].y + gap; });
-    ctx.font = `${12 * dpr}px ${FONT}`;
+    ctx.font = `${FONT_PX * dpr}px ${FONT}`;
     ctx.textBaseline = "middle";
     ctx.textAlign = "left";  // uPlot 畫座標軸時改成置右，這裡要設回來，名稱才會在線尾右邊
     const x = plot.bbox.left + plot.bbox.width + 6 * dpr;
@@ -113,9 +117,9 @@ const Chart = (() => {
   }
 
   function axisSize(self, values) {
-    if (!values) return 56;
+    if (!values) return 60;
     const c = document.createElement("canvas").getContext("2d");
-    c.font = `12px ${FONT}`;
+    c.font = `${FONT_PX}px ${FONT}`;
     return Math.max(48, Math.ceil(Math.max(...values.map((v) => c.measureText(v).width))) + 22);
   }
 
@@ -139,7 +143,7 @@ const Chart = (() => {
 
   function labelRoom() {
     const c = document.createElement("canvas").getContext("2d");
-    c.font = `12px ${FONT}`;
+    c.font = `${FONT_PX}px ${FONT}`;
     return Math.ceil(Math.max(...view.lines.map((l) => c.measureText(l.short).width))) + 12;
   }
 
@@ -167,12 +171,16 @@ const Chart = (() => {
       cursor: { drag: { x: false, y: false }, points: { size: 6 }, focus: { prox: 16 } },
       scales: { x: { time: true } },
       axes: [
-        { stroke: "#5c5c5c", grid: { stroke: "#e6e1d3", width: 1 }, ticks: { stroke: "#d8d3c4" }, ...dayAxis() },
+        { stroke: "#5c5c5c", font: `${FONT_PX}px ${FONT}`, grid: { stroke: "#e6e1d3", width: 1 }, ticks: { stroke: "#d8d3c4" },
+          ...dayAxis() },
         // 寬度照最長的刻度文字算（固定 56px 時「3000%」會壓到刻度線）
-        { stroke: "#5c5c5c", grid: { stroke: "#e6e1d3", width: 1 }, ticks: { stroke: "#d8d3c4" }, size: axisSize,
+        { stroke: "#5c5c5c", font: `${FONT_PX}px ${FONT}`, grid: { stroke: "#e6e1d3", width: 1 }, ticks: { stroke: "#d8d3c4" },
+          size: axisSize,
           values: (_, vals) => vals.map((v) => F.pct(v / 100, 0)) },
       ],
-      series: [{}, ...view.lines.map((l) => ({ label: l.name, stroke: l.color, width: l.width, dash: l.dash || undefined,
+      // S&P 500 的虛線長度照螢幕倍率放大（uPlot 的虛線是畫布像素，高解析度螢幕上會縮成點線）
+      series: [{}, ...view.lines.map((l) => ({ label: l.name, stroke: l.stroke || l.color, width: l.width,
+                                               dash: l.key === "spy" ? l.dash.map((v) => v * devicePixelRatio) : l.dash || undefined,
                                                spanGaps: false, points: { show: false } }))],
       hooks: {
         setCursor: [showTip],

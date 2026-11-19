@@ -152,6 +152,7 @@ const Bubbles = (() => {
     draw();
     last = null;
     frame = requestAnimationFrame(tick);
+    if (want) { const t = want; reveal(t); }
   }
 
   // 年份選單（第九版）：只播放那一年首次提及的股票；從頭（最新的在最上面）重新排
@@ -227,5 +228,24 @@ const Bubbles = (() => {
     start();
   }
 
-  return { init, refreshPicked, show, setItems };
+  // 搜尋選了這一檔（第十八版）：停住，把時間捲到它在泡泡區中間，亮起來約 2.5 秒。這段時間內泡泡區大小變了、重新排列，
+  // 也再捲到它一次（搜尋框收起來時泡泡區會變高）
+  let want = null, wantTimer = null;
+  function reveal(t) {
+    want = t;
+    clearTimeout(wantTimer);
+    wantTimer = setTimeout(() => { want = null; }, 2500);
+    setPlaying(false);
+    if (!reduced) {
+      const o = laid.find((x) => x.it.ticker === t);
+      if (o) moveTo(o.e + (root.clientHeight + o.d) / 2);
+    }
+    const b = root.querySelector(`.bubble[data-ticker="${CSS.escape(t)}"]`);
+    if (!b) return;
+    if (reduced) b.scrollIntoView({ block: "center" });
+    b.classList.add("found");
+    setTimeout(() => b.classList.remove("found"), 2500);
+  }
+
+  return { init, refreshPicked, show, setItems, reveal };
 })();
