@@ -63,6 +63,7 @@ const Tour = (() => {
   const AREA = { 3: { element: ".bubbles-panel", side: "right" }, 4: { element: ".chart-panel", side: "left" },
                  5: { element: "#detail", phone: "#detail .cmp-box", side: "left" },
                  6: { element: ".controls", side: "bottom", align: "end" } };  // 第十八版：右上角那一排連結
+  AREA[6].phone = "#menu-btn";  // 第二十一版：手機上連結收進 ☰，第 6 頁挖亮 ☰（文字不變）
   const phone = matchMedia("(max-width: 600px), (max-height: 500px)");
   let drv = null, ctx = null, saved = null, opener = null;
 
@@ -128,7 +129,7 @@ const Tour = (() => {
     drv = null;
     if (saved) ctx.restore(saved);  // 恢復訪客原本的狀態
     saved = null;
-    if (opener) opener.focus();
+    if (opener) { opener.focus(); if (document.activeElement !== opener) Menu.focus(); }  // 手機上「導覽」收在 ☰ 裡：焦點回到 ☰（第二十一版）
   }
 
   function open(at = 1, from = null) {

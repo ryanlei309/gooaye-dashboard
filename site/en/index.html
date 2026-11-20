@@ -29,10 +29,15 @@
 <header class="top">
   <h1>Stocks mentioned on the Gooaye podcast: <span class="nowrap">did they beat the market?</span></h1>
   <div class="controls">
-    <button type="button" id="method-open" class="link-btn">Method</button>
-    <button type="button" id="build-open" class="link-btn">How I built this</button>
-    <a href="insights/" class="link-btn" id="insights-link">Insights</a>
-    <button type="button" id="tour-open" class="link-btn">Tour</button>
+    <button type="button" id="menu-btn" class="menu-btn" aria-label="Menu" aria-expanded="false" aria-controls="menu-items">
+      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <div class="menu-items" id="menu-items">
+      <button type="button" id="method-open" class="link-btn">Method</button>
+      <button type="button" id="build-open" class="link-btn">How I built this</button>
+      <a href="insights/" class="link-btn" id="insights-link">Insights</a>
+      <button type="button" id="tour-open" class="link-btn">Tour</button>
+    </div>
     <nav class="lang" aria-label="Language"><a href="../" lang="zh-Hant" hreflang="zh-Hant" data-lang-link>中文</a><span aria-hidden="true">｜</span><a href="./" lang="en" hreflang="en" data-lang-link aria-current="page">English</a></nav>
   </div>
   <div class="headline-row">
@@ -79,13 +84,13 @@
   <section class="chart-panel" aria-labelledby="chart-title">
     <h2 id="chart-title" class="visually-hidden">Return chart</h2>
     <div class="panel-head chart-head">
-      <p class="marks" id="marks"></p>
       <div class="ranges" role="group" aria-label="Time range" id="ranges"></div>
     </div>
     <div class="chart-body">
       <div class="chart" id="chart" role="img" aria-label="Return chart"></div>
     </div>
     <div class="chart-foot">
+      <p class="marks" id="marks"></p>
       <p class="note" id="chart-note" role="status"></p>
     </div>
   </section>
@@ -132,6 +137,7 @@
 <script src="../assets/vendor/driver-1.3.1.iife.js"></script>
 <script src="../assets/i18n.js"></script>
 <script src="../assets/format.js"></script>
+<script src="../assets/menu.js"></script>
 <script src="../assets/tour.js"></script>
 <script src="../assets/info.js"></script>
 <script src="../assets/search.js"></script>

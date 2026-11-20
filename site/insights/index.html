@@ -29,10 +29,15 @@
 <header class="top">
   <h1><a href="../" class="home-link">謝孟恭提到的股票，<span class="nowrap">後來贏過大盤嗎？</span></a></h1>
   <div class="controls">
-    <a href="../#method" class="link-btn">方法與限制</a>
-    <a href="../#build" class="link-btn">製作過程</a>
-    <a href="./" class="link-btn" aria-current="page">數據觀察</a>
-    <a href="../#tour-1" class="link-btn">導覽</a>
+    <button type="button" id="menu-btn" class="menu-btn" aria-label="選單" aria-expanded="false" aria-controls="menu-items">
+      <svg viewBox="0 0 20 20" width="20" height="20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+    </button>
+    <div class="menu-items" id="menu-items">
+      <a href="../#method" class="link-btn">方法與限制</a>
+      <a href="../#build" class="link-btn">製作過程</a>
+      <a href="./" class="link-btn" aria-current="page">數據觀察</a>
+      <a href="../#tour-1" class="link-btn">導覽</a>
+    </div>
     <nav class="lang" aria-label="語言"><a href="./" lang="zh-Hant" hreflang="zh-Hant" aria-current="page">中文</a><span aria-hidden="true">｜</span><a href="../en/insights/" lang="en" hreflang="en">English</a></nav>
   </div>
   <div class="headline-row">
@@ -69,6 +74,7 @@
 
 <script src="../assets/i18n.js"></script>
 <script src="../assets/format.js"></script>
+<script src="../assets/menu.js"></script>
 <script src="../assets/insights.js"></script>
 </body>
 </html>

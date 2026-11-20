@@ -8,7 +8,8 @@
   const MAX = 5;
   const get = (p) => fetch(ROOT + p).then((r) => { if (!r.ok) throw new Error(p); return r.json(); });
   const [summary, events, bench] = await Promise.all(["data/summary.json", "data/events.json", "data/benchmarks.json"].map(get));
-  // 時間區間：還沒選股票時 1 週；選了股票自動切到「首次提及」，除非使用者自己選過別的區間（rangeSet）
+  // 時間區間：還沒選股票時 1 週；選了 1 檔自動切到「首次提及」、2 檔以上切到「各自起算」（第二十一版），
+  // 除非使用者自己選過區間（rangeSet：之後加減股票都不再自動切換）
   const state = { view: "bubbles", days: 5, rangeSet: false, picked: [], focus: null };
   const prices = new Map();
   const bubbleOf = new Map(summary.bubbles.map((b) => [b.ticker, b]));
@@ -37,7 +38,7 @@
 
   async function drawChart() {
     const stocks = await Promise.all(state.picked.map(async (t) => ({
-      ticker: t, c: (await load(t)).c, entry_day: eventOf.get(t).entry_day, date: eventOf.get(t).date, color: color(t),
+      ticker: t, ...(({ c, x }) => ({ c, x }))(await load(t)), entry_day: eventOf.get(t).entry_day, date: eventOf.get(t).date, color: color(t),
       open: bubbleOf.get(t).entry_open, bench: bubbleOf.get(t).to_date.USD.bench })));
     Chart.render(bench, stocks, state.days);
   }
@@ -95,12 +96,17 @@
 
   function note(text) { $("chart-note").textContent = text; }
 
-  // 時間區間按鈕：選中的 aria-pressed；「首次提及」在還沒選股票時不能按
+  // 時間區間按鈕：選中的 aria-pressed；「各自起算」「首次提及」在還沒選股票時不能按
   function syncRanges() {
     $("ranges").querySelectorAll("button").forEach((x) => {
       x.setAttribute("aria-pressed", String(x.dataset.days === String(state.days)));
-      if (x.dataset.days === "mention") x.disabled = !state.picked.length;
+      if (x.dataset.days === "mention" || x.dataset.days === "each") x.disabled = !state.picked.length;
     });
+  }
+
+  // 預設的區間（使用者沒自己選過時）：沒選股票 1 週、1 檔「首次提及」、2 檔以上「各自起算」
+  function autoRange() {
+    if (!state.rangeSet) state.days = !state.picked.length ? 5 : state.picked.length === 1 ? "mention" : "each";
   }
 
   // 點泡泡或表格的一列：沒選的加進來；已經選了的再點一次就取消（第七版）
@@ -108,7 +114,7 @@
     if (state.picked.includes(t)) { drop(t); return; }
     if (state.picked.length >= MAX) { note(T.maxPicked(MAX)); return; }
     state.picked.push(t);
-    if (!state.rangeSet) state.days = "mention";
+    autoRange();
     state.focus = t;  // 新加的成為正在顯示的那檔
     note("");
     refresh();
@@ -116,13 +122,14 @@
 
   function drop(t) {
     state.picked = state.picked.filter((x) => x !== t);
+    autoRange();
     if (state.focus === t) state.focus = state.picked[state.picked.length - 1] || null;
     note("");
     refresh();
   }
 
   function refresh() {
-    if (!state.picked.length && state.days === "mention") state.days = 5;  // 沒有股票就沒有「首次提及」，回到 1 週
+    if (!state.picked.length && (state.days === "mention" || state.days === "each")) state.days = 5;  // 沒有股票就沒有這兩種，回到 1 週
     syncRanges(); chips(); detail(); drawChart(); Bubbles.refreshPicked(); Table.render();
   }
 
@@ -154,8 +161,8 @@
   $("ranges").addEventListener("click", (e) => {
     const b = e.target.closest("[data-days]");
     if (!b || b.disabled) return;
-    state.days = b.dataset.days === "mention" ? "mention" : Number(b.dataset.days);
-    state.rangeSet = true;  // 使用者自己選過：之後加新股票不再自動跳回「首次提及」
+    state.days = b.dataset.days === "mention" || b.dataset.days === "each" ? b.dataset.days : Number(b.dataset.days);
+    state.rangeSet = true;  // 使用者自己選過：之後加新股票不再自動切換區間
     syncRanges();
     drawChart();
   });
@@ -164,7 +171,7 @@
     if (!t) return;
     if (t.dataset.drop) drop(t.dataset.drop);
     else if (t.dataset.show) { state.focus = t.dataset.show; chips(); detail(); }
-    else if (t.id === "clear") { state.picked = []; state.focus = null; note(""); refresh(); }
+    else if (t.id === "clear") { state.picked = []; state.focus = null; autoRange(); note(""); refresh(); }
   });
 
   // 年份選單（第九版）：全部、各年份（照資料自動產生，新的在前）、早期（2020–2021）；泡泡和表格共用
@@ -188,7 +195,7 @@
   const setYear = (y) => { if ($("year").value !== y) { $("year").value = y; $("year").dispatchEvent(new Event("change")); } };
 
   Dialogs.init(summary, events, bench);
-  Chart.init($("chart"), $("marks"));
+  Chart.init($("chart"), $("marks"), summary.insights && summary.insights.ch2);  // 各自起算的背景用數據觀察第 2 章的資料
   Bubbles.init($("bubbles"), items, pick, (t) => state.picked.includes(t));
   Table.init($("table-box"), { summary, bench, eventOf, prices, pick,
                                                             isPicked: (t) => state.picked.includes(t) });

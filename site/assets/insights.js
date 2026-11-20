@@ -383,10 +383,10 @@
     { id: "ch4", q: TEXT.ch4.q, n: I.ch4.n, note: TEXT.ch4.note, draw: ch4, text: TEXT.ch4.text(I.ch4) },
   ];
   $("chapters").innerHTML = chapters.map((c, i) => `<section class="chapter" id="${c.id}" aria-labelledby="${c.id}-q">
-      <h2 id="${c.id}-q"><span class="no">${i + 1}</span>${c.q}</h2>
+      <h2 id="${c.id}-q"><span class="no">${i + 1}</span>${F.tail(c.q)}</h2>
       <figure>${c.yAxis ? `<p class="axis-title y">${c.yAxis}</p>` : ""}<div class="fig" data-ch="${i}"></div>${c.xAxis ? `<p class="axis-title x">${c.xAxis}</p>` : ""}
         <figcaption><span class="n">${TEXT.n(c.n)}</span>${c.legend ? c.legend.map(([k, v]) => `<span class="key key-${k}">${v}</span>`).join("") : ""}
-          <span class="note">${c.note}</span></figcaption></figure>
+          <span class="note">${F.tail(c.note)}</span></figcaption></figure>
       <p class="takeaway">${c.text}</p></section>`).join("") +
     // 總結（第 4 章之後、下載檔之前）
     `<section class="chapter summary" id="summary" aria-labelledby="summary-q"><h2 id="summary-q">${TEXT.sum.title}</h2>

@@ -365,6 +365,32 @@ def event_path(s: Series, spy: Series, entry, days):
     return out
 
 
+EACH_PRE, EACH_POST = 21, HORIZON  # the chart's "since each mention" mode (2026-11-20): trading days -21..+252
+
+
+def each_path(s: Series, spy: Series, entry) -> list:
+    """The chart's "since each mention" mode: excess return on trading days -21..+252 (trading days = S&P 500 days).
+    Day t = (stock close on day t / stock open on the entry day - 1) - (same for the S&P 500), the same formula as
+    chapter 2 (event_path). Unlike chapter 2 it may be partial: it stops at the latest day (not a full year yet), days
+    before the S&P 500 history are None, and so is a day the stock has no close."""
+    days = spy.dates
+    k = spy.index(entry)
+    so, po = s.opens[s.index(entry)], spy.opens[k]
+    closes = dict(zip(s.dates, s.closes))
+    out = []
+    for t in range(-EACH_PRE, EACH_POST + 1):
+        if k + t >= len(days):
+            break
+        c = closes.get(days[k + t]) if k + t >= 0 else None
+        out.append(None if c is None else r6((c / so - 1) - (spy.closes[k + t] / po - 1)))
+    return out
+
+
+def each_paths(stocks: list[dict], series: dict, spy: Series) -> dict:
+    """Ticker -> each_path for every stock on the site (its own entry day)."""
+    return {st["ticker"]: each_path(series[st["ticker"]], spy, date.fromisoformat(st["entry_day"])) for st in stocks}
+
+
 def hit_curve(day_lists, n):
     """Share of the n stocks that had reached the threshold by trading day N (N = 0..252); None = never in 12 months."""
     return [r6(sum(d is not None and d <= N for d in day_lists) / n) for N in range(HORIZON + 1)]
@@ -597,7 +623,8 @@ def compute(cfg: dict, series: dict, spy: Series, sox: Series, splits: dict | No
     aligned = lambda x: [round(c, 4) if c is not None else None
                          for c in (dict(zip(x.dates, x.closes)).get(d) for d in chart_days)]
     benchmarks = {"dates": [d.isoformat() for d in chart_days], "spy": aligned(spy), "sox": aligned(sox)}
-    prices = {t: {"c": aligned(series[t])} for t in {s["ticker"] for s in cfg["stocks"]}}
+    each = each_paths(cfg["stocks"], series, spy)  # 走勢圖「各自起算」（2026-11-20）
+    prices = {t: {"c": aligned(series[t]), "x": each[t]} for t in {s["ticker"] for s in cfg["stocks"]}}
     return {"summary": summary, "benchmarks": benchmarks, "prices": prices, "events": cfg["events"],
             "downloads": downloads(cfg["stocks"], series, spy, names)}
 

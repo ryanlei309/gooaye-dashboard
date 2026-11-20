@@ -153,7 +153,10 @@ const Dialogs = (() => {
       <p>Bubbles and the table show holding from the first mention until today: of the stocks mentioned from 2022 on, ${wins} beat the S&amp;P 500 and ${main.length - wins} trailed it. The main result looks only at the first 12 months. The S&amp;P 500 rose about ${F.pct(riseSpy(bench), 0)} (with dividends) from the start of 2022 to ${F.date(summary.price_date)}; the earlier a stock was mentioned, the longer the index run it is compared against.</p>
 
       <h3>The chart's "Since mention" range</h3>
-      <p>After you pick a stock, the chart switches to "Since mention": every line, including the indexes, starts at 0% on the entry day of the earliest-mentioned stock you picked (the vertical dashed line), and the chart starts a little earlier so you can see the run-up. For that stock, the last number on its line equals "Return" to date in the detail table. If you pick several stocks, a stock mentioned later is measured from that earlier day too, so its line does not show its own return; <strong>the detail table always shows each stock's own return</strong>.</p>
+      <p>When you pick one stock, the chart switches to "Since mention": every line, including the indexes, starts at 0% on the entry day of the earliest-mentioned stock you picked (the vertical dashed line), and the chart starts a little earlier so you can see the run-up. For that stock, the last number on its line equals "Return" to date in the detail table. If you pick several stocks, a stock mentioned later is measured from that earlier day too, so its line does not show its own return; <strong>the detail table always shows each stock's own return</strong>.</p>
+
+      <h3>The chart's "Since each mention" range</h3>
+      <p>Each stock starts on the day it was mentioned and is compared with the S&amp;P 500 over the same period; the gray shows how mentioned stocks generally did.</p>
 
       <h3>What may make this look better than reality</h3>
       <ul>
@@ -205,7 +208,10 @@ const Dialogs = (() => {
       <p>泡泡和表格是「第一次提到之後一直持有到現在」：2022 年起的股票，贏過 S&amp;P 500 的 ${wins} 檔、輸的 ${main.length - wins} 檔。主結論只看提到後的 12 個月。S&amp;P 500 從 2022 年初到 ${summary.price_date} 漲了約 ${F.pct(riseSpy(bench), 0)}（含息）；越早提到的股票，「至今」要和越長一段大盤漲幅比。</p>
 
       <h3>走勢圖的「首次提及」</h3>
-      <p>選了股票之後，走勢圖會切到「首次提及」：所有線（包括大盤）都以你選的股票裡最早被提到那一檔的進場日（垂直虛線）為 0%，起點再往前多顯示一小段，看得到提及前的走勢。最早那一檔線上最後的數字，等於明細表的「至今報酬」。選了多檔時，較晚提到的股票也從這一天算起，線上的數字不是它自己的報酬；<strong>明細表的數字才是那一檔自己的報酬</strong>。</p>
+      <p>選了 1 檔股票時，走勢圖會切到「首次提及」：所有線（包括大盤）都以你選的股票裡最早被提到那一檔的進場日（垂直虛線）為 0%，起點再往前多顯示一小段，看得到提及前的走勢。最早那一檔線上最後的數字，等於明細表的「至今報酬」。選了多檔時，較晚提到的股票也從這一天算起，線上的數字不是它自己的報酬；<strong>明細表的數字才是那一檔自己的報酬</strong>。</p>
+
+      <h3>走勢圖的「各自起算」</h3>
+      <p>每一檔都從自己被提到的那天開始，和同一段時間的 S&amp;P 500 比；灰色是所有被提到股票的一般表現。</p>
 
       <h3>哪裡可能偏樂觀</h3>
       <ul>
@@ -311,6 +317,7 @@ const Dialogs = (() => {
     dlg.addEventListener("close", () => {
       if (location.hash === hash) history.replaceState(null, "", location.pathname + location.search);
       opener.focus();
+      if (document.activeElement !== opener) Menu.focus();  // 手機上按鈕收在 ☰ 選單裡、看不見：焦點回到 ☰（第二十一版）
     });
     all.push(d);
     return d;

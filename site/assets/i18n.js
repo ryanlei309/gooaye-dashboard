@@ -6,7 +6,8 @@ const ROOT = document.documentElement.dataset.root || "";  // 英文版在 en/�
 
 const I18N = {
   zh: {
-    headline: (pct, n) => `<span class="num">${pct}</span><span class="label">贏過 S&amp;P 500（${n} 檔個股，持有 12 個月）</span>`,
+    // 第二十一版：副標題的「S&P 500」和「持有 12 個月）」不拆開（手機上不會只剩「月）」掉到下一行）
+    headline: (pct, n) => `<span class="num">${pct}</span><span class="label">贏過 <span class="nowrap">S&amp;P 500</span>（${n} 檔個股，<span class="nowrap">持有 12 個月）</span></span>`,
     priceDate: (d) => `股價更新至 ${d}`,
     lastEp: (ep) => `集數涵蓋到 EP${ep}`,
     loadFail: "資料讀取失敗，請重新整理",
@@ -50,7 +51,12 @@ const I18N = {
     firstMark: (t, d) => `${t} 首次提及 <strong>${d}</strong>`,
     outside: "（不在此期間）",
     adjusted: "股價為調整後股價（含分割、配息調整）；費半是指數點數",
-    ranges: ["首次提及", "1 週", "4 週", "12 週", "半年", "1 年", "3 年", "5 年", "全部"],
+    ranges: ["各自起算", "首次提及", "1 週", "4 週", "12 週", "半年", "1 年", "3 年", "5 年", "全部"],
+    // 「各自起算」（第二十一版）：橫軸是距離首次提及的交易日，縱軸是和 S&P 500 同期比的報酬差
+    each: { ticks: ["提到前 1 個月", "提到（第 0 天）", "3 個月", "半年", "9 個月", "1 年"], y: "和 S&P 500 同期比，多漲或少漲",
+            spy: "S&P 500 同期", all: "所有被提到的股票（排在中間的那一檔）", band: (n) => `中間 50% 的範圍（${n} 檔）`,
+            day: (n) => (n === 0 ? "提到（第 0 天）" : `第 ${n < 0 ? "−" + -n : n} 天`), tail: (t, n) => `${t}（第 ${n} 天）`,
+            vs: "和 S&amp;P 500 比", date: "日期", own: "個股報酬", note: "股價為調整後股價（含分割、配息調整）" },
     bubbleLabel: (t, d, x, early) => `${t}，${d} 首次提及${early ? "（早期提及）" : ""}，至今贏輸 S&P 500 ${x}`,
     colTicker: "標的",
     colDate: "首次提及",
@@ -77,7 +83,7 @@ const I18N = {
     yearEarly: "早期（2020–2021）",
   },
   en: {
-    headline: (pct, n) => `<span class="num">${pct}</span><span class="label">beat the S&amp;P 500 (${n} stocks, held 12 months)</span>`,
+    headline: (pct, n) => `<span class="num">${pct}</span><span class="label">beat the <span class="nowrap">S&amp;P 500</span> (${n} stocks, <span class="nowrap">held 12 months)</span></span>`,
     priceDate: (d) => `Prices as of ${d}`,
     lastEp: (ep) => `Episodes through EP${ep}`,
     loadFail: "Could not load the data. Please refresh.",
@@ -121,7 +127,12 @@ const I18N = {
     firstMark: (t, d) => `${t} first mentioned <strong>${d}</strong>`,
     outside: " (outside this range)",
     adjusted: "Adjusted prices (splits and dividends); SOX is in index points",
-    ranges: ["Since mention", "1W", "4W", "12W", "6M", "1Y", "3Y", "5Y", "All"],
+    ranges: ["Since each mention", "Since mention", "1W", "4W", "12W", "6M", "1Y", "3Y", "5Y", "All"],
+    each: { ticks: ["1 month before", "Mention (day 0)", "3 months", "6 months", "9 months", "1 year"],
+            y: "Ahead of or behind the S&P 500 over the same period", spy: "S&P 500 (same period)",
+            all: "All mentioned stocks (the one in the middle)", band: (n) => `Middle 50% (${n} stocks)`,
+            day: (n) => (n === 0 ? "Mention (day 0)" : `Day ${n < 0 ? "−" + -n : n}`), tail: (t, n) => `${t} (day ${n})`,
+            vs: "vs S&amp;P 500", date: "Date", own: "Stock return", note: "Adjusted prices (splits and dividends)" },
     bubbleLabel: (t, d, x, early) => `${t}, first mentioned ${d}${early ? " (early mention)" : ""}, vs S&P 500 to date ${x}`,
     colTicker: "Stock",
     colDate: "First<br>mention",

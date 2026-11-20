@@ -21,6 +21,12 @@ const F = {
     const n = x.toLocaleString("en-US", { minimumFractionDigits: digits, maximumFractionDigits: digits });
     return cur === "USD" ? "US$" + n : n;
   },
+  // 標題、圖說的最後一段不拆開（第二十一版）：最後一行不會只剩一兩個字。中文是最後一個標點之後那一小句（7 個字以內），
+  // 英文是最後三個字；不碰 HTML 標籤
+  tail(s) {
+    const re = LANG === "en" ? /([^\s<>]+ [^\s<>]+ [^\s<>]+)$/ : /(?<=[，？。：；、])([^，？。：；、<>]{1,7}[？。！）]*)$/;
+    return s.replace(re, '<span class="nowrap">$1</span>');
+  },
   esc(s) {
     return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
   },
